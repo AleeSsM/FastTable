@@ -20,26 +20,21 @@ import { useAuth } from '@/contexts/auth-context';
 import { Comensal } from '@/constants/theme-comensal';
 import { REALTIME_MENU_COMENSAL, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { fetchLineasCuentaComensal } from '@/lib/cuenta-comensal';
-import { mapCocinaRpcError } from '@/lib/cocina-errors';
+import { mapCocinaRpcErrorComensal } from '@/lib/cocina-errors';
 import { formatPriceFromCents } from '@/lib/format';
+import {
+  etiquetaDisponibilidadComensal,
+  itemNoPedible,
+  type ItemMenuComensal,
+} from '@/lib/menu-comensal';
 import { fetchMesaActivaComensal, type MesaActiva } from '@/lib/mesa-activa';
 import { supabase } from '@/lib/supabase';
-
-type Item = {
-  id: string;
-  nombre: string;
-  descripcion: string | null;
-  precio_centavos: number;
-  disponible: boolean;
-  sin_stock?: boolean;
-  imagen_url: string | null;
-};
 
 type Category = {
   id: string;
   nombre: string;
   orden: number;
-  items_menu: Item[] | null;
+  items_menu: ItemMenuComensal[] | null;
 };
 
 function placeholderImage(itemId: string): string {
@@ -54,7 +49,7 @@ export default function MenuScreen() {
   const [error, setError] = useState<string | null>(null);
   const [mesaActiva, setMesaActiva] = useState<MesaActiva | null>(null);
   const [cuenta, setCuenta] = useState<Awaited<ReturnType<typeof fetchLineasCuentaComensal>> | null>(null);
-  const [modalItem, setModalItem] = useState<Item | null>(null);
+  const [modalItem, setModalItem] = useState<ItemMenuComensal | null>(null);
   const [qty, setQty] = useState(1);
   const [nota, setNota] = useState('');
   const [sending, setSending] = useState(false);
@@ -121,9 +116,8 @@ export default function MenuScreen() {
 
   useSupabaseRealtimeRefresh(REALTIME_MENU_COMENSAL, reloadMenuTab, true);
 
-  const openModal = (item: Item) => {
-    const blocked = !item.disponible || !!item.sin_stock;
-    if (blocked) return;
+  const openModal = (item: ItemMenuComensal) => {
+    if (itemNoPedible(item)) return;
     if (!mesaActiva) {
       Alert.alert(
         'Mesa',
@@ -146,7 +140,7 @@ export default function MenuScreen() {
         p_nota: nota.trim() || null,
       });
       if (rpcErr) {
-        Alert.alert('Pedido', mapCocinaRpcError(rpcErr.message));
+        Alert.alert('Pedido', mapCocinaRpcErrorComensal(rpcErr.message));
         return;
       }
       Alert.alert('Enviado', 'Tu pedido llegó a cocina.');
@@ -166,7 +160,7 @@ export default function MenuScreen() {
         onPress: async () => {
           const { error } = await supabase.rpc('comensal_terminar_servicio');
           if (error) {
-            Alert.alert('Servicio', mapCocinaRpcError(error.message));
+            Alert.alert('Servicio', mapCocinaRpcErrorComensal(error.message));
             return;
           }
           Alert.alert('Servicio finalizado', 'Tu mesa quedó liberada. ¡Gracias por visitarnos!');
@@ -250,13 +244,14 @@ export default function MenuScreen() {
         <View key={section.id} style={styles.section}>
           <Text style={styles.sectionTitle}>{section.nombre}</Text>
           {(section.items_menu ?? []).map((item) => {
-            const blocked = !item.disponible || !!item.sin_stock;
+            const noPedible = itemNoPedible(item);
+            const dispLabel = etiquetaDisponibilidadComensal(item);
             return (
             <Pressable
               key={item.id}
-              style={[styles.row, blocked && styles.rowDisabled]}
+              style={[styles.row, noPedible && styles.rowDisabled]}
               onPress={() => openModal(item)}
-              disabled={blocked}>
+              disabled={noPedible}>
               <Image
                 source={{ uri: item.imagen_url || placeholderImage(item.id) }}
                 style={styles.thumb}
@@ -266,8 +261,7 @@ export default function MenuScreen() {
               <View style={{ flex: 1 }}>
                 <Text style={styles.itemName}>{item.nombre}</Text>
                 {item.descripcion ? <Text style={styles.itemDesc} numberOfLines={2}>{item.descripcion}</Text> : null}
-                {!item.disponible ? <Text style={styles.unavailable}>No disponible</Text> : null}
-                {item.disponible && item.sin_stock ? <Text style={styles.unavailable}>Sin stock</Text> : null}
+                {dispLabel ? <Text style={styles.unavailable}>{dispLabel}</Text> : null}
               </View>
               <Text style={styles.price}>{formatPriceFromCents(item.precio_centavos)}</Text>
             </Pressable>

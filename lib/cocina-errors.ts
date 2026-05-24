@@ -1,3 +1,13 @@
+/** Mensajes para comensales: sin detalles de almacén, recetas ni cantidades internas. */
+export function mapCocinaRpcErrorComensal(message: string): string {
+  if (message.includes('item_sin_stock')) return 'Ese plato no está disponible en este momento.';
+  if (message.includes('item_sin_receta')) return 'Ese plato no está disponible en este momento.';
+  if (message.includes('inventario_insuficiente')) {
+    return 'No hay suficiente, prueba una cantidad más baja.';
+  }
+  return mapCocinaRpcError(message);
+}
+
 export function mapCocinaRpcError(message: string): string {
   if (message.includes('sin_mesa_para_pedidos')) {
     return 'Solo puedes pedir cuando estás sentado en una mesa ocupada (por reserva o por asignación de fila).';

@@ -176,13 +176,16 @@ CREATE TABLE public.ingredientes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   nombre TEXT NOT NULL,
   cantidad_disponible NUMERIC(14, 4) NOT NULL DEFAULT 0 CHECK (cantidad_disponible >= 0),
-  unidad_medida TEXT NOT NULL,
+  unidad_medida TEXT NOT NULL CHECK (unidad_medida IN ('g', 'ml', 'piezas', 'unidades')),
   stock_minimo NUMERIC(14, 4) NULL CHECK (stock_minimo IS NULL OR stock_minimo >= 0),
+  categoria TEXT NOT NULL DEFAULT 'Ingredientes'
+    CHECK (categoria IN ('Bebidas', 'Alimentos', 'Ingredientes', 'Otros')),
   creado_en TIMESTAMPTZ NOT NULL DEFAULT now(),
   actualizado_en TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE INDEX idx_ingredientes_nombre ON public.ingredientes (lower(nombre));
+CREATE INDEX idx_ingredientes_categoria ON public.ingredientes (categoria);
 
 CREATE TABLE public.recetas (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -460,6 +463,10 @@ CREATE POLICY zonas_select ON public.zonas FOR SELECT TO authenticated, anon USI
 CREATE POLICY mesas_select ON public.mesas FOR SELECT TO authenticated, anon USING (true);
 CREATE POLICY mesas_update_personal ON public.mesas FOR UPDATE TO authenticated
   USING (public.es_personal_activo());
+CREATE POLICY mesas_insert_gerente ON public.mesas FOR INSERT TO authenticated
+  WITH CHECK (public.es_gerente());
+CREATE POLICY mesas_delete_gerente ON public.mesas FOR DELETE TO authenticated
+  USING (public.es_gerente());
 
 CREATE POLICY fila_select ON public.fila_espera FOR SELECT
   USING (id_usuario = auth.uid() OR public.es_personal_activo());
@@ -1749,80 +1756,138 @@ SET imagen_url = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=60
 WHERE imagen_url IS NULL;
 
 -- ========== Seed inventario (ingredientes, recetas, sin_stock inicial) ==========
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Pan hamburguesa', 'piezas', 80, 20 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Pan hamburguesa');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Carne de hamburguesa', 'g', 5000, 800 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Carne de hamburguesa');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Queso cheddar', 'piezas', 200, 40 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Queso cheddar');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Bacon', 'g', 3000, 400 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Bacon');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Bechamel', 'ml', 4000, 600 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Bechamel');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Jamón serrano', 'g', 2500, 300 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Jamón serrano');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Pan rallado', 'g', 1500, 200 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Pan rallado');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Costilla de cerdo', 'g', 8000, 1200 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Costilla de cerdo');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Salsa BBQ', 'ml', 6000, 800 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Salsa BBQ');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Papas', 'g', 12000, 2000 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Papas');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Mascarpone', 'g', 4000, 500 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Mascarpone');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Café espresso', 'ml', 8000, 1000 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Café espresso');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Bizcocho savoiardi', 'piezas', 300, 40 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Bizcocho savoiardi');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Cacao en polvo', 'g', 2000, 200 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Cacao en polvo');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Limón', 'piezas', 120, 24 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Limón');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Hierbabuena fresca', 'g', 800, 100 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Hierbabuena fresca');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Agua filtrada', 'ml', 50000, 5000 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Agua filtrada');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Azúcar', 'g', 10000, 1000 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Azúcar');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Hielo', 'g', 20000, 2000 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Hielo');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Burrata', 'piezas', 40, 6 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Burrata');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Tomate', 'g', 8000, 1000 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Tomate');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Albahaca', 'g', 300, 40 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Albahaca');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Atún fresco', 'g', 5000, 600 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Atún fresco');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Aguacate', 'g', 4000, 500 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Aguacate');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Arroz arborio', 'g', 6000, 800 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Arroz arborio');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Hongos', 'g', 5000, 600 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Hongos');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Parmesano', 'g', 3500, 400 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Parmesano');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Pescado blanco', 'g', 6000, 800 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Pescado blanco');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Verduras de temporada', 'g', 7000, 900 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Verduras de temporada');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Agua embotellada', 'ml', 30000, 4000 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Agua embotellada');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Malta cervecera', 'ml', 20000, 3000 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Malta cervecera');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Lata refresco', 'piezas', 200, 24 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Lata refresco');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Chocolate postres', 'g', 5000, 600 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Chocolate postres');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Helado vainilla', 'g', 8000, 1000 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Helado vainilla');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Huevos', 'piezas', 200, 30 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Huevos');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Leche', 'ml', 20000, 2500 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Leche');
-INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo)
-SELECT 'Caramelo', 'ml', 2000, 200 WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Caramelo');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Pan hamburguesa', 'piezas', 80, 20, 'Alimentos' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Pan hamburguesa');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Carne de hamburguesa', 'g', 5000, 800, 'Alimentos' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Carne de hamburguesa');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Queso cheddar', 'piezas', 200, 40, 'Alimentos' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Queso cheddar');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Bacon', 'g', 3000, 400, 'Alimentos' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Bacon');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Bechamel', 'ml', 4000, 600, 'Ingredientes' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Bechamel');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Jamón serrano', 'g', 2500, 300, 'Alimentos' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Jamón serrano');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Pan rallado', 'g', 1500, 200, 'Ingredientes' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Pan rallado');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Costilla de cerdo', 'g', 8000, 1200, 'Alimentos' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Costilla de cerdo');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Salsa BBQ', 'ml', 6000, 800, 'Ingredientes' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Salsa BBQ');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Papas', 'g', 12000, 2000, 'Ingredientes' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Papas');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Mascarpone', 'g', 4000, 500, 'Alimentos' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Mascarpone');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Café espresso', 'ml', 8000, 1000, 'Bebidas' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Café espresso');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Bizcocho savoiardi', 'piezas', 300, 40, 'Alimentos' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Bizcocho savoiardi');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Cacao en polvo', 'g', 2000, 200, 'Ingredientes' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Cacao en polvo');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Limón', 'piezas', 120, 24, 'Ingredientes' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Limón');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Hierbabuena fresca', 'g', 800, 100, 'Ingredientes' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Hierbabuena fresca');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Agua filtrada', 'ml', 50000, 5000, 'Bebidas' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Agua filtrada');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Azúcar', 'g', 10000, 1000, 'Ingredientes' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Azúcar');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Hielo', 'g', 20000, 2000, 'Otros' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Hielo');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Burrata', 'piezas', 40, 6, 'Alimentos' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Burrata');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Tomate', 'g', 8000, 1000, 'Ingredientes' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Tomate');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Albahaca', 'g', 300, 40, 'Ingredientes' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Albahaca');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Atún fresco', 'g', 5000, 600, 'Alimentos' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Atún fresco');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Aguacate', 'g', 4000, 500, 'Ingredientes' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Aguacate');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Arroz arborio', 'g', 6000, 800, 'Ingredientes' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Arroz arborio');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Hongos', 'g', 5000, 600, 'Ingredientes' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Hongos');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Parmesano', 'g', 3500, 400, 'Ingredientes' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Parmesano');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Pescado blanco', 'g', 6000, 800, 'Alimentos' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Pescado blanco');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Verduras de temporada', 'g', 7000, 900, 'Ingredientes' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Verduras de temporada');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Agua embotellada', 'piezas', 120, 15, 'Bebidas' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Agua embotellada');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Malta cervecera', 'ml', 20000, 3000, 'Bebidas' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Malta cervecera');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Lata refresco', 'piezas', 200, 24, 'Bebidas' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Lata refresco');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Chocolate postres', 'g', 5000, 600, 'Alimentos' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Chocolate postres');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Helado vainilla', 'g', 8000, 1000, 'Alimentos' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Helado vainilla');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Huevos', 'piezas', 200, 30, 'Alimentos' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Huevos');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Leche', 'ml', 20000, 2500, 'Bebidas' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Leche');
+INSERT INTO public.ingredientes (nombre, unidad_medida, cantidad_disponible, stock_minimo, categoria)
+SELECT 'Caramelo', 'ml', 2000, 200, 'Ingredientes' WHERE NOT EXISTS (SELECT 1 FROM public.ingredientes i WHERE i.nombre = 'Caramelo');
+
+-- Bases vivas: añadir categoría sin recrear la tabla
+ALTER TABLE public.ingredientes
+  ADD COLUMN IF NOT EXISTS categoria TEXT NOT NULL DEFAULT 'Ingredientes';
+CREATE INDEX IF NOT EXISTS idx_ingredientes_categoria ON public.ingredientes (categoria);
+
+-- Bases ya existentes sin categoría (tras añadir la columna en despliegues vivos)
+UPDATE public.ingredientes i SET categoria = 'Alimentos'
+WHERE i.categoria = 'Ingredientes' AND i.nombre IN (
+  'Pan hamburguesa', 'Carne de hamburguesa', 'Queso cheddar', 'Bacon', 'Jamón serrano',
+  'Costilla de cerdo', 'Mascarpone', 'Bizcocho savoiardi', 'Burrata', 'Atún fresco',
+  'Pescado blanco', 'Chocolate postres', 'Helado vainilla', 'Huevos'
+);
+UPDATE public.ingredientes i SET categoria = 'Bebidas'
+WHERE i.categoria = 'Ingredientes' AND i.nombre IN (
+  'Café espresso', 'Agua filtrada', 'Agua embotellada', 'Malta cervecera', 'Lata refresco', 'Leche'
+);
+UPDATE public.ingredientes i SET categoria = 'Otros' WHERE i.nombre = 'Hielo';
+
+-- Unidades de medida: catálogo y productos empaquetados por pieza
+UPDATE public.ingredientes SET unidad_medida = 'g'
+WHERE lower(unidad_medida) IN ('gramo', 'gramos', 'gr');
+UPDATE public.ingredientes SET unidad_medida = 'piezas'
+WHERE lower(unidad_medida) IN ('pieza', 'pza', 'pzas');
+UPDATE public.ingredientes SET unidad_medida = 'unidades'
+WHERE lower(unidad_medida) = 'unidad';
+
+UPDATE public.ingredientes i
+SET
+  unidad_medida = 'piezas',
+  cantidad_disponible = GREATEST(1, ROUND(i.cantidad_disponible / 750.0)),
+  stock_minimo = CASE
+    WHEN i.stock_minimo IS NOT NULL THEN GREATEST(1, ROUND(i.stock_minimo / 750.0))
+    ELSE NULL
+  END
+WHERE i.nombre = 'Agua embotellada' AND i.unidad_medida = 'ml';
+
+UPDATE public.receta_ingredientes
+SET cantidad_por_plato = 1
+WHERE id IN (
+  SELECT ri.id
+  FROM public.receta_ingredientes ri
+  INNER JOIN public.ingredientes ing ON ing.id = ri.id_ingrediente
+  INNER JOIN public.recetas r ON r.id = ri.id_receta
+  INNER JOIN public.items_menu im ON im.id = r.id_item_menu
+  WHERE ing.nombre = 'Agua embotellada'
+    AND im.nombre = 'Agua mineral'
+    AND ri.cantidad_por_plato >= 100
+);
+
+DO $$
+BEGIN
+  ALTER TABLE public.ingredientes
+    ADD CONSTRAINT ingredientes_unidad_medida_check
+    CHECK (unidad_medida IN ('g', 'ml', 'piezas', 'unidades'));
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
 
 INSERT INTO public.recetas (id_item_menu, notas)
 SELECT im.id, 'Receta FastTable'
@@ -1945,7 +2010,7 @@ SELECT r.id, i.id, v.cant
 FROM public.recetas r
 JOIN public.items_menu im ON im.id = r.id_item_menu AND im.nombre = 'Agua mineral'
 CROSS JOIN (VALUES
-  ('Agua embotellada', 750::numeric)
+  ('Agua embotellada', 1::numeric)
 ) AS v(nombre, cant)
 JOIN public.ingredientes i ON i.nombre = v.nombre
 WHERE NOT EXISTS (SELECT 1 FROM public.receta_ingredientes ri2 WHERE ri2.id_receta = r.id AND ri2.id_ingrediente = i.id);

@@ -50,6 +50,9 @@ export default function LoginScreen() {
       }
       await setRememberedEmail(e);
       router.replace('/');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      Alert.alert('Sin conexión', formatAuthErrorMessage(msg));
     } finally {
       setBusy(false);
     }

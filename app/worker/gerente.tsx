@@ -13,7 +13,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Redirect, useFocusEffect, useRouter } from 'expo-router';
+import { Redirect, useFocusEffect, useRouter, type Href } from 'expo-router';
 
 import { useAuth } from '@/contexts/auth-context';
 import { FtColors } from '@/constants/fasttable';
@@ -498,6 +498,12 @@ export default function GerenteScreen() {
             ))
           )}
         </View>
+
+        <Pressable style={styles.linkKitchen} onPress={() => router.push('/worker/admin' as Href)}>
+          <Ionicons name="settings-outline" size={18} color={FtColors.accent} />
+          <Text style={styles.linkKitchenText}>Administración (mesas, ingredientes, platillos)</Text>
+          <Ionicons name="chevron-forward" size={18} color={FtColors.textMuted} />
+        </Pressable>
 
         <Pressable style={styles.linkKitchen} onPress={() => router.push('/worker/inventario')}>
           <Ionicons name="cube-outline" size={18} color={FtColors.accent} />

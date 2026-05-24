@@ -28,6 +28,9 @@ Plantilla: `.env.example`. La *service role* solo en máquina local para scripts
 |---------|-----|
 | `00_schema_teardown.sql` | Borra objetos FastTable en `public` (no borra `auth.users`). |
 | `01_schema_bootstrap.sql` | Esquema completo: tablas, RLS, RPC, seed menú/mesas/inventario, Realtime. |
+| `02_patch_inventario.sql` | Solo inventario en proyecto ya desplegado: columna `categoria` + datos demo (sin teardown). |
+| `03_patch_unidades_inventario.sql` | Unidades `g` / `ml` / `piezas` / `unidades`; agua embotellada por pieza (sin teardown). |
+| `04_patch_mesas_admin_gerente.sql` | RLS: gerente puede crear y eliminar mesas (admin en app). |
 | `demo-accounts.txt` | Correos y contraseña de cuentas demo de personal. |
 | `SCHEMA_CHANGE_GUIDE.txt` | Notas para alterar el esquema con cuidado en producción. |
 
@@ -67,4 +70,4 @@ ON CONFLICT (id_usuario) DO UPDATE SET
 - Inventario gerente (ingredientes, recetas, stock, `gerente_almacen_*`, `sin_stock` en menú).
 - Realtime en mesas, fila, pedidos, menú, personal, reportes e inventario.
 
-**Proyecto ya en producción:** no hay migraciones incrementales en el repo; para actualizar sin perder datos, aplica cambios puntuales siguiendo `SCHEMA_CHANGE_GUIDE.txt` o reinstala con teardown + bootstrap en un entorno de prueba primero.
+**Proyecto ya en producción:** en SQL Editor, en orden si aplica: **`02_patch_inventario.sql`** (categorías), **`03_patch_unidades_inventario.sql`** (piezas vs gramos/ml), **`04_patch_mesas_admin_gerente.sql`** (CRUD mesas gerente). Para otros cambios, usa `SCHEMA_CHANGE_GUIDE.txt` o reinstala con teardown + bootstrap en un entorno de prueba primero.

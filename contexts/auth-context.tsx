@@ -68,16 +68,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let mounted = true;
 
     (async () => {
-      const { data: { session: s } } = await supabase.auth.getSession();
-      if (!mounted) return;
-      setSession(s);
-      if (s?.user) {
-        await Promise.all([loadProfile(s.user.id), loadStaff(s.user.id)]);
-      } else {
-        setProfile(null);
-        setStaffMember(null);
+      try {
+        const { data: { session: s }, error } = await supabase.auth.getSession();
+        if (!mounted) return;
+        if (error) {
+          console.warn('No se pudo restaurar la sesión:', error.message);
+          setSession(null);
+          setProfile(null);
+          setStaffMember(null);
+          return;
+        }
+        setSession(s);
+        if (s?.user) {
+          await Promise.all([loadProfile(s.user.id), loadStaff(s.user.id)]);
+        } else {
+          setProfile(null);
+          setStaffMember(null);
+        }
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.warn('Error de red al iniciar auth:', msg);
+        if (mounted) {
+          setSession(null);
+          setProfile(null);
+          setStaffMember(null);
+        }
+      } finally {
+        if (mounted) setLoading(false);
       }
-      setLoading(false);
     })();
 
     const {

@@ -32,6 +32,16 @@ export const REALTIME_GERENTE = [
 /** Pantalla gerente — inventario */
 export const REALTIME_INVENTARIO = ['ingredientes', 'movimientos_almacen', 'items_menu'] as const;
 
+/** Admin gerente — mesas, ingredientes, platillos */
+export const REALTIME_ADMIN = [
+  'mesas',
+  'ingredientes',
+  'items_menu',
+  'categorias_menu',
+  'recetas',
+  'receta_ingredientes',
+] as const;
+
 /** Comensal — mesas en pestaña Salón (+ reservas propias) */
 export const REALTIME_TABLES_SCREEN = ['mesas', 'reservas_mesa'] as const;
 

@@ -25,6 +25,7 @@ import {
   type ReservaStaffRow,
 } from '@/lib/worker-reservations-logic';
 import { REALTIME_WORKER_DASHBOARD, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
+import { formatPriceFromCents } from '@/lib/format';
 import { textoSaludoStaff } from '@/lib/greeting';
 import { supabase } from '@/lib/supabase';
 
@@ -149,6 +150,7 @@ export default function WorkerDashboardScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [mesaBusy, setMesaBusy] = useState<string | null>(null);
+  const [terminarBusyId, setTerminarBusyId] = useState<string | null>(null);
   const isHost = staffMember?.rol === 'anfitrion' || staffMember?.rol === 'gerente';
   const isWaiter = staffMember?.rol === 'mesero';
 
@@ -330,13 +332,53 @@ export default function WorkerDashboardScreen() {
     await load();
   };
 
-  const onMeseroMarcarAtendido = async (mesaId: string) => {
-    const { error } = await supabase.rpc('personal_liberar_mesa_atendida', { p_id_mesa: mesaId });
-    if (error) {
-      Alert.alert('Mesa', mapStaffRpcError(error.message));
-      return;
+  const ejecutarTerminarServicio = async (mesaId: string) => {
+    setTerminarBusyId(mesaId);
+    try {
+      const { error } = await supabase.rpc('personal_liberar_mesa_atendida', { p_id_mesa: mesaId });
+      if (error) {
+        Alert.alert('Mesa', mapStaffRpcError(error.message));
+        return;
+      }
+      await load();
+    } finally {
+      setTerminarBusyId(null);
     }
-    await load();
+  };
+
+  const confirmarTerminarServicio = async (mesa: MesaAsignada) => {
+    let totalLine = '';
+    const { data, error } = await supabase
+      .from('pedidos_cocina')
+      .select('cantidad, items_menu ( precio_centavos )')
+      .eq('id_mesa', mesa.id);
+    if (!error && data && data.length > 0) {
+      let totalCentavos = 0;
+      for (const row of data) {
+        const raw = row.items_menu;
+        const z = Array.isArray(raw) ? raw[0] : raw;
+        const pu = (z as { precio_centavos?: number } | null)?.precio_centavos ?? 0;
+        totalCentavos += row.cantidad * pu;
+      }
+      if (totalCentavos > 0) {
+        totalLine = `\n\nTotal estimado de pedidos: ${formatPriceFromCents(totalCentavos)}`;
+      }
+    }
+
+    Alert.alert(
+      'Terminar servicio',
+      `¿Seguro que deseas terminar este servicio?\n\nMesa: ${mesa.codigo}${totalLine}`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Confirmar',
+          style: 'destructive',
+          onPress: () => {
+            void ejecutarTerminarServicio(mesa.id);
+          },
+        },
+      ],
+    );
   };
 
   const onToggleMesaWalkIn = async (m: MesaToggle) => {
@@ -620,8 +662,15 @@ export default function WorkerDashboardScreen() {
                   </View>
                 </View>
                 {m.estado === 'ocupada' ? (
-                  <Pressable style={styles.btnSolid} onPress={() => onMeseroMarcarAtendido(m.id)}>
-                    <Text style={styles.btnSolidText}>Marcar atendido / terminar servicio</Text>
+                  <Pressable
+                    style={[styles.btnSolid, terminarBusyId === m.id && styles.btnDisabled]}
+                    onPress={() => void confirmarTerminarServicio(m)}
+                    disabled={terminarBusyId === m.id}>
+                    {terminarBusyId === m.id ? (
+                      <ActivityIndicator color={FtColors.onAccent} />
+                    ) : (
+                      <Text style={styles.btnSolidText}>Marcar atendido / terminar servicio</Text>
+                    )}
                   </Pressable>
                 ) : (
                   <Text style={styles.myHint}>Esperando llegada del comensal.</Text>

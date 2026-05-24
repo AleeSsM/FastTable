@@ -15,4 +15,9 @@ export function assertSupabaseConfigured(): void {
       'Falta EXPO_PUBLIC_SUPABASE_URL o EXPO_PUBLIC_SUPABASE_ANON_KEY. Crea un archivo .env en la raíz del proyecto.',
     );
   }
+  if (__DEV__ && env.supabaseUrl.includes('.supabase.com')) {
+    console.warn(
+      '[FastTable] EXPO_PUBLIC_SUPABASE_URL parece incorrecta (.com). Usa la URL de Project Settings → API (.supabase.co).',
+    );
+  }
 }

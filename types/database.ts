@@ -53,6 +53,24 @@ export type Database = {
           id_personal_atendiendo: string | null;
           actualizado_en: string;
         };
+        Insert: {
+          codigo: string;
+          capacidad: number;
+          id_zona?: string | null;
+          estado?: 'libre' | 'ocupada' | 'reservada';
+          notas?: string | null;
+          descripcion_publica?: string | null;
+          imagen_url?: string | null;
+        };
+        Update: {
+          codigo?: string;
+          capacidad?: number;
+          id_zona?: string | null;
+          estado?: 'libre' | 'ocupada' | 'reservada';
+          notas?: string | null;
+          descripcion_publica?: string | null;
+          imagen_url?: string | null;
+        };
       };
       fila_espera: {
         Row: {
@@ -100,16 +118,79 @@ export type Database = {
           creado_en: string;
           actualizado_en: string;
         };
+        Insert: {
+          id_categoria: string;
+          nombre: string;
+          precio_centavos: number;
+          descripcion?: string | null;
+          disponible?: boolean;
+          imagen_url?: string | null;
+        };
+        Update: {
+          id_categoria?: string;
+          nombre?: string;
+          precio_centavos?: number;
+          descripcion?: string | null;
+          disponible?: boolean;
+          imagen_url?: string | null;
+        };
       };
       ingredientes: {
         Row: {
           id: string;
           nombre: string;
           cantidad_disponible: number;
-          unidad_medida: string;
+          unidad_medida: 'g' | 'ml' | 'piezas' | 'unidades';
           stock_minimo: number | null;
+          categoria: 'Bebidas' | 'Alimentos' | 'Ingredientes' | 'Otros';
           creado_en: string;
           actualizado_en: string;
+        };
+        Insert: {
+          nombre: string;
+          unidad_medida: 'g' | 'ml' | 'piezas' | 'unidades';
+          cantidad_disponible?: number;
+          stock_minimo?: number | null;
+          categoria?: 'Bebidas' | 'Alimentos' | 'Ingredientes' | 'Otros';
+        };
+        Update: {
+          nombre?: string;
+          unidad_medida?: 'g' | 'ml' | 'piezas' | 'unidades';
+          cantidad_disponible?: number;
+          stock_minimo?: number | null;
+          categoria?: 'Bebidas' | 'Alimentos' | 'Ingredientes' | 'Otros';
+        };
+      };
+      recetas: {
+        Row: {
+          id: string;
+          id_item_menu: string;
+          notas: string | null;
+          creado_en: string;
+        };
+        Insert: {
+          id_item_menu: string;
+          notas?: string | null;
+        };
+        Update: {
+          notas?: string | null;
+        };
+      };
+      receta_ingredientes: {
+        Row: {
+          id: string;
+          id_receta: string;
+          id_ingrediente: string;
+          cantidad_por_plato: number;
+          creado_en: string;
+        };
+        Insert: {
+          id_receta: string;
+          id_ingrediente: string;
+          cantidad_por_plato: number;
+        };
+        Update: {
+          cantidad_por_plato?: number;
         };
       };
       movimientos_almacen: {
