@@ -29,7 +29,7 @@ export const REALTIME_GERENTE = [
   'movimientos_almacen',
 ] as const;
 
-/** Pantalla gerente — inventario (tablas de `05_inventario.sql`) */
+/** Pantalla gerente — inventario */
 export const REALTIME_INVENTARIO = ['ingredientes', 'movimientos_almacen', 'items_menu'] as const;
 
 /** Comensal — mesas en pestaña Salón (+ reservas propias) */
@@ -44,7 +44,7 @@ export const REALTIME_MENU_COMENSAL = ['items_menu', 'pedidos_cocina'] as const;
 /**
  * Mientras la pantalla está enfocada, escucha cambios en Postgres (Supabase Realtime)
  * y vuelve a cargar datos sin pull-to-refresh. Requiere que las tablas estén en
- * `supabase_realtime` (incluido en `supabase/01_reconstruir_db.sql`).
+ * `supabase_realtime` (incluido en `supabase/01_schema_bootstrap.sql`).
  */
 export function useSupabaseRealtimeRefresh(
   tableNames: readonly string[],

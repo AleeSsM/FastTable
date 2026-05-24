@@ -1,7 +1,7 @@
 -- =============================================================================
--- BORRADO COMPLETO de objetos FastTable en el esquema public.
--- No borra auth.users ni tablas del sistema de Supabase.
--- Ejecuta UNA VEZ en SQL Editor, luego 01_reconstruir_db.sql
+-- FastTable — Teardown del esquema public (Supabase SQL Editor)
+-- Elimina tablas, funciones y tipos de FastTable. No borra auth.users.
+-- Ejecutar antes de 01_schema_bootstrap.sql cuando quieras reinstalar desde cero.
 -- =============================================================================
 
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
@@ -34,6 +34,11 @@ DROP FUNCTION IF EXISTS public.marcar_pedido_listo_cocina(uuid) CASCADE;
 DROP FUNCTION IF EXISTS public.cocina_set_item_disponible(uuid, boolean) CASCADE;
 DROP FUNCTION IF EXISTS public.personal_atender_reserva_completa(uuid) CASCADE;
 DROP FUNCTION IF EXISTS public.personal_marcar_mesa_libre_ocupada(uuid, boolean) CASCADE;
+
+DROP FUNCTION IF EXISTS public.comensal_terminar_servicio() CASCADE;
+DROP FUNCTION IF EXISTS public.comensal_mi_posicion_fila() CASCADE;
+DROP FUNCTION IF EXISTS public.gerente_dashboard_stats() CASCADE;
+DROP FUNCTION IF EXISTS public.personal_sentar_desde_fila(uuid, uuid, uuid) CASCADE;
 
 DROP FUNCTION IF EXISTS public.gerente_almacen_entrada(uuid, numeric, text) CASCADE;
 DROP FUNCTION IF EXISTS public.gerente_almacen_ajuste(uuid, numeric, text) CASCADE;

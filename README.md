@@ -58,7 +58,7 @@ La **fuente de verdad** es la base de datos; la app solo orquesta permisos y exp
 ## Requisitos
 
 - **Node.js** (LTS) y **npm**
-- Proyecto **Supabase** con el esquema aplicado: ver `supabase/00_EJECUCION.txt`
+- Proyecto **Supabase** con el esquema aplicado: ver [`supabase/README.md`](supabase/README.md)
 - Archivo **`.env`** con `EXPO_PUBLIC_SUPABASE_URL` y `EXPO_PUBLIC_SUPABASE_ANON_KEY` (plantilla: `.env.example`). La *service role* solo en máquina local para scripts administrativos, nunca en builds públicos.
 
 ---
@@ -72,7 +72,7 @@ cp .env.example .env
 npm start
 ```
 
-Cuentas demo del personal: `supabase/02_DEMO_CUENTAS.txt` · script `npm run staff:console`.
+Cuentas demo del personal: [`supabase/demo-accounts.txt`](supabase/demo-accounts.txt) · script `npm run staff:console`.
 
 ---
 
@@ -89,9 +89,11 @@ Cuentas demo del personal: `supabase/02_DEMO_CUENTAS.txt` · script `npm run sta
 
 | Recurso | Contenido |
 |---------|-----------|
-| `supabase/01_reconstruir_db.sql` | Esquema completo (nuevas instalaciones) |
-| `supabase/00_EJECUCION.txt` | Orden de ejecución y scripts |
-| `supabase/01_GUIA_ALTERAR_DB.txt` | Guía para alterar el esquema con cuidado |
+| [`supabase/README.md`](supabase/README.md) | Instalación: teardown + bootstrap + personal demo |
+| `supabase/00_schema_teardown.sql` | Borrado del esquema FastTable (opcional) |
+| `supabase/01_schema_bootstrap.sql` | Esquema completo alineado con la app |
+| `supabase/demo-accounts.txt` | Credenciales demo de personal |
+| `supabase/SCHEMA_CHANGE_GUIDE.txt` | Guía para alterar el esquema con cuidado |
 
 ---
 

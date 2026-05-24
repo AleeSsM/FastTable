@@ -1,4 +1,4 @@
-/** Tipos mínimos alineados con `supabase/01_reconstruir_db.sql`. */
+/** Tipos mínimos alineados con `supabase/01_schema_bootstrap.sql`. */
 export type Database = {
   public: {
     Tables: {

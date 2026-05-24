@@ -92,7 +92,7 @@ export default function InventarioScreen() {
       const m = ingRes.error.message ?? '';
       if (m.includes('ingredientes') && (m.includes('does not exist') || m.includes('schema cache'))) {
         setSchemaError(
-          'Falta el esquema de inventario en la base de datos. En Supabase SQL Editor ejecuta el script supabase/05_inventario.sql después de 01 (y 04 si aplica).',
+          'Falta el esquema de inventario en la base de datos. En Supabase SQL Editor ejecuta supabase/01_schema_bootstrap.sql (o supabase/README.md).',
         );
       } else {
         setSchemaError(m);

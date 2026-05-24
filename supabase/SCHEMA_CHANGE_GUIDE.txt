@@ -8,7 +8,7 @@ Dónde trabajar
   administrador (rol postgres). Las políticas RLS no aplican al rol que usa el
   SQL Editor en modo servicio.
 
-RLS en actualizaciones (01_reconstruir_db.sql y cambios incrementales propios)
+RLS en actualizaciones (01_schema_bootstrap.sql y cambios puntuales propios)
 -------------------------------------------------------------------
 Ejecuta esos scripts con RLS activado en las tablas (estado normal del proyecto).
 No hace falta desactivar RLS ni hay opción “Run sin RLS” en el editor: el rol del
@@ -56,7 +56,7 @@ rol, hay que alterar el tipo ENUM en PostgreSQL (ALTER TYPE ... ADD VALUE).
 
 Cuatro cuentas demo (un rol cada una)
 -------------------------------------
-  Crea usuarios manualmente en Authentication con los correos de 02_DEMO_CUENTAS.txt.
+  Crea usuarios manualmente en Authentication con los correos de demo-accounts.txt.
   No uses SQL para insertar en auth.users (42501).
 
 
@@ -174,11 +174,10 @@ Añadir valores a otros ENUMs es similar (ALTER TYPE ... ADD VALUE).
 7. Archivos SQL en este repositorio
 ================================================================================
 
-  00_EJECUCION.txt           → orden para crear o resetear el esquema
-  00_borrar_fasttable.sql  → borra objetos FastTable en public (opcional, antes de reinstalar)
-  01_reconstruir_db.sql      → instalación completa: esquema + RLS + RPC + datos de ejemplo
-  02_enlazar_personal_demo.sql → enlaza los 4 roles demo en public.personal (tras crear usuarios)
-  (parches incrementales)    → se consolidaron en 01_reconstruir_db.sql para instalación limpia desde cero
-  Cambios incrementales propios → documenta cualquier ajuste local con su SQL y fecha
+  supabase/README.md           → instalación desde cero (teardown + bootstrap + personal demo)
+  00_schema_teardown.sql       → borra objetos FastTable en public (opcional, antes de reinstalar)
+  01_schema_bootstrap.sql      → instalación completa: esquema + RLS + RPC + seed + inventario
+  demo-accounts.txt            → correos demo; enlace SQL en supabase/README.md
+  Cambios en producción        → SQL puntual documentado aquí; no hay migraciones incrementales en repo
 
 ================================================================================

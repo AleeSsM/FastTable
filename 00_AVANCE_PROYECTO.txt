@@ -35,15 +35,13 @@ Backend: Supabase (PostgreSQL, Auth, Row Level Security, Realtime, RPC).
 3. BASE DE DATOS Y SQL
 -----------------------
 Archivo maestro (instalación desde cero):
-  • supabase/01_reconstruir_db.sql
-    — Esquema, RLS, triggers, RPC, seed demo, publicación Realtime al final.
+  • supabase/01_schema_bootstrap.sql — Esquema completo (único script de instalación)
+  • supabase/00_schema_teardown.sql  — Borrado opcional antes de reinstalar
+  • supabase/README.md               — Orden de ejecución y personal demo
+  • supabase/SCHEMA_CHANGE_GUIDE.txt — Cómo alterar la BD con cuidado
+  • supabase/demo-accounts.txt       — Cuentas demo de trabajadores (alta manual)
 
-Guías:
-  • supabase/00_EJECUCION.txt       — Orden recomendado de scripts.
-  • supabase/01_GUIA_ALTERAR_DB.txt — Cómo alterar la BD con cuidado.
-  • supabase/02_DEMO_CUENTAS.txt    — Cuentas demo de trabajadores (alta manual)
-
-La instalación y la lógica actual están consolidadas en `01_reconstruir_db.sql`
+La instalación y la lógica actual están consolidadas en `01_schema_bootstrap.sql`
 para reconstrucción limpia desde cero.
 
 
