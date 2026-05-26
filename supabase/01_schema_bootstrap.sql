@@ -922,15 +922,19 @@ BEGIN
   VALUES (p_id_mesa, v_uid, v_reserva, v_fila, v_invitado, v_staff, 'activo')
   RETURNING id INTO v_id;
 
-  UPDATE public.pedidos_cocina pc
-  SET id_servicio_mesa = v_id
-  WHERE pc.id_mesa = p_id_mesa
-    AND pc.id_servicio_mesa IS NULL
-    AND (
-      (v_reserva IS NOT NULL AND pc.id_reserva_mesa = v_reserva)
-      OR (v_fila IS NOT NULL AND pc.id_fila_espera = v_fila)
-      OR (v_reserva IS NULL AND v_fila IS NULL)
-    );
+  IF v_reserva IS NOT NULL THEN
+    UPDATE public.pedidos_cocina pc
+    SET id_servicio_mesa = v_id
+    WHERE pc.id_mesa = p_id_mesa
+      AND pc.id_servicio_mesa IS NULL
+      AND pc.id_reserva_mesa = v_reserva;
+  ELSIF v_fila IS NOT NULL THEN
+    UPDATE public.pedidos_cocina pc
+    SET id_servicio_mesa = v_id
+    WHERE pc.id_mesa = p_id_mesa
+      AND pc.id_servicio_mesa IS NULL
+      AND pc.id_fila_espera = v_fila;
+  END IF;
 
   RETURN v_id;
 END;
@@ -1187,6 +1191,40 @@ BEGIN
 END;
 $function$;
 
+CREATE OR REPLACE FUNCTION public.terminar_servicio_en_mesa(p_id_mesa uuid)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $function$
+BEGIN
+  PERFORM 1 FROM public.mesas m WHERE m.id = p_id_mesa FOR UPDATE;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'mesa_no_encontrada';
+  END IF;
+
+  PERFORM public.cerrar_servicio_mesa_activo(p_id_mesa);
+
+  UPDATE public.fila_espera f
+  SET estado = 'cancelado',
+      cancelado_en = now()
+  WHERE f.id_mesa_asignada = p_id_mesa
+    AND f.estado = 'sentado';
+
+  UPDATE public.reservas_mesa rm
+  SET comensal_llego = false
+  WHERE rm.id_mesa = p_id_mesa
+    AND rm.ciclo = 'completada'
+    AND rm.comensal_llego IS TRUE;
+
+  UPDATE public.mesas m
+  SET estado = 'libre',
+      id_personal_atendiendo = NULL,
+      actualizado_en = now()
+  WHERE m.id = p_id_mesa;
+END;
+$function$;
+
 CREATE OR REPLACE FUNCTION public.personal_liberar_mesa_atendida(p_id_mesa uuid)
 RETURNS void
 LANGUAGE plpgsql
@@ -1212,25 +1250,7 @@ BEGIN
     RAISE EXCEPTION 'solo_ocupada_liberar';
   END IF;
 
-  PERFORM public.cerrar_servicio_mesa_activo(p_id_mesa);
-
-  UPDATE public.fila_espera AS f
-  SET estado = 'cancelado',
-      cancelado_en = now()
-  WHERE f.id_mesa_asignada = p_id_mesa
-    AND f.estado = 'sentado';
-
-  UPDATE public.reservas_mesa AS rm
-  SET comensal_llego = false
-  WHERE rm.id_mesa = p_id_mesa
-    AND rm.ciclo = 'completada'
-    AND rm.comensal_llego IS TRUE;
-
-  UPDATE public.mesas AS t
-  SET estado = 'libre',
-      id_personal_atendiendo = NULL,
-      actualizado_en = now()
-  WHERE t.id = p_id_mesa;
+  PERFORM public.terminar_servicio_en_mesa(p_id_mesa);
 END;
 $function$;
 
@@ -1687,43 +1707,7 @@ BEGIN
     RAISE EXCEPTION 'sin_mesa_activa_para_terminar';
   END IF;
 
-  PERFORM public.cerrar_servicio_mesa_activo(v_mesa);
-
-  UPDATE public.fila_espera
-  SET estado = 'cancelado',
-      cancelado_en = now()
-  WHERE id_usuario = v_uid
-    AND id_mesa_asignada = v_mesa
-    AND estado = 'sentado';
-
-  UPDATE public.reservas_mesa
-  SET comensal_llego = false
-  WHERE id_usuario = v_uid
-    AND id_mesa = v_mesa
-    AND ciclo = 'completada'
-    AND comensal_llego IS TRUE;
-
-  IF NOT EXISTS (
-    SELECT 1
-    FROM public.fila_espera f
-    WHERE f.id_mesa_asignada = v_mesa
-      AND f.estado = 'sentado'
-  )
-  AND NOT EXISTS (
-    SELECT 1
-    FROM public.reservas_mesa rm
-    INNER JOIN public.mesas m ON m.id = rm.id_mesa
-    WHERE rm.id_mesa = v_mesa
-      AND rm.ciclo = 'completada'
-      AND rm.comensal_llego IS TRUE
-      AND m.estado = 'ocupada'
-  ) THEN
-    UPDATE public.mesas
-    SET estado = 'libre',
-        id_personal_atendiendo = NULL,
-        actualizado_en = now()
-    WHERE id = v_mesa;
-  END IF;
+  PERFORM public.terminar_servicio_en_mesa(v_mesa);
 END;
 $function$;
 
@@ -1855,6 +1839,7 @@ GRANT EXECUTE ON FUNCTION public.personal_sentar_desde_fila(uuid, uuid, uuid) TO
 GRANT EXECUTE ON FUNCTION public.crear_pedido_cocina(uuid, int, text) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.personal_crear_pedido_mesa(uuid, uuid, int, text) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.mesa_cuenta_servicio_activo(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.terminar_servicio_en_mesa(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.comensal_terminar_servicio() TO authenticated;
 GRANT EXECUTE ON FUNCTION public.marcar_pedido_listo_cocina(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.cocina_set_item_disponible(uuid, boolean) TO authenticated;

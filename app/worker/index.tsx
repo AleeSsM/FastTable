@@ -177,6 +177,7 @@ export default function WorkerDashboardScreen() {
         .from('mesas')
         .select('id, codigo, estado')
         .eq('id_personal_atendiendo', staffMember.id)
+        .in('estado', ['ocupada', 'reservada'])
         .order('codigo'),
       supabase.from('mesas').select('id, codigo, estado, id_personal_atendiendo').order('codigo'),
       supabase

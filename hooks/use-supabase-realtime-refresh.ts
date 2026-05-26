@@ -11,6 +11,7 @@ export const REALTIME_WORKER_DASHBOARD = [
   'fila_espera',
   'solicitudes_servicio',
   'reservas_mesa',
+  'servicios_mesa',
 ] as const;
 
 /** Cocina y gerente (pedidos + carta) */
@@ -49,7 +50,14 @@ export const REALTIME_TABLES_SCREEN = ['mesas', 'reservas_mesa'] as const;
 export const REALTIME_QUEUE_TAB = ['fila_espera'] as const;
 
 /** Comensal — menú + cuenta (pedidos) */
-export const REALTIME_MENU_COMENSAL = ['items_menu', 'pedidos_cocina'] as const;
+export const REALTIME_MENU_COMENSAL = [
+  'items_menu',
+  'pedidos_cocina',
+  'mesas',
+  'reservas_mesa',
+  'fila_espera',
+  'servicios_mesa',
+] as const;
 
 /**
  * Mientras la pantalla está enfocada, escucha cambios en Postgres (Supabase Realtime)
