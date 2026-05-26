@@ -511,6 +511,12 @@ export default function GerenteScreen() {
           <Ionicons name="chevron-forward" size={18} color={FtColors.textMuted} />
         </Pressable>
 
+        <Pressable style={styles.linkKitchen} onPress={() => router.push('/worker/servicios-cerrados')}>
+          <Ionicons name="receipt-outline" size={18} color={FtColors.accent} />
+          <Text style={styles.linkKitchenText}>Recibos de servicios cerrados</Text>
+          <Ionicons name="chevron-forward" size={18} color={FtColors.textMuted} />
+        </Pressable>
+
         <Pressable style={styles.linkKitchen} onPress={() => router.push('/worker/kitchen')}>
           <Ionicons name="restaurant-outline" size={18} color={FtColors.accent} />
           <Text style={styles.linkKitchenText}>Abrir cocina (mismo acceso que gerente)</Text>

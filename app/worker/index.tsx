@@ -25,6 +25,7 @@ import {
   type ReservaStaffRow,
 } from '@/lib/worker-reservations-logic';
 import { REALTIME_WORKER_DASHBOARD, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
+import { fetchCuentaMesaServicio } from '@/lib/cuenta-mesa';
 import { formatPriceFromCents } from '@/lib/format';
 import { textoSaludoStaff } from '@/lib/greeting';
 import { supabase } from '@/lib/supabase';
@@ -348,21 +349,9 @@ export default function WorkerDashboardScreen() {
 
   const confirmarTerminarServicio = async (mesa: MesaAsignada) => {
     let totalLine = '';
-    const { data, error } = await supabase
-      .from('pedidos_cocina')
-      .select('cantidad, items_menu ( precio_centavos )')
-      .eq('id_mesa', mesa.id);
-    if (!error && data && data.length > 0) {
-      let totalCentavos = 0;
-      for (const row of data) {
-        const raw = row.items_menu;
-        const z = Array.isArray(raw) ? raw[0] : raw;
-        const pu = (z as { precio_centavos?: number } | null)?.precio_centavos ?? 0;
-        totalCentavos += row.cantidad * pu;
-      }
-      if (totalCentavos > 0) {
-        totalLine = `\n\nTotal estimado de pedidos: ${formatPriceFromCents(totalCentavos)}`;
-      }
+    const cuenta = await fetchCuentaMesaServicio(mesa.id);
+    if (cuenta.total_centavos > 0) {
+      totalLine = `\n\nTotal del servicio: ${formatPriceFromCents(cuenta.total_centavos)}`;
     }
 
     Alert.alert(
@@ -662,16 +651,28 @@ export default function WorkerDashboardScreen() {
                   </View>
                 </View>
                 {m.estado === 'ocupada' ? (
-                  <Pressable
-                    style={[styles.btnSolid, terminarBusyId === m.id && styles.btnDisabled]}
-                    onPress={() => void confirmarTerminarServicio(m)}
-                    disabled={terminarBusyId === m.id}>
-                    {terminarBusyId === m.id ? (
-                      <ActivityIndicator color={FtColors.onAccent} />
-                    ) : (
-                      <Text style={styles.btnSolidText}>Marcar atendido / terminar servicio</Text>
-                    )}
-                  </Pressable>
+                  <>
+                    <Pressable
+                      style={styles.btnPedirMesa}
+                      onPress={() =>
+                        router.push({
+                          pathname: '/worker/mesa-pedidos',
+                          params: { mesaId: m.id, codigo: m.codigo },
+                        })
+                      }>
+                      <Text style={styles.btnPedirMesaText}>Pedir / ver cuenta</Text>
+                    </Pressable>
+                    <Pressable
+                      style={[styles.btnSolid, terminarBusyId === m.id && styles.btnDisabled]}
+                      onPress={() => void confirmarTerminarServicio(m)}
+                      disabled={terminarBusyId === m.id}>
+                      {terminarBusyId === m.id ? (
+                        <ActivityIndicator color={FtColors.onAccent} />
+                      ) : (
+                        <Text style={styles.btnSolidText}>Marcar atendido / terminar servicio</Text>
+                      )}
+                    </Pressable>
+                  </>
                 ) : (
                   <Text style={styles.myHint}>Esperando llegada del comensal.</Text>
                 )}
@@ -1148,6 +1149,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   btnSolidText: { color: FtColors.onAccent, fontWeight: '800', fontSize: 15 },
+  btnPedirMesa: {
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: FtColors.accent,
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  btnPedirMesaText: { color: FtColors.accent, fontWeight: '800', fontSize: 15 },
   upCard: {
     padding: 14,
     borderRadius: 14,

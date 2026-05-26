@@ -212,11 +212,29 @@ export type Database = {
           id_item_menu: string;
           id_reserva_mesa: string | null;
           id_fila_espera: string | null;
+          id_servicio_mesa: string | null;
+          id_personal_registro: string | null;
           cantidad: number;
           nota_cliente: string | null;
           estado: 'pendiente' | 'listo';
           creado_en: string;
           listo_en: string | null;
+        };
+      };
+      servicios_mesa: {
+        Row: {
+          id: string;
+          id_mesa: string;
+          id_usuario: string | null;
+          id_reserva_mesa: string | null;
+          id_fila_espera: string | null;
+          nombre_invitado: string | null;
+          id_personal_apertura: string | null;
+          id_personal_cierre: string | null;
+          estado: 'activo' | 'cerrado';
+          total_centavos: number;
+          abierto_en: string;
+          cerrado_en: string | null;
         };
       };
       reportes_problema: {

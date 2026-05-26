@@ -28,6 +28,20 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+/** Sesión guardada en el dispositivo que Supabase ya no acepta (reset Auth, usuario borrado, etc.). */
+function isStaleRefreshTokenError(message: string): boolean {
+  const m = message.toLowerCase();
+  return m.includes('refresh token not found') || m.includes('invalid refresh token');
+}
+
+async function clearInvalidLocalSession(): Promise<void> {
+  try {
+    await supabase.auth.signOut({ scope: 'local' });
+  } catch {
+    // Ignorar: el objetivo es vaciar AsyncStorage aunque el servidor rechace el token.
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<ProfileRow | null>(null);
@@ -72,6 +86,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { data: { session: s }, error } = await supabase.auth.getSession();
         if (!mounted) return;
         if (error) {
+          if (isStaleRefreshTokenError(error.message)) {
+            await clearInvalidLocalSession();
+          }
           console.warn('No se pudo restaurar la sesión:', error.message);
           setSession(null);
           setProfile(null);
@@ -87,7 +104,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
-        console.warn('Error de red al iniciar auth:', msg);
+        if (isStaleRefreshTokenError(msg)) {
+          await clearInvalidLocalSession();
+        }
+        console.warn('Error al iniciar auth:', msg);
         if (mounted) {
           setSession(null);
           setProfile(null);

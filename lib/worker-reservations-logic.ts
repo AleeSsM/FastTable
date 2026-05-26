@@ -82,5 +82,9 @@ export function mapStaffRpcError(message: string): string {
   if (message.includes('solo_libre_a_ocupada')) return 'Solo puedes ocupar mesas libres.';
   if (message.includes('solo_ocupada_a_libre_toggle')) return 'Solo puedes liberar mesas ocupadas.';
   if (message.includes('no_tu_mesa_toggle')) return 'Otro mesero tiene asignada esa mesa.';
+  if (message.includes('mesa_no_ocupada_pedido') || message.includes('mesa_no_ocupada_servicio')) {
+    return 'La mesa debe estar ocupada para registrar pedidos.';
+  }
+  if (message.includes('mesa_no_encontrada')) return 'Mesa no encontrada.';
   return message;
 }

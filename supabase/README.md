@@ -31,6 +31,7 @@ Plantilla: `.env.example`. La *service role* solo en máquina local para scripts
 | `02_patch_inventario.sql` | Solo inventario en proyecto ya desplegado: columna `categoria` + datos demo (sin teardown). |
 | `03_patch_unidades_inventario.sql` | Unidades `g` / `ml` / `piezas` / `unidades`; agua embotellada por pieza (sin teardown). |
 | `04_patch_mesas_admin_gerente.sql` | RLS: gerente puede crear y eliminar mesas (admin en app). |
+| `05_servicios_mesa_mesero_pedidos.sql` | Servicios por mesa, pedidos del mesero, cuenta unificada y recibos al cerrar. |
 | `demo-accounts.txt` | Correos y contraseña de cuentas demo de personal. |
 | `SCHEMA_CHANGE_GUIDE.txt` | Notas para alterar el esquema con cuidado en producción. |
 

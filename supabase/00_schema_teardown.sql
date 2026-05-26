@@ -29,6 +29,13 @@ DROP FUNCTION IF EXISTS public.personal_liberar_mesa_atendida(uuid) CASCADE;
 DROP FUNCTION IF EXISTS public.tr_mesas_al_liberar_mesero() CASCADE;
 DROP FUNCTION IF EXISTS public.puede_ver_solicitud_servicio(uuid) CASCADE;
 DROP FUNCTION IF EXISTS public.es_cocina_o_gerente() CASCADE;
+DROP FUNCTION IF EXISTS public.mesa_cuenta_servicio_activo(uuid) CASCADE;
+DROP FUNCTION IF EXISTS public.personal_crear_pedido_mesa(uuid, uuid, int, text) CASCADE;
+DROP FUNCTION IF EXISTS public.crear_pedido_cocina_interno(uuid, uuid, uuid, int, text, uuid, uuid, uuid, uuid) CASCADE;
+DROP FUNCTION IF EXISTS public.cerrar_servicio_mesa_activo(uuid) CASCADE;
+DROP FUNCTION IF EXISTS public._calcular_total_servicio(uuid) CASCADE;
+DROP FUNCTION IF EXISTS public.asegurar_servicio_mesa_activo(uuid) CASCADE;
+DROP FUNCTION IF EXISTS public.puede_ver_pedidos_mesa(uuid) CASCADE;
 DROP FUNCTION IF EXISTS public.crear_pedido_cocina(uuid, int, text) CASCADE;
 DROP FUNCTION IF EXISTS public.marcar_pedido_listo_cocina(uuid) CASCADE;
 DROP FUNCTION IF EXISTS public.cocina_set_item_disponible(uuid, boolean) CASCADE;
@@ -55,6 +62,8 @@ DROP TYPE IF EXISTS public.tipo_movimiento_almacen CASCADE;
 
 -- Tablas (nombres en inglés antiguos + español)
 DROP TABLE IF EXISTS public.pedidos_cocina CASCADE;
+DROP TABLE IF EXISTS public.servicios_mesa CASCADE;
+DROP TYPE IF EXISTS public.estado_servicio_mesa CASCADE;
 DROP TABLE IF EXISTS public.eventos_auditoria CASCADE;
 DROP TABLE IF EXISTS public.solicitudes_servicio CASCADE;
 DROP TABLE IF EXISTS public.items_menu CASCADE;

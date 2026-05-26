@@ -206,6 +206,9 @@ export default function MenuScreen() {
         <View style={styles.cuentaCard}>
           <Text style={styles.cuentaTitle}>Tu cuenta</Text>
           <Text style={styles.cuentaHint}>
+            Incluye lo que pidas tú y lo que registre tu mesero en esta visita.
+          </Text>
+          <Text style={[styles.cuentaHint, { marginTop: 0 }]}>
             Se oculta cuando el mesero marca la mesa como libre al terminar el servicio.
           </Text>
           {cuenta && cuenta.lines.length > 0 ? (
