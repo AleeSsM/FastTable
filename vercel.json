@@ -1,0 +1,11 @@
+{
+  "buildCommand": "npm run build:host",
+  "outputDirectory": "host/dist",
+  "rewrites": [
+    { "source": "/auth/callback", "destination": "/auth/callback.html" },
+    { "source": "/auth/reset-password", "destination": "/auth/reset-password.html" },
+    { "source": "/auth/confirmado", "destination": "/auth/confirmado.html" },
+    { "source": "/app", "destination": "/app/index.html" },
+    { "source": "/app/:path*", "destination": "/app/index.html" }
+  ]
+}

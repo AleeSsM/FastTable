@@ -1,0 +1,9 @@
+{
+  "name": "fasttable-host",
+  "private": true,
+  "description": "Sitio público FastTable: landing, APK, auth y app web",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "preview": "npx --yes serve dist -l 3333"
+  }
+}

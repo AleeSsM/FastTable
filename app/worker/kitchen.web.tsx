@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Redirect, useFocusEffect } from 'expo-router';
+import { Redirect, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
@@ -17,6 +17,13 @@ import { useAuth } from '@/contexts/auth-context';
 import { REALTIME_KITCHEN, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { mapCocinaRpcError } from '@/lib/cocina-errors';
 import { supabase } from '@/lib/supabase';
+import { parseNavSection, type CocinaSection } from '@/lib/worker-nav';
+
+const COCINA_TITLE: Record<CocinaSection, string> = {
+  resumen: 'Vista general de pedidos pendientes y estado de la carta.',
+  pedidos: 'Pedidos entrantes en tiempo real. Marca cada platillo como listo al terminarlo.',
+  disponibilidad: 'Activa o desactiva platos para el comensal en tiempo real.',
+};
 
 type PedidoRow = {
   id: string;
@@ -50,6 +57,7 @@ function itemNombre(i: PedidoRow['items_menu']): string {
 }
 
 export default function KitchenWebScreen() {
+  const params = useLocalSearchParams<{ sec?: string }>();
   const { session, staffMember, loading: authLoading } = useAuth();
   const [pedidos, setPedidos] = useState<PedidoRow[]>([]);
   const [items, setItems] = useState<ItemDisp[]>([]);
@@ -156,6 +164,129 @@ export default function KitchenWebScreen() {
   if (!staffMember) return <Redirect href="/login" />;
   if (staffMember.rol !== 'cocina' && staffMember.rol !== 'gerente') return <Redirect href="/worker" />;
 
+  const isCocinaRol = staffMember.rol === 'cocina';
+  const sec = isCocinaRol
+    ? (parseNavSection('cocina', params.sec, '/worker/kitchen') as CocinaSection)
+    : 'pedidos';
+
+  const statsRow = (
+    <WebRow>
+      <StatCard icon="flame-outline" tone={FtColors.warning} value={pedidos.length} label="Pedidos pendientes" />
+      <StatCard
+        icon="close-circle-outline"
+        tone={FtColors.danger}
+        value={items.filter((it) => !it.disponible).length}
+        label="Platos no disponibles"
+      />
+      <StatCard icon="restaurant-outline" tone={FtColors.success} value={items.length} label="Platos en la carta" />
+    </WebRow>
+  );
+
+  const pedidosPanel = (
+    <>
+      <View style={styles.filterRow}>
+        <Pressable
+          style={[styles.filterChip, categoryFilter === 'todas' && styles.filterChipOn]}
+          onPress={() => setCategoryFilter('todas')}>
+          <Text style={[styles.filterChipText, categoryFilter === 'todas' && styles.filterChipTextOn]}>Todas</Text>
+        </Pressable>
+        {categories.map((cat) => (
+          <Pressable
+            key={cat}
+            style={[styles.filterChip, categoryFilter === cat && styles.filterChipOn]}
+            onPress={() => setCategoryFilter(cat)}>
+            <Text style={[styles.filterChipText, categoryFilter === cat && styles.filterChipTextOn]}>{cat}</Text>
+          </Pressable>
+        ))}
+      </View>
+      {loading && !refreshing ? (
+        <ActivityIndicator color={FtColors.accent} style={{ marginVertical: 24 }} />
+      ) : filteredPedidos.length === 0 ? (
+        <WebCard>
+          <View style={styles.emptyBox}>
+            <Ionicons name="checkmark-done-circle-outline" size={42} color={FtColors.success} />
+            <Text style={styles.emptyTitle}>Todo al día</Text>
+            <Text style={styles.emptyText}>No hay pedidos pendientes por preparar.</Text>
+          </View>
+        </WebCard>
+      ) : (
+        <View style={styles.board}>
+          {filteredPedidos.map((p) => {
+            const ageMs = Date.now() - new Date(p.creado_en).getTime();
+            const slaStyle =
+              ageMs > 20 * 60 * 1000 ? styles.slaLate : ageMs > 10 * 60 * 1000 ? styles.slaWarn : styles.slaOk;
+            return (
+              <View key={p.id} style={styles.ticket}>
+                <View style={styles.ticketTop}>
+                  <Text style={styles.ticketMesa}>Mesa {mesaCodigo(p.mesas)}</Text>
+                  <Text style={styles.ticketTime}>
+                    {new Date(p.creado_en).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })}
+                  </Text>
+                </View>
+                <Text style={styles.ticketPlato}>
+                  {p.cantidad}× {itemNombre(p.items_menu)}
+                </Text>
+                <View style={styles.slaRow}>
+                  <View style={[styles.slaDot, slaStyle]} />
+                  <Text style={styles.slaText}>En cola {Math.max(1, Math.floor(ageMs / 60000))} min</Text>
+                </View>
+                {p.nota_cliente ? (
+                  <View style={styles.notaBox}>
+                    <Text style={styles.notaLabel}>Nota</Text>
+                    <Text style={styles.notaText}>{p.nota_cliente}</Text>
+                  </View>
+                ) : (
+                  <Text style={styles.sinNota}>Sin notas</Text>
+                )}
+                <Pressable
+                  style={[styles.btnListo, busyId === p.id && styles.btnDisabled]}
+                  onPress={() => onListo(p.id)}
+                  disabled={busyId === p.id}>
+                  {busyId === p.id ? (
+                    <ActivityIndicator color={FtColors.onAccent} />
+                  ) : (
+                    <>
+                      <Ionicons name="checkmark-circle" size={18} color={FtColors.onAccent} />
+                      <Text style={styles.btnListoText}>Listo</Text>
+                    </>
+                  )}
+                </Pressable>
+              </View>
+            );
+          })}
+        </View>
+      )}
+    </>
+  );
+
+  const disponibilidadPanel = (
+    <WebCard>
+      <WebCardHead icon="options-outline" title="Disponibilidad de la carta" />
+      <Text style={styles.panelHint}>Activa o desactiva platos para el comensal en tiempo real.</Text>
+      <View style={styles.dispList}>
+        {items.map((it) => (
+          <View key={it.id} style={styles.dispRow}>
+            <View style={{ flex: 1, paddingRight: 10 }}>
+              <Text style={styles.dispName} numberOfLines={1}>
+                {it.nombre}
+              </Text>
+              {catNombre(it.categorias_menu) ? (
+                <Text style={styles.dispCat}>{catNombre(it.categorias_menu)}</Text>
+              ) : null}
+            </View>
+            <Switch
+              value={it.disponible}
+              onValueChange={(v) => onToggleDisponible(it, v)}
+              disabled={toggleBusy === it.id}
+              trackColor={{ false: FtColors.border, true: 'rgba(125,206,160,0.5)' }}
+              thumbColor={it.disponible ? FtColors.success : FtColors.textMuted}
+            />
+          </View>
+        ))}
+      </View>
+    </WebCard>
+  );
+
   return (
     <WebScroll
       maxWidth={1480}
@@ -164,139 +295,51 @@ export default function KitchenWebScreen() {
       }>
       <WebHeader
         eyebrow="Cocina"
-        title="Tablero de preparación"
-        subtitle="Pedidos entrantes en tiempo real. Marca cada platillo como listo al terminarlo."
+        title={isCocinaRol ? 'Tablero de preparación' : 'Cocina · vista gerencia'}
+        subtitle={isCocinaRol ? COCINA_TITLE[sec] : 'Pedidos entrantes en tiempo real.'}
       />
 
-      <WebRow>
-        <StatCard icon="flame-outline" tone={FtColors.warning} value={pedidos.length} label="Pedidos pendientes" />
-        <StatCard
-          icon="close-circle-outline"
-          tone={FtColors.danger}
-          value={items.filter((it) => !it.disponible).length}
-          label="Platos no disponibles"
-        />
-        <StatCard
-          icon="restaurant-outline"
-          tone={FtColors.success}
-          value={items.length}
-          label="Platos en la carta"
-        />
-      </WebRow>
-
-      <View style={{ height: 18 }} />
-
-      <WebRow>
-        <View style={[webStyles.col, { flex: 3, minWidth: 460 }]}>
-          <View style={styles.filterRow}>
-            <Pressable
-              style={[styles.filterChip, categoryFilter === 'todas' && styles.filterChipOn]}
-              onPress={() => setCategoryFilter('todas')}>
-              <Text style={[styles.filterChipText, categoryFilter === 'todas' && styles.filterChipTextOn]}>
-                Todas
-              </Text>
-            </Pressable>
-            {categories.map((cat) => (
-              <Pressable
-                key={cat}
-                style={[styles.filterChip, categoryFilter === cat && styles.filterChipOn]}
-                onPress={() => setCategoryFilter(cat)}>
-                <Text style={[styles.filterChipText, categoryFilter === cat && styles.filterChipTextOn]}>
-                  {cat}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-
-          {loading && !refreshing ? (
-            <ActivityIndicator color={FtColors.accent} style={{ marginVertical: 24 }} />
-          ) : filteredPedidos.length === 0 ? (
+      {isCocinaRol && sec === 'resumen' ? (
+        <>
+          {statsRow}
+          <View style={{ height: 18 }} />
+          {pedidos.length > 0 ? (
+            <>
+              <Text style={styles.panelHint}>Últimos pedidos en cola (ve a Pedidos para el tablero completo).</Text>
+              <View style={styles.board}>
+                {filteredPedidos.slice(0, 6).map((p) => (
+                  <View key={p.id} style={styles.ticket}>
+                    <Text style={styles.ticketMesa}>Mesa {mesaCodigo(p.mesas)}</Text>
+                    <Text style={styles.ticketPlato}>
+                      {p.cantidad}× {itemNombre(p.items_menu)}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </>
+          ) : (
             <WebCard>
               <View style={styles.emptyBox}>
                 <Ionicons name="checkmark-done-circle-outline" size={42} color={FtColors.success} />
                 <Text style={styles.emptyTitle}>Todo al día</Text>
-                <Text style={styles.emptyText}>No hay pedidos pendientes por preparar.</Text>
               </View>
             </WebCard>
-          ) : (
-            <View style={styles.board}>
-              {filteredPedidos.map((p) => {
-                const ageMs = Date.now() - new Date(p.creado_en).getTime();
-                const slaStyle =
-                  ageMs > 20 * 60 * 1000 ? styles.slaLate : ageMs > 10 * 60 * 1000 ? styles.slaWarn : styles.slaOk;
-                return (
-                  <View key={p.id} style={styles.ticket}>
-                    <View style={styles.ticketTop}>
-                      <Text style={styles.ticketMesa}>Mesa {mesaCodigo(p.mesas)}</Text>
-                      <Text style={styles.ticketTime}>
-                        {new Date(p.creado_en).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })}
-                      </Text>
-                    </View>
-                    <Text style={styles.ticketPlato}>
-                      {p.cantidad}× {itemNombre(p.items_menu)}
-                    </Text>
-                    <View style={styles.slaRow}>
-                      <View style={[styles.slaDot, slaStyle]} />
-                      <Text style={styles.slaText}>
-                        En cola {Math.max(1, Math.floor(ageMs / 60000))} min
-                      </Text>
-                    </View>
-                    {p.nota_cliente ? (
-                      <View style={styles.notaBox}>
-                        <Text style={styles.notaLabel}>Nota</Text>
-                        <Text style={styles.notaText}>{p.nota_cliente}</Text>
-                      </View>
-                    ) : (
-                      <Text style={styles.sinNota}>Sin notas</Text>
-                    )}
-                    <Pressable
-                      style={[styles.btnListo, busyId === p.id && styles.btnDisabled]}
-                      onPress={() => onListo(p.id)}
-                      disabled={busyId === p.id}>
-                      {busyId === p.id ? (
-                        <ActivityIndicator color={FtColors.onAccent} />
-                      ) : (
-                        <>
-                          <Ionicons name="checkmark-circle" size={18} color={FtColors.onAccent} />
-                          <Text style={styles.btnListoText}>Listo</Text>
-                        </>
-                      )}
-                    </Pressable>
-                  </View>
-                );
-              })}
-            </View>
           )}
-        </View>
-
-        <View style={[webStyles.col, { flex: 1, minWidth: 300 }]}>
-          <WebCard>
-            <WebCardHead icon="options-outline" title="Disponibilidad de la carta" />
-            <Text style={styles.panelHint}>Activa o desactiva platos para el comensal en tiempo real.</Text>
-            <View style={styles.dispList}>
-              {items.map((it) => (
-                <View key={it.id} style={styles.dispRow}>
-                  <View style={{ flex: 1, paddingRight: 10 }}>
-                    <Text style={styles.dispName} numberOfLines={1}>
-                      {it.nombre}
-                    </Text>
-                    {catNombre(it.categorias_menu) ? (
-                      <Text style={styles.dispCat}>{catNombre(it.categorias_menu)}</Text>
-                    ) : null}
-                  </View>
-                  <Switch
-                    value={it.disponible}
-                    onValueChange={(v) => onToggleDisponible(it, v)}
-                    disabled={toggleBusy === it.id}
-                    trackColor={{ false: FtColors.border, true: 'rgba(125,206,160,0.5)' }}
-                    thumbColor={it.disponible ? FtColors.success : FtColors.textMuted}
-                  />
-                </View>
-              ))}
-            </View>
-          </WebCard>
-        </View>
-      </WebRow>
+        </>
+      ) : isCocinaRol && sec === 'disponibilidad' ? (
+        disponibilidadPanel
+      ) : isCocinaRol ? (
+        pedidosPanel
+      ) : (
+        <>
+          {statsRow}
+          <View style={{ height: 18 }} />
+          <WebRow>
+            <View style={[webStyles.col, { flex: 3, minWidth: 460 }]}>{pedidosPanel}</View>
+            <View style={[webStyles.col, { flex: 1, minWidth: 300 }]}>{disponibilidadPanel}</View>
+          </WebRow>
+        </>
+      )}
 
       <View style={{ height: 24 }} />
     </WebScroll>

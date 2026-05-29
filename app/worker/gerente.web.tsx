@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Redirect, useFocusEffect } from 'expo-router';
+import { Redirect, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, Linking, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 
@@ -10,7 +10,12 @@ import { useAuth } from '@/contexts/auth-context';
 import { REALTIME_GERENTE, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { formatPriceFromCents } from '@/lib/format';
 import { supabase } from '@/lib/supabase';
-import { roleLabel } from '@/lib/worker-nav';
+import { parseNavSection, roleLabel, type GerenteSection } from '@/lib/worker-nav';
+
+const GERENTE_TITLE: Record<GerenteSection, string> = {
+  resumen: 'Indicadores del restaurante. Se actualizan solos al registrar pedidos o cambiar la carta.',
+  reportes: 'Problemas reportados por comensales: quién atendió y cómo contactarlos.',
+};
 
 type GerenteStats = {
   total_centavos: number;
@@ -56,6 +61,7 @@ function localDayKey(d: Date): string {
 }
 
 export default function GerenteWebScreen() {
+  const params = useLocalSearchParams<{ sec?: string }>();
   const { session, staffMember, loading: authLoading } = useAuth();
   const [stats, setStats] = useState<GerenteStats | null>(null);
   const [rangeDays, setRangeDays] = useState<RangeOption>(7);
@@ -220,6 +226,9 @@ export default function GerenteWebScreen() {
   if (!staffMember) return <Redirect href="/login" />;
   if (staffMember.rol !== 'gerente') return <Redirect href="/worker" />;
 
+  const sec = parseNavSection('gerente', params.sec, '/worker/gerente') as GerenteSection;
+  const reportesAbiertos = reportes.filter((r) => r.estado === 'abierto').length;
+
   const maxRevenue = Math.max(1, ...dailyRevenue.map((d) => d.value));
   const rangeTotal = dailyRevenue.reduce((acc, d) => acc + d.value, 0);
   const variation =
@@ -235,8 +244,9 @@ export default function GerenteWebScreen() {
       <WebHeader
         eyebrow="Gerencia"
         title={`Hola, ${staffMember.nombre_visible}`}
-        subtitle="Indicadores del restaurante. Se actualizan solos al registrar pedidos o cambiar la carta."
+        subtitle={GERENTE_TITLE[sec]}
         right={
+          sec === 'resumen' ? (
           <View style={styles.segment}>
             {[7, 30].map((n) => (
               <Pressable
@@ -247,11 +257,95 @@ export default function GerenteWebScreen() {
               </Pressable>
             ))}
           </View>
+          ) : null
         }
       />
 
       {loading && !refreshing ? <ActivityIndicator color={FtColors.accent} style={{ marginVertical: 12 }} /> : null}
 
+      {sec === 'reportes' ? (
+        <WebCard>
+          <WebCardHead
+            icon="mail-unread-outline"
+            color={FtColors.warning}
+            title={`Problemas reportados${reportesAbiertos > 0 ? ` · ${reportesAbiertos} abiertos` : ''}`}
+          />
+          {reportes.length === 0 ? (
+            <Text style={styles.muted}>No hay reportes por revisar.</Text>
+          ) : (
+            <View style={styles.repGrid}>
+              {reportes.map((r) => (
+                <View key={r.id} style={styles.repCard}>
+                  <View style={styles.repTop}>
+                    <Text style={styles.repName} numberOfLines={1}>
+                      {r.nombre_usuario?.trim() || 'Comensal'}
+                    </Text>
+                    <Text style={[styles.repState, r.estado !== 'abierto' && styles.repStateDone]}>{r.estado}</Text>
+                  </View>
+                  <Text style={styles.repTitle} numberOfLines={2}>
+                    {r.titulo}
+                  </Text>
+                  <Text style={styles.repDesc} numberOfLines={4}>
+                    {r.descripcion}
+                  </Text>
+                  {r.mesero_nombre ? (
+                    <View style={styles.repInfoRow}>
+                      <Ionicons name="restaurant-outline" size={14} color={FtColors.textMuted} />
+                      <Text style={styles.repInfoText}>Atendió: {r.mesero_nombre}</Text>
+                    </View>
+                  ) : null}
+                  <Text style={styles.repMeta}>
+                    {new Date(r.creado_en).toLocaleString('es', {
+                      day: '2-digit',
+                      month: 'short',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </Text>
+                  {r.telefono_contacto || r.correo_contacto ? (
+                    <View style={styles.repContactRow}>
+                      {r.telefono_contacto ? (
+                        <Pressable
+                          style={styles.repContactBtn}
+                          onPress={() => Linking.openURL(`tel:${r.telefono_contacto}`)}>
+                          <Ionicons name="call-outline" size={14} color={FtColors.accent} />
+                          <Text style={styles.repContactText} numberOfLines={1}>
+                            {r.telefono_contacto}
+                          </Text>
+                        </Pressable>
+                      ) : null}
+                      {r.correo_contacto ? (
+                        <Pressable
+                          style={styles.repContactBtn}
+                          onPress={() =>
+                            Linking.openURL(
+                              `mailto:${r.correo_contacto}?subject=${encodeURIComponent('Sobre tu reporte en FastTable')}`,
+                            )
+                          }>
+                          <Ionicons name="mail-outline" size={14} color={FtColors.accent} />
+                          <Text style={styles.repContactText} numberOfLines={1}>
+                            {r.correo_contacto}
+                          </Text>
+                        </Pressable>
+                      ) : null}
+                    </View>
+                  ) : null}
+                  {r.estado === 'abierto' ? (
+                    <Pressable
+                      style={[styles.repBtn, reportBusyId === r.id && styles.btnDisabled]}
+                      onPress={() => onMarcarReporteRevisado(r.id)}
+                      disabled={reportBusyId === r.id}>
+                      <Ionicons name="checkmark-circle-outline" size={16} color={FtColors.onAccent} />
+                      <Text style={styles.repBtnText}>{reportBusyId === r.id ? 'Guardando…' : 'Marcar revisado'}</Text>
+                    </Pressable>
+                  ) : null}
+                </View>
+              ))}
+            </View>
+          )}
+        </WebCard>
+      ) : (
+        <>
       <WebRow>
         <StatCard
           icon="cash-outline"
@@ -375,86 +469,9 @@ export default function GerenteWebScreen() {
         </View>
       </WebRow>
 
-      <View style={{ height: 16 }} />
-
-      <WebCard>
-        <WebCardHead icon="mail-unread-outline" color={FtColors.warning} title="Problemas reportados" />
-        {reportes.length === 0 ? (
-          <Text style={styles.muted}>No hay reportes por revisar.</Text>
-        ) : (
-          <View style={styles.repGrid}>
-            {reportes.map((r) => (
-              <View key={r.id} style={styles.repCard}>
-                <View style={styles.repTop}>
-                  <Text style={styles.repName} numberOfLines={1}>
-                    {r.nombre_usuario?.trim() || 'Comensal'}
-                  </Text>
-                  <Text style={[styles.repState, r.estado !== 'abierto' && styles.repStateDone]}>{r.estado}</Text>
-                </View>
-                <Text style={styles.repTitle} numberOfLines={2}>
-                  {r.titulo}
-                </Text>
-                <Text style={styles.repDesc} numberOfLines={4}>
-                  {r.descripcion}
-                </Text>
-                {r.mesero_nombre ? (
-                  <View style={styles.repInfoRow}>
-                    <Ionicons name="restaurant-outline" size={14} color={FtColors.textMuted} />
-                    <Text style={styles.repInfoText}>Atendió: {r.mesero_nombre}</Text>
-                  </View>
-                ) : null}
-                <Text style={styles.repMeta}>
-                  {new Date(r.creado_en).toLocaleString('es', {
-                    day: '2-digit',
-                    month: 'short',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </Text>
-                {r.telefono_contacto || r.correo_contacto ? (
-                  <View style={styles.repContactRow}>
-                    {r.telefono_contacto ? (
-                      <Pressable
-                        style={styles.repContactBtn}
-                        onPress={() => Linking.openURL(`tel:${r.telefono_contacto}`)}>
-                        <Ionicons name="call-outline" size={14} color={FtColors.accent} />
-                        <Text style={styles.repContactText} numberOfLines={1}>
-                          {r.telefono_contacto}
-                        </Text>
-                      </Pressable>
-                    ) : null}
-                    {r.correo_contacto ? (
-                      <Pressable
-                        style={styles.repContactBtn}
-                        onPress={() =>
-                          Linking.openURL(
-                            `mailto:${r.correo_contacto}?subject=${encodeURIComponent('Sobre tu reporte en FastTable')}`,
-                          )
-                        }>
-                        <Ionicons name="mail-outline" size={14} color={FtColors.accent} />
-                        <Text style={styles.repContactText} numberOfLines={1}>
-                          {r.correo_contacto}
-                        </Text>
-                      </Pressable>
-                    ) : null}
-                  </View>
-                ) : null}
-                {r.estado === 'abierto' ? (
-                  <Pressable
-                    style={[styles.repBtn, reportBusyId === r.id && styles.btnDisabled]}
-                    onPress={() => onMarcarReporteRevisado(r.id)}
-                    disabled={reportBusyId === r.id}>
-                    <Ionicons name="checkmark-circle-outline" size={16} color={FtColors.onAccent} />
-                    <Text style={styles.repBtnText}>{reportBusyId === r.id ? 'Guardando…' : 'Marcar revisado'}</Text>
-                  </Pressable>
-                ) : null}
-              </View>
-            ))}
-          </View>
-        )}
-      </WebCard>
-
       <View style={{ height: 24 }} />
+        </>
+      )}
     </WebScroll>
   );
 }

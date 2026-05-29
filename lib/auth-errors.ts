@@ -37,5 +37,8 @@ export function formatAuthErrorMessage(message: string): string {
   if (m.includes('email not confirmed')) {
     return 'Confirma tu correo con el enlace que te enviamos antes de entrar.';
   }
+  if (m.includes('otp_expired') || m.includes('email link is invalid') || m.includes('link has expired')) {
+    return 'El enlace caducó o ya se usó. Solicita otro desde la app.';
+  }
   return message;
 }

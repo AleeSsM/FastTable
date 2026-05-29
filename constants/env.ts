@@ -7,6 +7,8 @@ function envStr(key: string): string {
 export const env = {
   supabaseUrl: envStr('EXPO_PUBLIC_SUPABASE_URL'),
   supabaseAnonKey: envStr('EXPO_PUBLIC_SUPABASE_ANON_KEY'),
+  /** Dominio público de la app web (sin barra final). Ej. https://app.midominio.com */
+  appUrl: envStr('EXPO_PUBLIC_APP_URL'),
 };
 
 export function assertSupabaseConfigured(): void {

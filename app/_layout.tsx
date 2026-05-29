@@ -31,6 +31,7 @@ export default function RootLayout() {
           <Stack.Screen name="register" options={{ title: 'Crear cuenta', headerBackTitle: 'Atrás' }} />
           <Stack.Screen name="login" options={{ title: 'Iniciar sesión', headerBackTitle: 'Atrás' }} />
           <Stack.Screen name="forgot-password" options={{ title: 'Recuperar contraseña', headerBackTitle: 'Atrás' }} />
+          <Stack.Screen name="auth/callback" options={{ headerShown: false, title: 'Acceso' }} />
           <Stack.Screen name="reset-password" options={{ title: 'Nueva contraseña', headerBackTitle: 'Atrás' }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen

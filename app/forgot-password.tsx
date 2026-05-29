@@ -11,11 +11,11 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as Linking from 'expo-linking';
 import { useRouter } from 'expo-router';
 
 import { Comensal } from '@/constants/theme-comensal';
 import { formatAuthErrorMessage } from '@/lib/auth-errors';
+import { getAuthRedirectUrl, getAuthRedirectUrlHints } from '@/lib/auth-redirect';
 import { supabase } from '@/lib/supabase';
 
 export default function ForgotPasswordScreen() {
@@ -31,7 +31,7 @@ export default function ForgotPasswordScreen() {
     }
     setBusy(true);
     try {
-      const redirectTo = Linking.createURL('/reset-password');
+      const redirectTo = getAuthRedirectUrl();
       const { error } = await supabase.auth.resetPasswordForEmail(e, { redirectTo });
       if (error) {
         Alert.alert('Recuperación', formatAuthErrorMessage(error.message));
@@ -74,8 +74,8 @@ export default function ForgotPasswordScreen() {
           </View>
 
           <Text style={styles.hint}>
-            En Supabase → Authentication → URL configuration, añade como URL de redirección permitida la que usa
-            esta app (por ejemplo fasttable://… al abrir el enlace en el móvil).
+            En Supabase → Authentication → URL configuration, añade estas URLs de redirección:{' '}
+            {getAuthRedirectUrlHints().join(' · ')}
           </Text>
 
           <Pressable

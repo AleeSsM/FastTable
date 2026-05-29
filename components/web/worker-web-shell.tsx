@@ -5,7 +5,15 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import { Avatar } from '@/components/avatar';
 import { FtColors } from '@/constants/fasttable';
 import { useAuth } from '@/contexts/auth-context';
-import { DEFAULT_MESERO_SECTION, navForRole, roleLabel } from '@/lib/worker-nav';
+import { badgeCountForItem, useWorkerNavBadges } from '@/hooks/use-worker-nav-badges';
+import {
+  navForRole,
+  navItemHref,
+  parseNavSection,
+  roleLabel,
+  type WorkerNavItem,
+  type WorkerRol,
+} from '@/lib/worker-nav';
 
 const SIDEBAR_WIDTH = 256;
 
@@ -17,14 +25,16 @@ function isActive(pathname: string, href: string): boolean {
 /**
  * Marco de escritorio para el personal (solo web). Barra lateral fija a la
  * izquierda con navegación por rol; el contenido se renderiza a la derecha.
- * En móvil este componente no se usa (existe `_layout.tsx` con Stack).
  */
 export function WorkerWebShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname() ?? '';
   const params = useLocalSearchParams<{ sec?: string }>();
-  const currentSec = typeof params.sec === 'string' ? params.sec : DEFAULT_MESERO_SECTION;
   const { staffMember, loading, signOut } = useAuth();
+
+  const rol = staffMember?.rol as WorkerRol | undefined;
+  const currentSec = parseNavSection(rol, params.sec, pathname);
+  const { badges } = useWorkerNavBadges(rol, staffMember?.id ?? null, pathname);
 
   if (loading) {
     return (
@@ -34,13 +44,15 @@ export function WorkerWebShell({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // Sin ficha de personal (comensal o sesión cerrada): dejamos que la pantalla
-  // hija haga su propio redirect, sin pintar el marco del personal.
   if (!staffMember) {
     return <View style={styles.bare}>{children}</View>;
   }
 
   const items = navForRole(staffMember.rol);
+
+  const navPress = (item: WorkerNavItem) => {
+    router.push(navItemHref(item) as Href);
+  };
 
   return (
     <View style={styles.root}>
@@ -60,11 +72,12 @@ export function WorkerWebShell({ children }: { children: React.ReactNode }) {
             const active = item.section
               ? isActive(pathname, item.href) && currentSec === item.section
               : isActive(pathname, item.href);
-            const href = (item.section ? `${item.href}?sec=${item.section}` : item.href) as Href;
+            const count = badgeCountForItem(item, badges);
+            const isAlert = item.badgeAlert === true;
             return (
               <Pressable
                 key={`${item.label}-${item.section ?? item.href}`}
-                onPress={() => router.push(href)}
+                onPress={() => navPress(item)}
                 style={({ hovered }: { hovered?: boolean }) => [
                   styles.navItem,
                   hovered && styles.navItemHover,
@@ -76,6 +89,13 @@ export function WorkerWebShell({ children }: { children: React.ReactNode }) {
                   color={active ? FtColors.onAccent : FtColors.textMuted}
                 />
                 <Text style={[styles.navText, active && styles.navTextActive]}>{item.label}</Text>
+                {count > 0 ? (
+                  <View style={[styles.badge, isAlert ? styles.badgeAlert : styles.badgeMuted]}>
+                    <Text style={[styles.badgeText, isAlert ? styles.badgeTextAlert : styles.badgeTextMuted]}>
+                      {count > 99 ? '99+' : count}
+                    </Text>
+                  </View>
+                ) : null}
               </Pressable>
             );
           })}
@@ -149,8 +169,21 @@ const styles = StyleSheet.create({
   },
   navItemHover: { backgroundColor: FtColors.surfaceElevated },
   navItemActive: { backgroundColor: FtColors.accent },
-  navText: { fontSize: 14, fontWeight: '600', color: FtColors.textMuted },
+  navText: { flex: 1, fontSize: 14, fontWeight: '600', color: FtColors.textMuted },
   navTextActive: { color: FtColors.onAccent, fontWeight: '700' },
+  badge: {
+    minWidth: 22,
+    height: 22,
+    borderRadius: 11,
+    paddingHorizontal: 7,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badgeAlert: { backgroundColor: FtColors.warning },
+  badgeMuted: { backgroundColor: FtColors.surfaceElevated, borderWidth: 1, borderColor: FtColors.border },
+  badgeText: { fontSize: 12, fontWeight: '800' },
+  badgeTextAlert: { color: FtColors.background },
+  badgeTextMuted: { color: FtColors.textMuted },
   userBox: {
     flexDirection: 'row',
     alignItems: 'center',

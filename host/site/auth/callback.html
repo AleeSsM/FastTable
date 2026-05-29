@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FastTable · Verificando acceso</title>
+    <link rel="stylesheet" href="auth.css" />
+    <script src="/config.js"></script>
+  </head>
+  <body>
+    <div class="card center">
+      <div class="spinner" aria-hidden="true"></div>
+      <h1>Completando acceso…</h1>
+      <p id="status">Procesando el enlace del correo.</p>
+    </div>
+    <script src="auth.js"></script>
+    <script>
+      (async function () {
+        const status = document.getElementById("status");
+        try {
+          const type = await FastTableAuth.handleAuthCallback();
+          if (type === "recovery") {
+            window.location.replace("/auth/reset-password.html");
+            return;
+          }
+          window.location.replace("/auth/confirmado.html");
+        } catch (e) {
+          status.textContent = "";
+          document.querySelector(".card").innerHTML =
+            '<h1>No se pudo completar</h1>' +
+            '<p class="error">' +
+            (e.message || "Error desconocido") +
+            "</p>" +
+            '<div class="links">' +
+            '<a class="btn" href="/">Ir al inicio</a>' +
+            '<a href="' +
+            FastTableAuth.appUrl("/forgot-password") +
+            '">Recuperar contraseña en la app</a>' +
+            "</div>";
+        }
+      })();
+    </script>
+  </body>
+</html>

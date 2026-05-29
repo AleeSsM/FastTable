@@ -14,13 +14,26 @@ import {
   type MesaToggle,
   type WaitlistEntry,
 } from '@/hooks/use-worker-dashboard';
-import { DEFAULT_MESERO_SECTION, roleLabel, type MeseroSection } from '@/lib/worker-nav';
+import {
+  parseNavSection,
+  roleLabel,
+  type AnfitrionSection,
+  type MeseroSection,
+} from '@/lib/worker-nav';
 
-const SECTION_TITLE: Record<MeseroSection, string> = {
+const MESERO_TITLE: Record<MeseroSection, string> = {
   resumen: 'Un vistazo a tu turno: mesas, solicitudes y disponibilidad.',
   mesas: 'Tus mesas asignadas y el comensal que atiende cada una.',
   solicitudes: 'Llamadas de atención de tus comensales.',
   libres: 'Ocupa una mesa para un walk-in o libérala al terminar.',
+};
+
+const ANFITRION_TITLE: Record<AnfitrionSection, string> = {
+  resumen: 'Recepción: fila, reservas y mesas en un vistazo.',
+  fila: 'Comensales en espera y asignación de mesa y mesero.',
+  reservas: 'Reservas por atender y próximas llegadas.',
+  mesas: 'Mapa de mesas: ocupar walk-ins o liberar.',
+  equipo: 'Carga de meseros y reasignación de mesas.',
 };
 
 export default function WorkerDashboardWebScreen() {
@@ -149,12 +162,7 @@ export default function WorkerDashboardWebScreen() {
     { icon: 'grid-outline' as const, label: 'Mesas libres', value: d.available ?? 0, tone: FtColors.success },
   ];
 
-  const sec: MeseroSection = (() => {
-    const raw = typeof params.sec === 'string' ? params.sec : DEFAULT_MESERO_SECTION;
-    return (['resumen', 'mesas', 'solicitudes', 'libres'] as const).includes(raw as MeseroSection)
-      ? (raw as MeseroSection)
-      : DEFAULT_MESERO_SECTION;
-  })();
+  const sec = parseNavSection(staffMember.rol, params.sec, '/worker');
 
   const loader = d.loading && !d.refreshing ? (
     <ActivityIndicator color={FtColors.accent} style={{ marginVertical: 16 }} />
@@ -255,6 +263,177 @@ export default function WorkerDashboardWebScreen() {
     </WebCard>
   );
 
+  const hostFilaCard = (
+    <WebCard>
+      <WebCardHead icon="people-outline" color={FtColors.success} title="Fila de espera" />
+      <View style={styles.loadCard}>
+        <Text style={styles.loadTitle}>Carga de meseros</Text>
+        {d.meseroLoads.length === 0 ? (
+          <Text style={styles.empty}>No hay meseros activos.</Text>
+        ) : (
+          d.meseroLoads.map((m) => (
+            <View key={m.id} style={styles.loadRow}>
+              <Text style={styles.loadName}>{m.nombre_visible}</Text>
+              <Text style={styles.loadCount}>{m.mesasAtendidas} mesas</Text>
+            </View>
+          ))
+        )}
+      </View>
+      {d.waitlist.length === 0 ? (
+        <Text style={styles.empty}>No hay comensales en espera.</Text>
+      ) : (
+        d.waitlist.map((entry, i) => waitlistCard(entry, i))
+      )}
+    </WebCard>
+  );
+
+  const hostReservasCard = (
+    <>
+      <WebCard>
+        <WebCardHead icon="calendar-outline" title="Reservas a atender" />
+        {d.attendOrdered.length === 0 ? (
+          <Text style={styles.empty}>Nada pendiente por atender ahora.</Text>
+        ) : (
+          d.attendOrdered.map((r) => {
+            const code = r.mesas?.codigo ?? '—';
+            const guest = d.names[r.id_usuario]?.trim() || 'Cliente';
+            const other =
+              r.mesas?.id_personal_atendiendo != null && r.mesas.id_personal_atendiendo !== staffMember.id;
+            const showNoShow = d.canShowNoShow(r, new Date());
+            const isLate = new Date(r.fecha_hora_reserva).getTime() < Date.now();
+            return (
+              <View key={r.id} style={styles.subCard}>
+                <View style={styles.rowHead}>
+                  <Avatar uri={d.fotos[r.id_usuario]} name={guest} size={42} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.itemName}>Mesa {code} · {guest}</Text>
+                    <Text style={styles.itemMeta}>{fmtFecha(r.fecha_hora_reserva)} · {r.personas_grupo} pers.</Text>
+                  </View>
+                  <View style={[styles.pill, isLate ? styles.pillWarn : styles.pillInfo]}>
+                    <Text style={[styles.pillText, isLate ? styles.pillTextWarn : styles.pillTextInfo]}>
+                      {isLate ? 'Prioridad' : 'Próxima'}
+                    </Text>
+                  </View>
+                </View>
+                {r.nota ? <Text style={styles.note}>Nota: {r.nota}</Text> : null}
+                {other ? (
+                  <Text style={styles.warn}>Otro mesero está atendiendo esta mesa.</Text>
+                ) : (
+                  <>
+                    <Text style={styles.fieldLabel}>Mesero responsable</Text>
+                    {chips(
+                      d.meseroLoads.map((m) => ({ key: m.id, label: `${m.nombre_visible} (${m.mesasAtendidas})` })),
+                      d.selectedMeseroByReserva[r.id],
+                      (k) => d.setSelectedMeseroByReserva((p) => ({ ...p, [r.id]: k })),
+                      'Sin meseros en línea.',
+                    )}
+                    <View style={styles.btnRow}>
+                      <Pressable style={[styles.btnPrimary, { flex: 1 }]} onPress={() => d.onAtenderCompleta(r.id)}>
+                        <Text style={styles.btnPrimaryText}>Atender</Text>
+                      </Pressable>
+                      {showNoShow ? (
+                        <Pressable style={[styles.btnDanger, { flex: 1 }]} onPress={() => d.resolve(r.id, false)}>
+                          <Text style={styles.btnDangerText}>No llegó</Text>
+                        </Pressable>
+                      ) : null}
+                    </View>
+                    {!showNoShow ? (
+                      <Text style={styles.hintSmall}>Tras 5 min de la hora podrás marcar “no llegó”.</Text>
+                    ) : null}
+                  </>
+                )}
+              </View>
+            );
+          })
+        )}
+      </WebCard>
+      <View style={{ height: 16 }} />
+      <WebCard>
+        <WebCardHead icon="time-outline" color={FtColors.textMuted} title="Próximas reservas" />
+        {d.upcoming.length === 0 ? (
+          <Text style={styles.empty}>No hay reservas próximas.</Text>
+        ) : (
+          d.upcoming.map((r) => {
+            const guest = d.names[r.id_usuario]?.trim() || 'Cliente';
+            return (
+              <View key={r.id} style={[styles.rowHead, styles.upcomingRow]}>
+                <Avatar uri={d.fotos[r.id_usuario]} name={guest} size={38} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.itemName}>{r.mesas?.codigo ?? '—'} · {guest}</Text>
+                  <Text style={styles.itemMeta}>{fmtFecha(r.fecha_hora_reserva)} · {r.personas_grupo} pers.</Text>
+                </View>
+              </View>
+            );
+          })
+        )}
+        <Pressable style={styles.linkRow} onPress={() => router.push('/worker/reservations' as Href)}>
+          <Text style={styles.linkText}>Vista detallada de reservas</Text>
+          <Ionicons name="chevron-forward" size={18} color={FtColors.accentMuted} />
+        </Pressable>
+      </WebCard>
+    </>
+  );
+
+  const hostMesasCard = (
+    <WebCard>
+      <WebCardHead icon="grid-outline" title="Mapa de mesas" />
+      <Text style={styles.cardHint}>Ocupar/liberar walk-ins. Las reservadas se gestionan en Reservas.</Text>
+      <View style={styles.mesaGrid}>{d.allMesas.map((m) => mesaTile(m))}</View>
+    </WebCard>
+  );
+
+  const hostEquipoCard = (
+    <WebCard>
+      <WebCardHead icon="swap-horizontal-outline" title="Equipo · flujo de meseros" />
+      <Text style={styles.cardHint}>
+        Reasigna las mesas de un mesero a otro si alguien no puede continuar (p. ej. se siente mal).
+      </Text>
+      {d.meseroLoads.length === 0 ? (
+        <Text style={styles.empty}>No hay meseros activos.</Text>
+      ) : (
+        <View style={styles.equipoGrid}>
+          {d.meseroLoads.map((m) => {
+            const mesas = d.meseroMesas[m.id] ?? [];
+            const otros = d.meseroLoads.filter((x) => x.id !== m.id);
+            return (
+              <View key={m.id} style={styles.equipoCard}>
+                <Text style={styles.itemName}>{m.nombre_visible}</Text>
+                <Text style={styles.itemMeta}>
+                  {mesas.length} {mesas.length === 1 ? 'mesa' : 'mesas'} a su cargo
+                </Text>
+                {mesas.length > 0 ? (
+                  <View style={styles.meseroTagsWrap}>
+                    {mesas.map((mesa) => (
+                      <View key={mesa.id} style={styles.meseroTag}>
+                        <Text style={styles.meseroTagText}>{mesa.codigo}</Text>
+                      </View>
+                    ))}
+                  </View>
+                ) : (
+                  <Text style={styles.hintSmall}>Sin mesas asignadas.</Text>
+                )}
+                {mesas.length > 0 && otros.length > 0 ? (
+                  <>
+                    <Text style={styles.fieldLabel}>Pasar todas a</Text>
+                    {chips(
+                      otros.map((o) => ({ key: o.id, label: `${o.nombre_visible} (${o.mesasAtendidas})` })),
+                      undefined,
+                      (k) => {
+                        const dest = otros.find((o) => o.id === k);
+                        if (dest) void d.reasignarMeseroTodo(m.id, m.nombre_visible, dest.id, dest.nombre_visible);
+                      },
+                      'Sin otros meseros.',
+                    )}
+                  </>
+                ) : null}
+              </View>
+            );
+          })}
+        </View>
+      )}
+    </WebCard>
+  );
+
   return (
     <WebScroll
       maxWidth={1480}
@@ -262,7 +441,11 @@ export default function WorkerDashboardWebScreen() {
       <WebHeader
         eyebrow={roleLabel(staffMember.rol)}
         title={`Hola, ${staffMember.nombre_visible}`}
-        subtitle={isHost ? 'Recepción: gestiona fila, reservas y el mapa de mesas en vivo.' : SECTION_TITLE[sec]}
+        subtitle={
+          isHost
+            ? ANFITRION_TITLE[sec as AnfitrionSection] ?? ANFITRION_TITLE.resumen
+            : MESERO_TITLE[sec as MeseroSection] ?? MESERO_TITLE.resumen
+        }
       />
 
       {isWaiter ? (
@@ -300,191 +483,41 @@ export default function WorkerDashboardWebScreen() {
         </>
       ) : (
         <>
-        <WebRow>
-          {hostSummary.map((s) => (
-            <StatCard key={s.label} icon={s.icon} tone={s.tone} value={s.value} label={s.label} />
-          ))}
-        </WebRow>
-
-        <View style={{ height: 18 }} />
-
-        {loader}
-
-        <WebRow>
-          {/* Fila */}
-          <View style={[webStyles.col, { flex: 1.4, minWidth: 360 }]}>
-            <WebCard>
-              <WebCardHead icon="people-outline" color={FtColors.success} title="Fila de espera" />
-              <View style={styles.loadCard}>
-                <Text style={styles.loadTitle}>Carga de meseros</Text>
-                {d.meseroLoads.length === 0 ? (
-                  <Text style={styles.empty}>No hay meseros activos.</Text>
-                ) : (
-                  d.meseroLoads.map((m) => (
-                    <View key={m.id} style={styles.loadRow}>
-                      <Text style={styles.loadName}>{m.nombre_visible}</Text>
-                      <Text style={styles.loadCount}>{m.mesasAtendidas} mesas</Text>
-                    </View>
-                  ))
-                )}
-              </View>
-              {d.waitlist.length === 0 ? (
-                <Text style={styles.empty}>No hay comensales en espera.</Text>
-              ) : (
-                d.waitlist.map((entry, i) => waitlistCard(entry, i))
-              )}
-            </WebCard>
-          </View>
-
-          {/* Reservas */}
-          <View style={[webStyles.col, { flex: 1.4, minWidth: 360 }]}>
-            <WebCard>
-              <WebCardHead icon="calendar-outline" title="Reservas a atender" />
-              {d.attendOrdered.length === 0 ? (
-                <Text style={styles.empty}>Nada pendiente por atender ahora.</Text>
-              ) : (
-                d.attendOrdered.map((r) => {
-                  const code = r.mesas?.codigo ?? '—';
-                  const guest = d.names[r.id_usuario]?.trim() || 'Cliente';
-                  const other =
-                    r.mesas?.id_personal_atendiendo != null && r.mesas.id_personal_atendiendo !== staffMember.id;
-                  const showNoShow = d.canShowNoShow(r, new Date());
-                  const isLate = new Date(r.fecha_hora_reserva).getTime() < Date.now();
-                  return (
-                    <View key={r.id} style={styles.subCard}>
-                      <View style={styles.rowHead}>
-                        <Avatar uri={d.fotos[r.id_usuario]} name={guest} size={42} />
-                        <View style={{ flex: 1 }}>
-                          <Text style={styles.itemName}>Mesa {code} · {guest}</Text>
-                          <Text style={styles.itemMeta}>{fmtFecha(r.fecha_hora_reserva)} · {r.personas_grupo} pers.</Text>
-                        </View>
-                        <View style={[styles.pill, isLate ? styles.pillWarn : styles.pillInfo]}>
-                          <Text style={[styles.pillText, isLate ? styles.pillTextWarn : styles.pillTextInfo]}>
-                            {isLate ? 'Prioridad' : 'Próxima'}
-                          </Text>
-                        </View>
-                      </View>
-                      {r.nota ? <Text style={styles.note}>Nota: {r.nota}</Text> : null}
-                      {other ? (
-                        <Text style={styles.warn}>Otro mesero está atendiendo esta mesa.</Text>
-                      ) : (
-                        <>
-                          <Text style={styles.fieldLabel}>Mesero responsable</Text>
-                          {chips(
-                            d.meseroLoads.map((m) => ({ key: m.id, label: `${m.nombre_visible} (${m.mesasAtendidas})` })),
-                            d.selectedMeseroByReserva[r.id],
-                            (k) => d.setSelectedMeseroByReserva((p) => ({ ...p, [r.id]: k })),
-                            'Sin meseros en línea.',
-                          )}
-                          <View style={styles.btnRow}>
-                            <Pressable style={[styles.btnPrimary, { flex: 1 }]} onPress={() => d.onAtenderCompleta(r.id)}>
-                              <Text style={styles.btnPrimaryText}>Atender</Text>
-                            </Pressable>
-                            {showNoShow ? (
-                              <Pressable style={[styles.btnDanger, { flex: 1 }]} onPress={() => d.resolve(r.id, false)}>
-                                <Text style={styles.btnDangerText}>No llegó</Text>
-                              </Pressable>
-                            ) : null}
-                          </View>
-                          {!showNoShow ? (
-                            <Text style={styles.hintSmall}>Tras 5 min de la hora podrás marcar “no llegó”.</Text>
-                          ) : null}
-                        </>
-                      )}
-                    </View>
-                  );
-                })
-              )}
-            </WebCard>
-
-            <View style={{ height: 16 }} />
-
-            <WebCard>
-              <WebCardHead icon="time-outline" color={FtColors.textMuted} title="Próximas reservas" />
-              {d.upcoming.length === 0 ? (
-                <Text style={styles.empty}>No hay reservas próximas.</Text>
-              ) : (
-                d.upcoming.map((r) => {
-                  const guest = d.names[r.id_usuario]?.trim() || 'Cliente';
-                  return (
-                    <View key={r.id} style={[styles.rowHead, styles.upcomingRow]}>
-                      <Avatar uri={d.fotos[r.id_usuario]} name={guest} size={38} />
-                      <View style={{ flex: 1 }}>
-                        <Text style={styles.itemName}>{r.mesas?.codigo ?? '—'} · {guest}</Text>
-                        <Text style={styles.itemMeta}>{fmtFecha(r.fecha_hora_reserva)} · {r.personas_grupo} pers.</Text>
-                      </View>
-                    </View>
-                  );
-                })
-              )}
-              <Pressable style={styles.linkRow} onPress={() => router.push('/worker/reservations' as Href)}>
-                <Text style={styles.linkText}>Vista detallada de reservas</Text>
-                <Ionicons name="chevron-forward" size={18} color={FtColors.accentMuted} />
-              </Pressable>
-            </WebCard>
-          </View>
-
-          {/* Mapa de mesas */}
-          <View style={[webStyles.col, { flex: 1, minWidth: 280 }]}>
-            <WebCard>
-              <WebCardHead icon="grid-outline" title="Mapa de mesas" />
-              <Text style={styles.cardHint}>Ocupar/liberar walk-ins. Las reservadas se gestionan en Reservas.</Text>
-              <View style={styles.mesaGrid}>{d.allMesas.map((m) => mesaTile(m))}</View>
-            </WebCard>
-          </View>
-        </WebRow>
-
-        <View style={{ height: 16 }} />
-
-        <WebCard>
-          <WebCardHead icon="swap-horizontal-outline" title="Equipo · flujo de meseros" />
-          <Text style={styles.cardHint}>
-            Reasigna las mesas de un mesero a otro si alguien no puede continuar (p. ej. se siente mal).
-          </Text>
-          {d.meseroLoads.length === 0 ? (
-            <Text style={styles.empty}>No hay meseros activos.</Text>
+          {sec === 'resumen' ? (
+            <>
+              <WebRow>
+                {hostSummary.map((s) => (
+                  <StatCard key={s.label} icon={s.icon} tone={s.tone} value={s.value} label={s.label} />
+                ))}
+              </WebRow>
+              <View style={{ height: 18 }} />
+              {loader}
+              <WebRow>
+                <View style={[webStyles.col, { flex: 1, minWidth: 360 }]}>{hostFilaCard}</View>
+                <View style={[webStyles.col, { flex: 1, minWidth: 360 }]}>{hostReservasCard}</View>
+              </WebRow>
+            </>
+          ) : sec === 'fila' ? (
+            <>
+              {loader}
+              {hostFilaCard}
+            </>
+          ) : sec === 'reservas' ? (
+            <>
+              {loader}
+              {hostReservasCard}
+            </>
+          ) : sec === 'mesas' ? (
+            <>
+              {loader}
+              {hostMesasCard}
+            </>
           ) : (
-            <View style={styles.equipoGrid}>
-              {d.meseroLoads.map((m) => {
-                const mesas = d.meseroMesas[m.id] ?? [];
-                const otros = d.meseroLoads.filter((x) => x.id !== m.id);
-                return (
-                  <View key={m.id} style={styles.equipoCard}>
-                    <Text style={styles.itemName}>{m.nombre_visible}</Text>
-                    <Text style={styles.itemMeta}>
-                      {mesas.length} {mesas.length === 1 ? 'mesa' : 'mesas'} a su cargo
-                    </Text>
-                    {mesas.length > 0 ? (
-                      <View style={styles.meseroTagsWrap}>
-                        {mesas.map((mesa) => (
-                          <View key={mesa.id} style={styles.meseroTag}>
-                            <Text style={styles.meseroTagText}>{mesa.codigo}</Text>
-                          </View>
-                        ))}
-                      </View>
-                    ) : (
-                      <Text style={styles.hintSmall}>Sin mesas asignadas.</Text>
-                    )}
-                    {mesas.length > 0 && otros.length > 0 ? (
-                      <>
-                        <Text style={styles.fieldLabel}>Pasar todas a</Text>
-                        {chips(
-                          otros.map((o) => ({ key: o.id, label: `${o.nombre_visible} (${o.mesasAtendidas})` })),
-                          undefined,
-                          (k) => {
-                            const dest = otros.find((o) => o.id === k);
-                            if (dest) void d.reasignarMeseroTodo(m.id, m.nombre_visible, dest.id, dest.nombre_visible);
-                          },
-                          'Sin otros meseros.',
-                        )}
-                      </>
-                    ) : null}
-                  </View>
-                );
-              })}
-            </View>
+            <>
+              {loader}
+              {hostEquipoCard}
+            </>
           )}
-        </WebCard>
         </>
       )}
 

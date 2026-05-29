@@ -1,6 +1,8 @@
-# FastTable — Landing page
+# FastTable — Landing page (copia histórica)
 
-Página promocional **solo frontend** (HTML + CSS + JS, sin dependencias ni build).
+La versión que se **publica en internet** está en **`host/site/`** (ver [`host/README.md`](../host/README.md)).
+
+Esta carpeta `landing/` se mantiene como referencia; edita y despliega desde `host/`.
 Sirve para mostrar la app y, más adelante, enlazar la descarga en Google Play.
 
 ## Estructura

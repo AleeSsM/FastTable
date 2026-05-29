@@ -11,11 +11,11 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as Linking from 'expo-linking';
 import { useRouter } from 'expo-router';
 
 import { Comensal } from '@/constants/theme-comensal';
 import { formatAuthErrorMessage } from '@/lib/auth-errors';
+import { getAuthRedirectUrl } from '@/lib/auth-redirect';
 import { supabase } from '@/lib/supabase';
 
 export default function RegisterScreen() {
@@ -47,7 +47,7 @@ export default function RegisterScreen() {
         email: e,
         password,
         options: {
-          emailRedirectTo: Linking.createURL('/'),
+          emailRedirectTo: getAuthRedirectUrl(),
           data: { nombre_completo: n, full_name: n },
         },
       });
