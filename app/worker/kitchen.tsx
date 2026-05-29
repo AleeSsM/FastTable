@@ -18,6 +18,7 @@ import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 
 import { useAuth } from '@/contexts/auth-context';
+import { useSafeSignOut } from '@/hooks/use-safe-sign-out';
 import { FtColors } from '@/constants/fasttable';
 import { REALTIME_KITCHEN, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { mapCocinaRpcError } from '@/lib/cocina-errors';
@@ -64,7 +65,8 @@ const cardShadow =
 
 export default function KitchenScreen() {
   const router = useRouter();
-  const { session, staffMember, loading: authLoading, signOut } = useAuth();
+  const { session, staffMember, loading: authLoading } = useAuth();
+  const { safeSignOut, signingOut } = useSafeSignOut();
   const [pedidos, setPedidos] = useState<PedidoRow[]>([]);
   const [items, setItems] = useState<ItemDisp[]>([]);
   const [loading, setLoading] = useState(true);
@@ -309,8 +311,8 @@ export default function KitchenScreen() {
           <Ionicons name="chevron-forward" size={18} color={FtColors.textMuted} />
         </Pressable>
 
-        <Pressable style={styles.signOut} onPress={() => signOut()}>
-          <Text style={styles.signOutText}>Cerrar sesión</Text>
+        <Pressable style={styles.signOut} onPress={safeSignOut} disabled={signingOut}>
+          <Text style={styles.signOutText}>{signingOut ? 'Cerrando sesión…' : 'Cerrar sesión'}</Text>
         </Pressable>
       </ScrollView>
 

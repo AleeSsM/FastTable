@@ -5,6 +5,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -47,6 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<ProfileRow | null>(null);
   const [staffMember, setStaffMember] = useState<StaffRow | null>(null);
   const [loading, setLoading] = useState(true);
+  const signingOutRef = useRef(false);
 
   const loadProfile = useCallback(async (userId: string) => {
     const { data, error } = await supabase.from('perfiles').select('*').eq('id', userId).maybeSingle();
@@ -151,9 +153,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [session?.user?.id, loadStaff]);
 
   const signOut = useCallback(async () => {
-    await supabase.auth.signOut();
+    if (signingOutRef.current) return;
+    signingOutRef.current = true;
+    setLoading(true);
+    setSession(null);
     setProfile(null);
     setStaffMember(null);
+    try {
+      await supabase.auth.signOut({ scope: 'local' });
+    } catch {
+      await clearInvalidLocalSession();
+    }
+    signingOutRef.current = false;
+    setLoading(false);
   }, []);
 
   const value = useMemo<AuthContextValue>(

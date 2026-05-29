@@ -18,6 +18,7 @@ import { Redirect, useFocusEffect, useRouter, type Href } from 'expo-router';
 
 import { Avatar } from '@/components/avatar';
 import { useAuth } from '@/contexts/auth-context';
+import { useSafeSignOut } from '@/hooks/use-safe-sign-out';
 import { FtColors } from '@/constants/fasttable';
 import { REALTIME_GERENTE, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { formatPriceFromCents } from '@/lib/format';
@@ -89,7 +90,8 @@ function roleLabel(rol: string): string {
 
 export default function GerenteScreen() {
   const router = useRouter();
-  const { session, staffMember, loading: authLoading, signOut } = useAuth();
+  const { session, staffMember, loading: authLoading } = useAuth();
+  const { safeSignOut, signingOut } = useSafeSignOut();
   const [stats, setStats] = useState<GerenteStats | null>(null);
   const [rangeDays, setRangeDays] = useState<RangeOption>(7);
   const [dailyRevenue, setDailyRevenue] = useState<DailyMetric[]>([]);
@@ -582,8 +584,8 @@ export default function GerenteScreen() {
           <Ionicons name="chevron-forward" size={18} color={FtColors.textMuted} />
         </Pressable>
 
-        <Pressable style={styles.signOut} onPress={() => signOut()}>
-          <Text style={styles.signOutText}>Cerrar sesión</Text>
+        <Pressable style={styles.signOut} onPress={safeSignOut} disabled={signingOut}>
+          <Text style={styles.signOutText}>{signingOut ? 'Cerrando sesión…' : 'Cerrar sesión'}</Text>
         </Pressable>
       </ScrollView>
     </SafeAreaView>

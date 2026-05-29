@@ -16,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Avatar } from '@/components/avatar';
 import { FtColors } from '@/constants/fasttable';
 import { useAuth } from '@/contexts/auth-context';
+import { useSafeSignOut } from '@/hooks/use-safe-sign-out';
 import {
   fmtFecha,
   formatGuestName,
@@ -522,8 +523,8 @@ export default function WorkerDashboardScreen() {
           <Ionicons name="chevron-forward" size={18} color={FtColors.accentMuted} />
         </Pressable>
 
-        <Pressable style={styles.signOut} onPress={() => signOut()}>
-          <Text style={styles.signOutText}>Cerrar sesión</Text>
+        <Pressable style={styles.signOut} onPress={safeSignOut} disabled={signingOut}>
+          <Text style={styles.signOutText}>{signingOut ? 'Cerrando sesión…' : 'Cerrar sesión'}</Text>
         </Pressable>
       </ScrollView>
     </SafeAreaView>

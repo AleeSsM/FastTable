@@ -1,23 +1,11 @@
-import { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Comensal } from '@/constants/theme-comensal';
-import { useAuth } from '@/contexts/auth-context';
+import { useSafeSignOut } from '@/hooks/use-safe-sign-out';
 
 /** Aviso en web para clientes: la versión de navegador es solo para personal. */
 export function SoloPersonalWeb() {
-  const { signOut } = useAuth();
-  const [busy, setBusy] = useState(false);
-
-  const onSignOut = async () => {
-    if (busy) return;
-    setBusy(true);
-    try {
-      await signOut();
-    } catch {
-      setBusy(false);
-    }
-  };
+  const { safeSignOut, signingOut } = useSafeSignOut();
 
   return (
     <View style={styles.root}>
@@ -33,8 +21,11 @@ export function SoloPersonalWeb() {
           Si eres cliente, usa la app de FastTable en tu teléfono para reservar mesa, ver el menú y
           pedir servicio.
         </Text>
-        <Pressable style={[styles.btn, busy && styles.btnDisabled]} onPress={onSignOut} disabled={busy}>
-          {busy ? (
+        <Pressable
+          style={[styles.btn, signingOut && styles.btnDisabled]}
+          onPress={safeSignOut}
+          disabled={signingOut}>
+          {signingOut ? (
             <ActivityIndicator color={Comensal.onAccent} />
           ) : (
             <Text style={styles.btnText}>Cerrar sesión</Text>

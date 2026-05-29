@@ -1,31 +1,21 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import {
-  Alert,
-  InteractionManager,
-  Keyboard,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Avatar } from '@/components/avatar';
 import { useAuth } from '@/contexts/auth-context';
+import { useSafeSignOut } from '@/hooks/use-safe-sign-out';
 import { Comensal } from '@/constants/theme-comensal';
 import { supabase } from '@/lib/supabase';
 
 export default function MoreScreen() {
   const router = useRouter();
-  const { user, profile, signOut } = useAuth();
+  const { user, profile } = useAuth();
+  const { safeSignOut, signingOut } = useSafeSignOut();
   const [issueTitle, setIssueTitle] = useState('');
   const [issueDetail, setIssueDetail] = useState('');
   const [sending, setSending] = useState(false);
-  const [signingOut, setSigningOut] = useState(false);
 
   const onReportIssue = async () => {
     if (!user?.id) return;
@@ -53,34 +43,6 @@ export default function MoreScreen() {
       );
     } finally {
       setSending(false);
-    }
-  };
-
-  const onSignOut = () => {
-    if (signingOut) return;
-    setSigningOut(true);
-    Keyboard.dismiss();
-
-    const run = async () => {
-      try {
-        // iOS: no desmontar el árbol de tabs en el mismo tick del toque (ScrollView + TextInput + Redirect).
-        if (Platform.OS === 'ios') {
-          await new Promise<void>((resolve) => {
-            InteractionManager.runAfterInteractions(() => {
-              requestAnimationFrame(() => resolve());
-            });
-          });
-        }
-        await signOut();
-      } catch {
-        setSigningOut(false);
-      }
-    };
-
-    if (Platform.OS === 'ios') {
-      setTimeout(() => void run(), 0);
-    } else {
-      void run();
     }
   };
 
@@ -145,7 +107,7 @@ export default function MoreScreen() {
         <Text style={styles.sectionTitle}>Sesión</Text>
         <Pressable
           style={[styles.ghostBtn, signingOut && styles.btnDisabled]}
-          onPress={onSignOut}
+          onPress={safeSignOut}
           disabled={signingOut}>
           <Text style={styles.ghostBtnText}>{signingOut ? 'Cerrando sesión…' : 'Cerrar sesión'}</Text>
         </Pressable>

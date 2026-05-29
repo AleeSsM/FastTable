@@ -5,6 +5,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import { Avatar } from '@/components/avatar';
 import { FtColors } from '@/constants/fasttable';
 import { useAuth } from '@/contexts/auth-context';
+import { useSafeSignOut } from '@/hooks/use-safe-sign-out';
 import { badgeCountForItem, useWorkerNavBadges } from '@/hooks/use-worker-nav-badges';
 import {
   navForRole,
@@ -30,7 +31,8 @@ export function WorkerWebShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname() ?? '';
   const params = useLocalSearchParams<{ sec?: string }>();
-  const { staffMember, loading, signOut } = useAuth();
+  const { staffMember, loading } = useAuth();
+  const { safeSignOut, signingOut } = useSafeSignOut();
 
   const rol = staffMember?.rol as WorkerRol | undefined;
   const currentSec = parseNavSection(rol, params.sec, pathname);
@@ -114,7 +116,8 @@ export function WorkerWebShell({ children }: { children: React.ReactNode }) {
             </View>
           </Pressable>
           <Pressable
-            onPress={() => signOut()}
+            onPress={safeSignOut}
+            disabled={signingOut}
             hitSlop={8}
             style={({ hovered }: { hovered?: boolean }) => [
               styles.signOutBtn,
