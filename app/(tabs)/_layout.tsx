@@ -2,19 +2,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { Redirect, Tabs } from 'expo-router';
 import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
 
+import { AuthBoot } from '@/components/auth-boot';
 import { SoloPersonalWeb } from '@/components/solo-personal-web';
 import { useAuth } from '@/contexts/auth-context';
 import { Comensal } from '@/constants/theme-comensal';
 
 export default function GuestTabLayout() {
-  const { session, staffMember, loading } = useAuth();
+  const { session, staffMember, loading, signingOut } = useAuth();
 
-  if (loading) {
-    return (
-      <View style={styles.boot}>
-        <ActivityIndicator color={Comensal.accent} size="large" />
-      </View>
-    );
+  if (loading || signingOut) {
+    return <AuthBoot />;
   }
 
   if (!session) {

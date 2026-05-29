@@ -1,37 +1,40 @@
 import { useRouter, type Href } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 
 import { useAuth } from '@/contexts/auth-context';
 import { afterSignOutUiSettled, runSignOutTask } from '@/lib/sign-out';
 
 type Options = {
-  /** Tras cerrar sesión (por defecto pantalla de bienvenida). */
   redirectTo?: Href;
 };
 
 /**
- * Cierra sesión y navega fuera de worker/tabs sin depender solo de Redirect en iOS.
+ * Cierra sesión, vacía el stack de navegación y va al inicio sin Redirect en bucle (iOS).
  */
 export function useSafeSignOut(options: Options = {}) {
   const router = useRouter();
-  const { signOut } = useAuth();
-  const [signingOut, setSigningOut] = useState(false);
+  const { signOut, finishSignOutNavigation, signingOut } = useAuth();
   const redirectTo = options.redirectTo ?? ('/' as Href);
 
   const safeSignOut = useCallback(() => {
     if (signingOut) return;
-    setSigningOut(true);
 
     runSignOutTask(async () => {
       try {
         await afterSignOutUiSettled();
         await signOut();
+
+        if (typeof router.dismissAll === 'function') {
+          router.dismissAll();
+        }
         router.replace(redirectTo);
+
+        await afterSignOutUiSettled();
       } finally {
-        setSigningOut(false);
+        finishSignOutNavigation();
       }
     });
-  }, [signOut, router, redirectTo, signingOut]);
+  }, [signOut, finishSignOutNavigation, router, redirectTo, signingOut]);
 
   return { safeSignOut, signingOut };
 }

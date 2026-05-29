@@ -17,6 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Redirect, useFocusEffect, useRouter, type Href } from 'expo-router';
 
 import { Avatar } from '@/components/avatar';
+import { AuthBoot } from '@/components/auth-boot';
 import { useAuth } from '@/contexts/auth-context';
 import { useSafeSignOut } from '@/hooks/use-safe-sign-out';
 import { FtColors } from '@/constants/fasttable';
@@ -90,8 +91,9 @@ function roleLabel(rol: string): string {
 
 export default function GerenteScreen() {
   const router = useRouter();
-  const { session, staffMember, loading: authLoading } = useAuth();
-  const { safeSignOut, signingOut } = useSafeSignOut();
+  const { session, staffMember, loading: authLoading, signingOut: authSigningOut } = useAuth();
+  const { safeSignOut, signingOut: localSigningOut } = useSafeSignOut();
+  const signingOut = authSigningOut || localSigningOut;
   const [stats, setStats] = useState<GerenteStats | null>(null);
   const [rangeDays, setRangeDays] = useState<RangeOption>(7);
   const [dailyRevenue, setDailyRevenue] = useState<DailyMetric[]>([]);
@@ -283,12 +285,8 @@ export default function GerenteScreen() {
     !!session && !!staffMember && staffMember.rol === 'gerente',
   );
 
-  if (authLoading) {
-    return (
-      <View style={styles.boot}>
-        <ActivityIndicator color={FtColors.accent} size="large" />
-      </View>
-    );
+  if (authLoading || signingOut) {
+    return <AuthBoot variant="worker" />;
   }
 
   if (!session) {

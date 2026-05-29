@@ -10,20 +10,16 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Redirect, useRouter } from 'expo-router';
 
+import { AuthBoot } from '@/components/auth-boot';
 import { useAuth } from '@/contexts/auth-context';
 import { Comensal } from '@/constants/theme-comensal';
 
 export default function WelcomeScreen() {
   const router = useRouter();
-  const { session, user, staffMember, loading } = useAuth();
+  const { session, user, staffMember, loading, signingOut } = useAuth();
 
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.centered}>
-        <ActivityIndicator color={Comensal.accent} />
-        <Text style={styles.muted}>Cargando…</Text>
-      </SafeAreaView>
-    );
+  if (loading || signingOut) {
+    return <AuthBoot />;
   }
 
   if (session && user) {

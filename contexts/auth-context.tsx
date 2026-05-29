@@ -22,9 +22,12 @@ type AuthContextValue = {
   profile: ProfileRow | null;
   staffMember: StaffRow | null;
   loading: boolean;
+  /** true mientras cerramos sesión: no usar Redirect en layouts. */
+  signingOut: boolean;
   refreshProfile: () => Promise<void>;
   refreshStaff: () => Promise<void>;
   signOut: () => Promise<void>;
+  finishSignOutNavigation: () => void;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -48,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<ProfileRow | null>(null);
   const [staffMember, setStaffMember] = useState<StaffRow | null>(null);
   const [loading, setLoading] = useState(true);
+  const [signingOut, setSigningOut] = useState(false);
   const signingOutRef = useRef(false);
 
   const loadProfile = useCallback(async (userId: string) => {
@@ -73,7 +77,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
       lastError = error.message;
-      // Retry transient errors to avoid misrouting staff into comensal flow.
       await new Promise((resolve) => setTimeout(resolve, 250 * (attempt + 1)));
     }
     console.warn('No se pudo cargar personal activo:', lastError);
@@ -123,11 +126,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, s) => {
+      if (signingOutRef.current) {
+        if (!s?.user) {
+          setSession(null);
+          setProfile(null);
+          setStaffMember(null);
+        }
+        return;
+      }
+
       setSession(s);
       if (s?.user) {
         setLoading(true);
         void Promise.all([loadProfile(s.user.id), loadStaff(s.user.id)]).finally(() => {
-          setLoading(false);
+          if (!signingOutRef.current) setLoading(false);
         });
       } else {
         setProfile(null);
@@ -155,6 +167,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = useCallback(async () => {
     if (signingOutRef.current) return;
     signingOutRef.current = true;
+    setSigningOut(true);
     setLoading(true);
     setSession(null);
     setProfile(null);
@@ -164,8 +177,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       await clearInvalidLocalSession();
     }
-    signingOutRef.current = false;
     setLoading(false);
+  }, []);
+
+  const finishSignOutNavigation = useCallback(() => {
+    signingOutRef.current = false;
+    setSigningOut(false);
   }, []);
 
   const value = useMemo<AuthContextValue>(
@@ -175,11 +192,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       profile,
       staffMember,
       loading,
+      signingOut,
       refreshProfile,
       refreshStaff,
       signOut,
+      finishSignOutNavigation,
     }),
-    [session, profile, staffMember, loading, refreshProfile, refreshStaff, signOut],
+    [
+      session,
+      profile,
+      staffMember,
+      loading,
+      signingOut,
+      refreshProfile,
+      refreshStaff,
+      signOut,
+      finishSignOutNavigation,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

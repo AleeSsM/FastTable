@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { AuthBoot } from '@/components/auth-boot';
 import { Avatar } from '@/components/avatar';
 import { FtColors } from '@/constants/fasttable';
 import { useAuth } from '@/contexts/auth-context';
@@ -38,19 +39,17 @@ const cardShadow =
 
 export default function WorkerDashboardScreen() {
   const router = useRouter();
-  const { signOut, loading: authLoading } = useAuth();
+  const { loading: authLoading, signingOut: authSigningOut } = useAuth();
+  const { safeSignOut, signingOut: localSigningOut } = useSafeSignOut();
+  const signingOut = authSigningOut || localSigningOut;
   const d = useWorkerDashboard();
   const { staffMember, session, isHost, isWaiter } = d;
 
   const [hostTab, setHostTab] = useState<HostTab>('fila');
   const [waiterTab, setWaiterTab] = useState<WaiterTab>('mesas');
 
-  if (authLoading) {
-    return (
-      <View style={styles.boot}>
-        <ActivityIndicator color={FtColors.accent} size="large" />
-      </View>
-    );
+  if (authLoading || signingOut) {
+    return <AuthBoot variant="worker" />;
   }
   if (!session) return <Redirect href="/" />;
   if (!staffMember) return <Redirect href="/login" />;

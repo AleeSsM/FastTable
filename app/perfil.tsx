@@ -38,7 +38,8 @@ function roleLabel(rol: string): string {
 
 export default function PerfilScreen() {
   const router = useRouter();
-  const { user, session, profile, staffMember, loading, refreshProfile, refreshStaff } = useAuth();
+  const { user, session, profile, staffMember, loading, signingOut, refreshProfile, refreshStaff } =
+    useAuth();
   const isStaff = !!staffMember;
 
   const [nombre, setNombre] = useState('');
@@ -64,7 +65,7 @@ export default function PerfilScreen() {
     }
   }, [profile, staffMember, user]);
 
-  if (loading) {
+  if (loading || signingOut) {
     return (
       <View style={styles.boot}>
         <ActivityIndicator color={BRAND.accent} size="large" />

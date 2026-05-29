@@ -17,6 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 
+import { AuthBoot } from '@/components/auth-boot';
 import { useAuth } from '@/contexts/auth-context';
 import { useSafeSignOut } from '@/hooks/use-safe-sign-out';
 import { FtColors } from '@/constants/fasttable';
@@ -174,12 +175,8 @@ export default function KitchenScreen() {
     }
   };
 
-  if (authLoading) {
-    return (
-      <View style={styles.boot}>
-        <ActivityIndicator color={FtColors.accent} size="large" />
-      </View>
-    );
+  if (authLoading || signingOut) {
+    return <AuthBoot variant="worker" />;
   }
 
   if (!session) {
