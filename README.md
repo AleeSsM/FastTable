@@ -61,7 +61,7 @@ La **fuente de verdad** es la base de datos; la app solo orquesta permisos y exp
 - Proyecto **Supabase** con el esquema aplicado: ver [`supabase/README.md`](supabase/README.md)
 - Archivo **`.env`** con `EXPO_PUBLIC_SUPABASE_URL` y `EXPO_PUBLIC_SUPABASE_ANON_KEY` (plantilla: `.env.example`). Para producción web añade `EXPO_PUBLIC_APP_URL` (dominio público, sin localhost). La *service role* solo en máquina local para scripts administrativos, nunca en builds públicos.
 
-**Sitio público (landing + APK + auth + app web en `/app`)**: carpeta [`host/`](host/README.md) y `npm run build:host`. Guía ampliada: [`docs/DESPLIEGUE.md`](docs/DESPLIEGUE.md).
+**Sitio público (landing + APK + auth + app web en `/app`)**: carpeta [`host/`](host/README.md) y `npm run build:host`. Producción: [`docs/PRODUCCION.md`](docs/PRODUCCION.md) · Despliegue: [`docs/DESPLIEGUE.md`](docs/DESPLIEGUE.md) · Equipo: [`docs/COLABORACION.md`](docs/COLABORACION.md).
 
 ---
 
