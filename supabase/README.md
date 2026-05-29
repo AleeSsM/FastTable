@@ -33,6 +33,8 @@ Plantilla: `.env.example`. La *service role* solo en máquina local para scripts
 | `04_patch_mesas_admin_gerente.sql` | RLS: gerente puede crear y eliminar mesas (admin en app). |
 | `05_servicios_mesa_mesero_pedidos.sql` | Servicios por mesa, pedidos del mesero, cuenta unificada y recibos al cerrar. |
 | `06_terminar_servicio_mesa_unificado.sql` | Cierre de servicio igual para comensal y mesero; pedidos sin mezclar visitas. |
+| `07_reservas_turno_2h.sql` | Reservas por turno fijo de 2 h (elige día y hora, sin solapamiento); caducan solas al pasar el turno sin presentarse. |
+| `08_liberar_manual_cierra_servicio.sql` | Liberar mesa con el toggle manual cierra el servicio y genera recibo (evita heredar la cuenta al siguiente cliente). |
 | `demo-accounts.txt` | Correos y contraseña de cuentas demo de personal. |
 | `SCHEMA_CHANGE_GUIDE.txt` | Notas para alterar el esquema con cuidado en producción. |
 

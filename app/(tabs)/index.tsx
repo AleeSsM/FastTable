@@ -18,12 +18,6 @@ import { ReservationModal } from '@/components/reservation-modal';
 import { Comensal } from '@/constants/theme-comensal';
 import { useAuth } from '@/contexts/auth-context';
 import { REALTIME_TABLES_SCREEN, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
-import {
-  addDaysToYmd,
-  restaurantTodayYmd,
-  reservationYmdInRestaurantTz,
-  ymdToLabelEs,
-} from '@/lib/plan-day-ymd';
 import { supabase } from '@/lib/supabase';
 import { tableImageUrl } from '@/lib/table-image';
 
@@ -69,7 +63,7 @@ function formatRpcError(message: string): string {
   )
     return 'Esta mesa ya no está disponible.';
   if (message.includes('mesa_ya_reservada') || message.includes('table_has_active_reservation'))
-    return 'Esta mesa ya tiene una reserva activa.';
+    return 'Ese horario ya está reservado. Cada reserva dura 2 horas; elige otra hora.';
   if (
     message.includes('usuario_ya_tiene_reserva') ||
     message.includes('user_has_active_reservation')
@@ -87,7 +81,6 @@ function formatRpcError(message: string): string {
 export default function TablesScreen() {
   const { user } = useAuth();
   const [filter, setFilter] = useState<'todas' | EstadoMesa>('todas');
-  const [planYmd, setPlanYmd] = useState(restaurantTodayYmd);
   const [rows, setRows] = useState<Row[]>([]);
   const [mine, setMine] = useState<MyReservation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -102,16 +95,6 @@ export default function TablesScreen() {
     }
     return m;
   }, [mine]);
-
-  const planStripDays = useMemo(() => {
-    const out: string[] = [];
-    let y = restaurantTodayYmd();
-    for (let i = 0; i < 21; i += 1) {
-      out.push(y);
-      y = addDaysToYmd(y, 1);
-    }
-    return out;
-  }, []);
 
   const loadMine = useCallback(async () => {
     if (!user?.id) {
@@ -128,6 +111,7 @@ export default function TablesScreen() {
 
   const load = useCallback(async () => {
     setError(null);
+    await supabase.rpc('expirar_reservas_vencidas');
     const { data, error: qError } = await supabase
       .from('mesas')
       .select('id, codigo, capacidad, estado, descripcion_publica, imagen_url, zonas ( nombre )')
@@ -137,13 +121,6 @@ export default function TablesScreen() {
       setRows([]);
       return;
     }
-    const { data: occ, error: occErr } = await supabase.rpc('mesas_con_reserva_activa_en_dia_servicio', {
-      p_dia: planYmd,
-    });
-    if (occErr) {
-      console.warn('mesas_con_reserva_activa_en_dia_servicio', occErr.message);
-    }
-    const reservedToday = new Set<string>((occ as string[] | null) ?? []);
 
     const mapped: Row[] =
       data?.map((r) => {
@@ -151,14 +128,12 @@ export default function TablesScreen() {
         const nombreZona =
           z == null ? null : Array.isArray(z) ? (z[0]?.nombre ?? null) : (z.nombre ?? null);
         const estado = r.estado as EstadoMesa;
-        const displayEstado: EstadoMesa =
-          estado === 'ocupada' ? 'ocupada' : reservedToday.has(r.id) ? 'reservada' : 'libre';
         return {
           id: r.id,
           codigo: r.codigo,
           capacidad: r.capacidad,
           estado,
-          displayEstado,
+          displayEstado: estado,
           nombreZona,
           descripcion_publica: r.descripcion_publica ?? null,
           imagen_url: r.imagen_url ?? null,
@@ -166,7 +141,7 @@ export default function TablesScreen() {
       }) ?? [];
     setRows(mapped);
     await loadMine();
-  }, [loadMine, planYmd]);
+  }, [loadMine]);
 
   useFocusEffect(
     useCallback(() => {
@@ -247,33 +222,11 @@ export default function TablesScreen() {
           <Text style={styles.heroEyebrow}>Salón</Text>
           <Text style={styles.heroTitle}>Mesas</Text>
           <Text style={styles.heroSub}>
-            Elige el día (calendario del restaurante) y una mesa libre para esa fecha; luego confirma hora en el modal.
+            Elige una mesa disponible y, al reservar, eliges el día y la hora. Cada reserva
+            ocupa la mesa durante 2 horas.
           </Text>
           <ComensalGreetingLine style={styles.heroGreeting} />
         </View>
-
-        <Text style={styles.planStripTitle}>Día de la visita</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.planStrip}>
-          {planStripDays.map((ymd) => {
-            const isOn = ymd === planYmd;
-            const isToday = ymd === restaurantTodayYmd();
-            return (
-              <Pressable
-                key={ymd}
-                onPress={() => setPlanYmd(ymd)}
-                style={[styles.dayChip, isOn && styles.dayChipOn]}>
-                <Text style={[styles.dayChipTop, isOn && styles.dayChipTopOn]}>
-                  {isToday ? 'Hoy' : ymdToLabelEs(ymd)}
-                </Text>
-                <Text style={[styles.dayChipSub, isOn && styles.dayChipSubOn]}>{ymd.slice(5)}</Text>
-              </Pressable>
-            );
-          })}
-        </ScrollView>
-        <Text style={styles.planStripHint}>
-          Las reservas se cuentan por día en zona Ciudad de México. Si tu restaurante está en otra región, se puede
-          cambiar en la base de datos.
-        </Text>
 
         {loading && !refreshing ? (
           <ActivityIndicator color={Comensal.accent} style={styles.loader} />
@@ -297,9 +250,8 @@ export default function TablesScreen() {
         </View>
 
         {filtered.map((t) => {
-          const rawMy = myByTableId.get(t.id);
-          const myRes =
-            rawMy && reservationYmdInRestaurantTz(rawMy.fecha_hora_reserva) === planYmd ? rawMy : undefined;
+          const myRes = myByTableId.get(t.id);
+          const canReserve = t.estado !== 'ocupada' && !!user && !myRes && !hasActiveReservation;
           return (
             <View key={t.id} style={styles.card}>
               <View style={styles.cardAccent} />
@@ -353,17 +305,17 @@ export default function TablesScreen() {
                       </View>
                     ) : (
                       <Text style={styles.sideHint}>
-                        {t.displayEstado === 'libre'
-                          ? hasActiveReservation
+                        {t.estado === 'ocupada'
+                          ? 'Ocupada en este momento'
+                          : hasActiveReservation
                             ? 'Ya tienes una reserva activa'
-                            : 'Disponible para reservar'
-                          : t.displayEstado === 'ocupada'
-                            ? 'Mesa ocupada en este momento'
-                            : 'Reservada para el día elegido'}
+                            : t.estado === 'reservada'
+                              ? 'Tiene reservas; elige otro horario'
+                              : 'Disponible para reservar'}
                       </Text>
                     )}
 
-                    {t.displayEstado === 'libre' && user && !myRes && !hasActiveReservation ? (
+                    {canReserve ? (
                       <Pressable style={styles.reserveBtn} onPress={() => setReserveTable(t)}>
                         <Text style={styles.reserveBtnText}>Reservar</Text>
                       </Pressable>
@@ -383,7 +335,7 @@ export default function TablesScreen() {
         tableDescription={reserveTable?.descripcion_publica}
         zoneName={reserveTable?.nombreZona}
         capacity={reserveTable?.capacidad}
-        suggestedDayYmd={reserveTable != null ? planYmd : null}
+        suggestedDayYmd={null}
         onClose={() => setReserveTable(null)}
         onConfirm={onReserveConfirm}
       />
@@ -426,38 +378,6 @@ const styles = StyleSheet.create({
     maxWidth: 320,
   },
   heroGreeting: { marginTop: 10, marginBottom: 0 },
-  planStripTitle: {
-    fontSize: 11,
-    letterSpacing: 2.5,
-    textTransform: 'uppercase',
-    color: Comensal.accentMuted,
-    marginBottom: 10,
-  },
-  planStrip: { flexDirection: 'row', gap: 10, paddingBottom: 4, marginBottom: 6 },
-  planStripHint: {
-    fontSize: 11,
-    color: Comensal.textFaint,
-    lineHeight: 16,
-    marginBottom: 18,
-    maxWidth: 360,
-  },
-  dayChip: {
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: Comensal.radiusSm,
-    borderWidth: 1,
-    borderColor: Comensal.border,
-    backgroundColor: Comensal.surfaceInput,
-    minWidth: 76,
-  },
-  dayChipOn: {
-    borderColor: Comensal.accent,
-    backgroundColor: Comensal.chipSelectedBg,
-  },
-  dayChipTop: { fontSize: 12, fontWeight: '800', color: Comensal.textMuted, textAlign: 'center' },
-  dayChipTopOn: { color: Comensal.text },
-  dayChipSub: { fontSize: 11, color: Comensal.textFaint, textAlign: 'center', marginTop: 2 },
-  dayChipSubOn: { color: Comensal.textMuted },
   loader: { marginVertical: 20 },
   err: { color: Comensal.danger, marginBottom: 12, fontSize: 14 },
   empty: { fontSize: 14, color: Comensal.textMuted, marginBottom: 16 },

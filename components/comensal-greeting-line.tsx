@@ -9,7 +9,9 @@ type Props = Omit<TextProps, 'children'>;
 export function ComensalGreetingLine({ style, ...rest }: Props) {
   const { user, profile } = useAuth();
   if (!user) return null;
-  const line = textoSaludoComensal(profile?.nombre_completo, user.email);
+  const meta = user.user_metadata as { nombre_completo?: string; full_name?: string } | undefined;
+  const metaNombre = meta?.nombre_completo ?? meta?.full_name ?? null;
+  const line = textoSaludoComensal(profile?.nombre_completo, metaNombre);
   return (
     <Text style={[styles.line, style]} {...rest}>
       {line}

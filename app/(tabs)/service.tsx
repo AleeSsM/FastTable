@@ -84,7 +84,7 @@ export default function ServiceScreen() {
         />
       }>
       <Text style={styles.eyebrow}>Asistencia</Text>
-      <Text style={styles.intro}>Llama al personal cuando estés en mesa.</Text>
+      <Text style={styles.intro}>Solicita atención del personal cuando estés en tu mesa.</Text>
       <ComensalGreetingLine style={styles.greetingLine} />
 
       <View style={styles.card}>

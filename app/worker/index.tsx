@@ -157,6 +157,7 @@ export default function WorkerDashboardScreen() {
 
   const load = useCallback(async () => {
     if (!staffMember?.id) return;
+    await supabase.rpc('expirar_reservas_vencidas');
     const [tAvail, tWait, tSol, resData, mine, todas, filaData, meserosData, mesasConMesero] = await Promise.all([
       supabase.from('mesas').select('*', { count: 'exact', head: true }).eq('estado', 'libre'),
       supabase.from('fila_espera').select('*', { count: 'exact', head: true }).eq('estado', 'esperando'),

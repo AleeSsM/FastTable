@@ -33,6 +33,16 @@ export default function RootLayout() {
           <Stack.Screen name="forgot-password" options={{ title: 'Recuperar contraseña', headerBackTitle: 'Atrás' }} />
           <Stack.Screen name="reset-password" options={{ title: 'Nueva contraseña', headerBackTitle: 'Atrás' }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="mis-cuentas"
+            options={{
+              title: 'Mis cuentas',
+              headerBackTitle: 'Atrás',
+              headerStyle: { backgroundColor: Comensal.surface },
+              headerTitleStyle: { color: Comensal.text, fontWeight: '700' },
+              headerTintColor: Comensal.accent,
+            }}
+          />
           <Stack.Screen name="worker" options={{ headerShown: false }} />
         </Stack>
         <StatusBar style="light" />

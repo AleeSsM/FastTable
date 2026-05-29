@@ -596,6 +596,35 @@ CREATE POLICY reportes_problema_update_gerente ON public.reportes_problema FOR U
     )
   );
 
+-- Caduca reservas cuyo turno de 2 h ya terminó y nunca se sentaron, y libera la
+-- mesa si ya no le queda ningún turno vigente. Evita que una mesa quede
+-- "reservada" para siempre o que un cliente quede bloqueado por una reserva vieja.
+CREATE OR REPLACE FUNCTION public.expirar_reservas_vencidas()
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $function$
+BEGIN
+  UPDATE public.reservas_mesa rm
+  SET ciclo = 'cancelada'
+  WHERE rm.ciclo = 'activa'
+    AND rm.comensal_llego IS NULL
+    AND rm.fecha_hora_reserva + INTERVAL '2 hours' <= now();
+
+  UPDATE public.mesas m
+  SET estado = 'libre', actualizado_en = now()
+  WHERE m.estado = 'reservada'
+    AND NOT EXISTS (
+      SELECT 1 FROM public.reservas_mesa r
+      WHERE r.id_mesa = m.id
+        AND r.ciclo = 'activa'
+        AND r.comensal_llego IS NULL
+        AND r.fecha_hora_reserva + INTERVAL '2 hours' > now()
+    );
+END;
+$function$;
+
 CREATE OR REPLACE FUNCTION public.crear_reserva_mesa(
   p_id_mesa uuid,
   p_fecha_hora timestamptz,
@@ -612,6 +641,7 @@ DECLARE
   v_id uuid;
 BEGIN
   IF v_uid IS NULL THEN RAISE EXCEPTION 'no_autenticado'; END IF;
+  PERFORM public.expirar_reservas_vencidas();
   IF p_personas_grupo IS NULL OR p_personas_grupo < 1 THEN RAISE EXCEPTION 'grupo_invalido'; END IF;
   IF p_personas_grupo > (SELECT m.capacidad FROM public.mesas m WHERE m.id = p_id_mesa) THEN
     RAISE EXCEPTION 'grupo_excede_capacidad_mesa';
@@ -624,18 +654,25 @@ BEGIN
     RAISE EXCEPTION 'mesa_no_disponible';
   END IF;
 
-  -- Máximo una reserva activa por mesa y día de servicio (zona restaurante).
+  -- Cada reserva ocupa un turno fijo de 2 horas. No se permite otra reserva
+  -- cuyo turno se solape con uno existente en la misma mesa. Dos turnos
+  -- [a, a+2h) y [b, b+2h) se solapan si a < b+2h y b < a+2h.
   IF EXISTS (
     SELECT 1
     FROM public.reservas_mesa r
     WHERE r.id_mesa = p_id_mesa
       AND r.ciclo = 'activa'
-      AND (r.fecha_hora_reserva AT TIME ZONE 'America/Mexico_City')::date
-        = (p_fecha_hora AT TIME ZONE 'America/Mexico_City')::date
+      AND r.fecha_hora_reserva < p_fecha_hora + INTERVAL '2 hours'
+      AND p_fecha_hora < r.fecha_hora_reserva + INTERVAL '2 hours'
   ) THEN
     RAISE EXCEPTION 'mesa_ya_reservada';
   END IF;
-  IF EXISTS (SELECT 1 FROM public.reservas_mesa WHERE id_usuario = v_uid AND ciclo = 'activa') THEN
+  IF EXISTS (
+    SELECT 1 FROM public.reservas_mesa
+    WHERE id_usuario = v_uid
+      AND ciclo = 'activa'
+      AND fecha_hora_reserva + INTERVAL '2 hours' > now()
+  ) THEN
     RAISE EXCEPTION 'usuario_ya_tiene_reserva';
   END IF;
 
@@ -1444,16 +1481,11 @@ BEGIN
        AND v_staff_rol IS DISTINCT FROM 'gerente'::public.rol_personal THEN
       RAISE EXCEPTION 'no_tu_mesa_toggle';
     END IF;
-    UPDATE public.mesas AS t
-    SET estado = 'libre',
-        actualizado_en = now()
-    WHERE t.id = p_id_mesa;
-
-    UPDATE public.fila_espera AS f
-    SET estado = 'cancelado',
-        cancelado_en = now()
-    WHERE f.id_mesa_asignada = p_id_mesa
-      AND f.estado = 'sentado';
+    -- Cierre completo (igual que liberar la mesa atendida): cierra el servicio
+    -- activo y genera su recibo, cancela la fila sentada y limpia la reserva
+    -- atendida. Sin esto, el servicio quedaría abierto y un próximo comensal
+    -- en esta mesa heredaría la cuenta del anterior (mezcla entre clientes).
+    PERFORM public.terminar_servicio_en_mesa(p_id_mesa);
   END IF;
 END;
 $function$;
@@ -1826,6 +1858,7 @@ $function$;
 REVOKE ALL ON FUNCTION public.mesas_con_reserva_activa_en_dia_servicio(date) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.mesas_con_reserva_activa_en_dia_servicio(date) TO authenticated;
 
+GRANT EXECUTE ON FUNCTION public.expirar_reservas_vencidas() TO authenticated;
 GRANT EXECUTE ON FUNCTION public.crear_reserva_mesa(uuid, timestamptz, int, text) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.cancelar_reserva_mesa(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.personal_resolver_reserva(uuid, boolean) TO authenticated;

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="FastTable — la app que opera tu restaurante de punta a punta: reservas, menú, cocina, sala y gerencia en tiempo real."
+    />
+    <title>FastTable · Tu restaurante, en una sola app</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Fondo con glow -->
+    <div class="bg-glow bg-glow--one" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow--two" aria-hidden="true"></div>
+
+    <!-- ===================== NAV ===================== -->
+    <header class="nav" id="nav">
+      <div class="container nav__inner">
+        <a href="#hero" class="brand" aria-label="FastTable inicio">
+          <span class="brand__mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" width="28" height="28">
+              <rect x="3" y="3" width="26" height="26" rx="8" fill="url(#g)" />
+              <path
+                d="M11 10h10M11 16h10M11 22h6"
+                stroke="#f5f7ff"
+                stroke-width="2.4"
+                stroke-linecap="round"
+              />
+              <defs>
+                <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#7c8cff" />
+                  <stop offset="1" stop-color="#5f6ece" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </span>
+          <span class="brand__name">FastTable</span>
+        </a>
+
+        <nav class="nav__links" aria-label="Secciones">
+          <a href="#features">Funciones</a>
+          <a href="#roles">Roles</a>
+          <a href="#how">Cómo funciona</a>
+          <a href="#download">Descargar</a>
+        </nav>
+
+        <a href="#download" class="btn btn--accent btn--sm nav__cta">Descargar app</a>
+
+        <button class="nav__burger" id="burger" aria-label="Abrir menú" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <!-- ===================== HERO ===================== -->
+      <section class="hero" id="hero">
+        <div class="container hero__grid">
+          <div class="hero__copy">
+            <span class="pill">
+              <span class="pill__dot"></span> En tiempo real · sin recargar
+            </span>
+            <h1 class="hero__title">
+              Tu restaurante completo,<br />
+              <span class="grad-text">en una sola app.</span>
+            </h1>
+            <p class="hero__lead">
+              Reservas, menú, pedidos a cocina, atención en sala y los indicadores
+              de gerencia. FastTable conecta a comensales y personal sobre un mismo
+              backend, sincronizado al instante.
+            </p>
+
+            <div class="hero__cta">
+              <a href="#download" class="btn btn--accent btn--lg">
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                  <path
+                    d="M12 3v12m0 0l-4-4m4 4l4-4M5 19h14"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                Descargar gratis
+              </a>
+              <a href="#how" class="btn btn--ghost btn--lg">Ver cómo funciona</a>
+            </div>
+
+            <div class="hero__stats">
+              <div class="stat">
+                <strong>5</strong>
+                <span>roles conectados</span>
+              </div>
+              <div class="stat-sep" aria-hidden="true"></div>
+              <div class="stat">
+                <strong>0s</strong>
+                <span>de espera al actualizar</span>
+              </div>
+              <div class="stat-sep" aria-hidden="true"></div>
+              <div class="stat">
+                <strong>100%</strong>
+                <span>en tu bolsillo</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mockup teléfono -->
+          <div class="hero__device" aria-hidden="true">
+            <div class="phone phone--float">
+              <div class="phone__notch"></div>
+              <div class="phone__screen">
+                <div class="appbar">
+                  <div class="appbar__title">Buenas noches 👋</div>
+                  <div class="appbar__sub">Mesa lista para ti</div>
+                </div>
+                <div class="screen-card screen-card--banner">
+                  <div class="dot dot--ok"></div>
+                  <div>
+                    <div class="sc-strong">Mesa A4 · ocupada</div>
+                    <div class="sc-muted">Atiende: Sofía</div>
+                  </div>
+                </div>
+                <div class="screen-list">
+                  <div class="screen-row">
+                    <div class="thumb"></div>
+                    <div class="screen-row__body">
+                      <div class="sc-strong">Risotto de hongos</div>
+                      <div class="sc-muted">Plato fuerte</div>
+                    </div>
+                    <div class="price">$185</div>
+                  </div>
+                  <div class="screen-row">
+                    <div class="thumb thumb--b"></div>
+                    <div class="screen-row__body">
+                      <div class="sc-strong">Limonada de la casa</div>
+                      <div class="sc-muted">Bebida</div>
+                    </div>
+                    <div class="price">$55</div>
+                  </div>
+                  <div class="screen-row">
+                    <div class="thumb thumb--c"></div>
+                    <div class="screen-row__body">
+                      <div class="sc-strong">Tarta de chocolate</div>
+                      <div class="sc-muted">Postre</div>
+                    </div>
+                    <div class="price">$95</div>
+                  </div>
+                </div>
+                <div class="screen-total">
+                  <span>Total estimado</span>
+                  <strong>$335</strong>
+                </div>
+                <div class="screen-btn">Pedir a cocina</div>
+              </div>
+            </div>
+            <div class="device-badge device-badge--a">
+              <div class="dot dot--accent"></div>
+              Pedido enviado
+            </div>
+            <div class="device-badge device-badge--b">
+              <div class="dot dot--warn"></div>
+              Cocina: en preparación
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== FEATURES ===================== -->
+      <section class="section" id="features">
+        <div class="container">
+          <div class="section__head">
+            <span class="eyebrow">Por qué FastTable</span>
+            <h2 class="section__title">Una operación, sin fricciones</h2>
+            <p class="section__sub">
+              Todo lo que pasa en el restaurante se refleja al instante en cada
+              dispositivo. Menos radios, menos papelitos, menos errores.
+            </p>
+          </div>
+
+          <div class="grid grid--features">
+            <article class="card feature">
+              <div class="feature__icon">⚡</div>
+              <h3>Tiempo real</h3>
+              <p>
+                Pedidos, mesas y reservas se actualizan solos. Lo que toca un
+                mesero lo ve la cocina al momento.
+              </p>
+            </article>
+            <article class="card feature">
+              <div class="feature__icon">🍽️</div>
+              <h3>Pedidos por mesa</h3>
+              <p>
+                Cada mesa lleva su propia cuenta hasta cerrar el servicio. Sin
+                mezclar consumos de turnos anteriores.
+              </p>
+            </article>
+            <article class="card feature">
+              <div class="feature__icon">🧾</div>
+              <h3>Recibos y control</h3>
+              <p>
+                Al terminar el servicio se guarda el detalle: qué se pidió y
+                cuánto fue. Historial disponible para gerencia.
+              </p>
+            </article>
+            <article class="card feature">
+              <div class="feature__icon">📊</div>
+              <h3>Indicadores claros</h3>
+              <p>
+                Ingresos, platos más vendidos y estado del equipo en un panel
+                pensado para tomar decisiones.
+              </p>
+            </article>
+            <article class="card feature">
+              <div class="feature__icon">🔐</div>
+              <h3>Acceso por rol</h3>
+              <p>
+                Cada quien ve lo suyo: comensal, sala, cocina y gerencia, con
+                permisos seguros.
+              </p>
+            </article>
+            <article class="card feature">
+              <div class="feature__icon">📱</div>
+              <h3>Lista para móvil</h3>
+              <p>
+                Diseñada para usarse desde el teléfono, con una interfaz premium
+                y fácil de aprender.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== ROLES ===================== -->
+      <section class="section section--alt" id="roles">
+        <div class="container">
+          <div class="section__head">
+            <span class="eyebrow">Para todo el equipo</span>
+            <h2 class="section__title">Un rol para cada parte del servicio</h2>
+            <p class="section__sub">
+              FastTable conecta a quienes hacen funcionar el restaurante, de la
+              puerta a la cocina.
+            </p>
+          </div>
+
+          <div class="grid grid--roles">
+            <article class="card role">
+              <div class="role__tag">Comensal</div>
+              <h3>Reserva, pide y revisa su cuenta</h3>
+              <ul class="ticks">
+                <li>Mesas y reservas</li>
+                <li>Carta con fotos y precios</li>
+                <li>Pedidos a cocina y cuenta estimada</li>
+                <li>Fila virtual y solicitudes</li>
+              </ul>
+            </article>
+            <article class="card role">
+              <div class="role__tag">Sala</div>
+              <h3>Mesero y anfitrión, al control</h3>
+              <ul class="ticks">
+                <li>Reservas a atender</li>
+                <li>Mesas asignadas y ocupación</li>
+                <li>Pedidos directos a la mesa</li>
+                <li>Solicitudes de los comensales</li>
+              </ul>
+            </article>
+            <article class="card role">
+              <div class="role__tag">Cocina</div>
+              <h3>La cola de pedidos, ordenada</h3>
+              <ul class="ticks">
+                <li>Pedidos en vivo por mesa</li>
+                <li>Disponibilidad de platos</li>
+                <li>Centro de control de la carta</li>
+              </ul>
+            </article>
+            <article class="card role">
+              <div class="role__tag">Gerencia</div>
+              <h3>Los números que importan</h3>
+              <ul class="ticks">
+                <li>Ingresos del periodo</li>
+                <li>Platos más vendidos</li>
+                <li>Estado del equipo</li>
+                <li>Recibos de servicios cerrados</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== HOW ===================== -->
+      <section class="section" id="how">
+        <div class="container">
+          <div class="section__head">
+            <span class="eyebrow">Cómo funciona</span>
+            <h2 class="section__title">Listo en tres pasos</h2>
+          </div>
+
+          <div class="steps">
+            <div class="step">
+              <div class="step__num">1</div>
+              <h3>Descarga e inicia sesión</h3>
+              <p>Instala FastTable y entra con tu cuenta según tu rol.</p>
+            </div>
+            <div class="step__line" aria-hidden="true"></div>
+            <div class="step">
+              <div class="step__num">2</div>
+              <h3>Reserva o atiende</h3>
+              <p>El comensal pide; la sala y la cocina reciben todo al instante.</p>
+            </div>
+            <div class="step__line" aria-hidden="true"></div>
+            <div class="step">
+              <div class="step__num">3</div>
+              <h3>Cierra y mide</h3>
+              <p>Se guarda el recibo del servicio y gerencia ve los resultados.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== DOWNLOAD ===================== -->
+      <section class="section download" id="download">
+        <div class="container">
+          <div class="download__card card">
+            <div class="download__copy">
+              <span class="eyebrow">Disponible para Android</span>
+              <h2 class="section__title">Lleva tu restaurante en el bolsillo</h2>
+              <p class="section__sub">
+                Descarga FastTable y empieza a operar en tiempo real. Pronto en
+                Google Play.
+              </p>
+
+              <div class="store-buttons">
+                <!-- Botón Play Store: cambia el href por el link real cuando lo tengas -->
+                <a
+                  href="#"
+                  class="store-btn"
+                  id="playstore-btn"
+                  data-store="play"
+                  aria-label="Disponible próximamente en Google Play"
+                >
+                  <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+                    <path
+                      d="M3.6 2.3c-.3.3-.5.7-.5 1.2v17c0 .5.2.9.5 1.2l.1.1L13 12.6v-.2L3.7 2.2l-.1.1z"
+                      fill="#7c8cff"
+                    />
+                    <path d="M16.4 16l-3.4-3.4v-.2L16.4 9l3.9 2.2c1.1.6 1.1 1.7 0 2.3L16.4 16z" fill="#5f6ece" />
+                    <path d="M16.4 16L13 12.5 3.6 22c.4.4 1 .4 1.7.1L16.4 16z" fill="#a4afc4" />
+                    <path d="M16.4 9L5.3 2.8c-.7-.4-1.3-.3-1.7.1L13 12.5 16.4 9z" fill="#f4f7ff" />
+                  </svg>
+                  <span class="store-btn__txt">
+                    <small>Próximamente en</small>
+                    <strong>Google Play</strong>
+                  </span>
+                </a>
+
+                <!-- APK directo placeholder -->
+                <a href="#" class="store-btn store-btn--outline" id="apk-btn" data-store="apk">
+                  <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                    <path
+                      d="M12 3v12m0 0l-4-4m4 4l4-4M5 19h14"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  <span class="store-btn__txt">
+                    <small>Descarga directa</small>
+                    <strong>APK (demo)</strong>
+                  </span>
+                </a>
+              </div>
+              <p class="download__note" id="download-note">
+                * Los enlaces de descarga se activarán al publicar la app.
+              </p>
+            </div>
+
+            <div class="download__qr" aria-hidden="true">
+              <div class="qr">
+                <div class="qr__grid"></div>
+                <div class="qr__logo">FT</div>
+              </div>
+              <span>Escanea para descargar</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="footer">
+      <div class="container footer__inner">
+        <div class="footer__brand">
+          <span class="brand__name">FastTable</span>
+          <p>Reservas · menú · cocina · sala · gerencia.</p>
+        </div>
+        <div class="footer__cols">
+          <div>
+            <h4>Producto</h4>
+            <a href="#features">Funciones</a>
+            <a href="#roles">Roles</a>
+            <a href="#how">Cómo funciona</a>
+          </div>
+          <div>
+            <h4>Descargar</h4>
+            <a href="#download">Google Play</a>
+            <a href="#download">APK demo</a>
+          </div>
+          <div>
+            <h4>Proyecto</h4>
+            <a href="https://github.com/AleeSsM/FastTable" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </div>
+      </div>
+      <div class="container footer__bottom">
+        <span>© <span id="year"></span> FastTable. Proyecto IPN.</span>
+        <span>Hecho con cariño para restaurantes.</span>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

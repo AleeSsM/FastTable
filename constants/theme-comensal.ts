@@ -1,38 +1,43 @@
 /**
- * Tema visual exclusivo del comensal: sobrio, formal, inspiración editorial / sala premium.
- * El personal sigue usando `constants/fasttable.ts` (FtColors).
+ * Tema visual del comensal. Se DERIVA de `constants/palette.ts`.
+ *
+ * No edites los colores aquí: cambia `BRAND` en `constants/palette.ts` y se
+ * actualiza en toda la app. Este archivo solo arma los tokens (incluidos los
+ * fondos translúcidos) que ya usan las pantallas del comensal.
  */
+import { ALPHAS, BRAND, BRAND_RGB, RADII, withAlpha } from '@/constants/palette';
+
 export const Comensal = {
-  background: '#06080f',
-  surface: '#0f1524',
-  surfaceElevated: '#161f34',
-  surfaceInput: '#0b1220',
-  text: '#f4f7ff',
-  textMuted: '#a4afc4',
-  textFaint: '#6d7890',
-  border: '#2a3b61',
-  borderSubtle: '#1b2944',
+  background: BRAND.background,
+  surface: BRAND.surface,
+  surfaceElevated: BRAND.surfaceElevated,
+  surfaceInput: BRAND.surfaceInput,
+  text: BRAND.text,
+  textMuted: BRAND.textMuted,
+  textFaint: BRAND.textFaint,
+  border: BRAND.border,
+  borderSubtle: BRAND.borderSubtle,
   /** Azul eléctrico + violeta profundo para un look premium tech */
-  accent: '#7c8cff',
-  accentMuted: '#5f6ece',
-  onAccent: '#f5f7ff',
-  success: '#63c8a4',
-  warning: '#f0bd73',
-  danger: '#e47f9e',
-  overlay: 'rgba(4, 7, 14, 0.9)',
-  chipSelectedBg: 'rgba(124, 140, 255, 0.2)',
-  mesaBannerBg: 'rgba(99, 200, 164, 0.14)',
-  mesaBannerBorder: 'rgba(99, 200, 164, 0.36)',
-  warnBannerBg: 'rgba(240, 189, 115, 0.12)',
-  warnBannerBorder: 'rgba(240, 189, 115, 0.34)',
-  badgeOkBg: 'rgba(99, 200, 164, 0.18)',
-  badgeBusyBg: 'rgba(228, 127, 158, 0.2)',
-  badgeHoldBg: 'rgba(240, 189, 115, 0.18)',
-  heroImgFallback: '#1b2440',
-  glowSoft: 'rgba(124, 140, 255, 0.18)',
-  glowStrong: 'rgba(124, 140, 255, 0.3)',
-  radiusSm: 10,
-  radiusMd: 16,
-  radiusLg: 20,
-  radiusPill: 999,
+  accent: BRAND.accent,
+  accentMuted: BRAND.accentMuted,
+  onAccent: BRAND.onAccent,
+  success: BRAND.success,
+  warning: BRAND.warning,
+  danger: BRAND.danger,
+  overlay: withAlpha(BRAND_RGB.shadow, ALPHAS.overlay),
+  chipSelectedBg: withAlpha(BRAND_RGB.accent, ALPHAS.chipSelected),
+  mesaBannerBg: withAlpha(BRAND_RGB.success, ALPHAS.bannerBgSoft),
+  mesaBannerBorder: withAlpha(BRAND_RGB.success, ALPHAS.bannerBorderSoft),
+  warnBannerBg: withAlpha(BRAND_RGB.warning, ALPHAS.warnBg),
+  warnBannerBorder: withAlpha(BRAND_RGB.warning, ALPHAS.warnBorder),
+  badgeOkBg: withAlpha(BRAND_RGB.success, ALPHAS.badgeOk),
+  badgeBusyBg: withAlpha(BRAND_RGB.danger, ALPHAS.badgeBusy),
+  badgeHoldBg: withAlpha(BRAND_RGB.warning, ALPHAS.badgeHold),
+  heroImgFallback: BRAND.heroImgFallback,
+  glowSoft: withAlpha(BRAND_RGB.accent, ALPHAS.glowSoft),
+  glowStrong: withAlpha(BRAND_RGB.accent, ALPHAS.glowStrong),
+  radiusSm: RADII.sm,
+  radiusMd: RADII.md,
+  radiusLg: RADII.lg,
+  radiusPill: RADII.pill,
 } as const;

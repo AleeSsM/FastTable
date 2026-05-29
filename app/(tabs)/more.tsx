@@ -1,3 +1,5 @@
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
   Alert,
@@ -17,6 +19,7 @@ import { Comensal } from '@/constants/theme-comensal';
 import { supabase } from '@/lib/supabase';
 
 export default function MoreScreen() {
+  const router = useRouter();
   const { user, profile, signOut } = useAuth();
   const [issueTitle, setIssueTitle] = useState('');
   const [issueDetail, setIssueDetail] = useState('');
@@ -89,9 +92,20 @@ export default function MoreScreen() {
       <Text style={styles.eyebrow}>Cuenta y soporte</Text>
       <Text style={styles.title}>Más opciones</Text>
 
+      <Pressable style={styles.linkCard} onPress={() => router.push('/mis-cuentas')}>
+        <View style={styles.linkIcon}>
+          <Ionicons name="receipt-outline" size={22} color={Comensal.accent} />
+        </View>
+        <View style={styles.linkTextWrap}>
+          <Text style={styles.sectionTitle}>Mis cuentas</Text>
+          <Text style={styles.sectionHint}>Revisa tus visitas y recibos anteriores.</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={20} color={Comensal.textMuted} />
+      </Pressable>
+
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>¿Hubo un problema?</Text>
-        <Text style={styles.sectionHint}>Envíalo y le llegará al gerente.</Text>
+        <Text style={styles.sectionHint}>Cuéntanos y nuestro equipo lo revisará.</Text>
         <TextInput
           value={issueTitle}
           onChangeText={setIssueTitle}
@@ -149,6 +163,26 @@ const styles = StyleSheet.create({
   },
   sectionTitle: { fontSize: 16, fontWeight: '800', color: Comensal.text },
   sectionHint: { fontSize: 13, color: Comensal.textMuted, marginTop: 4, marginBottom: 10 },
+  linkCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    padding: 16,
+    borderRadius: Comensal.radiusMd,
+    backgroundColor: Comensal.surfaceElevated,
+    borderWidth: 1,
+    borderColor: Comensal.border,
+    marginBottom: 14,
+  },
+  linkIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Comensal.surfaceInput,
+  },
+  linkTextWrap: { flex: 1 },
   input: {
     borderWidth: 1,
     borderColor: Comensal.border,

@@ -120,8 +120,8 @@ export default function MenuScreen() {
     if (itemNoPedible(item)) return;
     if (!mesaActiva) {
       Alert.alert(
-        'Mesa',
-        'Solo puedes pedir cuando ya estás sentado en mesa ocupada (por reserva atendida o por asignación desde fila).',
+        'Aún no puedes pedir',
+        'Para hacer un pedido primero debes estar sentado en tu mesa. Si ya llegaste, pídele al personal que te acomode.',
       );
       return;
     }
@@ -183,7 +183,7 @@ export default function MenuScreen() {
         />
       }>
       <Text style={styles.eyebrow}>Carta</Text>
-      <Text style={styles.intro}>Toca un plato para pedir cuando ya estés sentado en una mesa ocupada.</Text>
+      <Text style={styles.intro}>Toca un plato para añadirlo a tu pedido cuando ya estés en tu mesa.</Text>
       <ComensalGreetingLine style={styles.greetingLine} />
 
       {mesaActiva ? (
@@ -197,7 +197,7 @@ export default function MenuScreen() {
         <View style={styles.warnBanner}>
           <Ionicons name="information-circle-outline" size={18} color={Comensal.warning} />
           <Text style={styles.warnBannerText}>
-            Sin mesa activa: necesitas estar sentado en una mesa ocupada para pedir platos.
+            Para pedir platos, primero debes estar sentado en tu mesa.
           </Text>
         </View>
       )}
@@ -206,10 +206,7 @@ export default function MenuScreen() {
         <View style={styles.cuentaCard}>
           <Text style={styles.cuentaTitle}>Tu cuenta</Text>
           <Text style={styles.cuentaHint}>
-            Incluye lo que pidas tú y lo que registre tu mesero en esta visita.
-          </Text>
-          <Text style={[styles.cuentaHint, { marginTop: 0 }]}>
-            Se oculta cuando el mesero marca la mesa como libre al terminar el servicio.
+            Resumen de tu pedido en esta visita. Es una estimación; el total final lo confirma el personal.
           </Text>
           {cuenta && cuenta.lines.length > 0 ? (
             <>

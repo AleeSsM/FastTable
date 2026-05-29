@@ -1,21 +1,26 @@
 /**
- * Paleta base compartida para toda la app (comensal + worker).
- * Mantiene el mismo lenguaje visual premium usado en comensal.
+ * Paleta del personal (worker). Se DERIVA de `constants/palette.ts`.
+ *
+ * No edites los colores aquí: cambia `BRAND` en `constants/palette.ts` y se
+ * actualiza en toda la app. Este archivo solo expone los tokens que ya usan
+ * las pantallas del personal, para no tener que tocar sus imports.
  */
+import { BRAND } from '@/constants/palette';
+
 export const FtColors = {
-  background: '#06080f',
-  surface: '#0f1524',
-  surfaceElevated: '#161f34',
-  text: '#f4f7ff',
-  textMuted: '#a4afc4',
-  textFaint: '#6d7890',
-  border: '#2a3b61',
-  borderSubtle: '#1b2944',
-  accent: '#7c8cff',
-  accentMuted: '#5f6ece',
+  background: BRAND.background,
+  surface: BRAND.surface,
+  surfaceElevated: BRAND.surfaceElevated,
+  text: BRAND.text,
+  textMuted: BRAND.textMuted,
+  textFaint: BRAND.textFaint,
+  border: BRAND.border,
+  borderSubtle: BRAND.borderSubtle,
+  accent: BRAND.accent,
+  accentMuted: BRAND.accentMuted,
   /** Texto sobre botones con acento */
-  onAccent: '#f5f7ff',
-  success: '#63c8a4',
-  warning: '#f0bd73',
-  danger: '#e47f9e',
-};
+  onAccent: BRAND.onAccent,
+  success: BRAND.success,
+  warning: BRAND.warning,
+  danger: BRAND.danger,
+} as const;

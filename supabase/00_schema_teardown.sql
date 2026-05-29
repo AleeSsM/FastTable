@@ -20,6 +20,7 @@ DROP FUNCTION IF EXISTS public.create_table_reservation(uuid, timestamptz, int, 
 DROP FUNCTION IF EXISTS public.cancel_table_reservation(uuid) CASCADE;
 DROP FUNCTION IF EXISTS public.waiter_resolve_reservation(uuid, boolean) CASCADE;
 DROP FUNCTION IF EXISTS public.mesas_con_reserva_activa_en_dia_servicio(date) CASCADE;
+DROP FUNCTION IF EXISTS public.expirar_reservas_vencidas() CASCADE;
 DROP FUNCTION IF EXISTS public.crear_reserva_mesa(uuid, timestamptz, int, text) CASCADE;
 DROP FUNCTION IF EXISTS public.cancelar_reserva_mesa(uuid) CASCADE;
 DROP FUNCTION IF EXISTS public.personal_resolver_reserva(uuid, boolean) CASCADE;

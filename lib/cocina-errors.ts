@@ -5,6 +5,12 @@ export function mapCocinaRpcErrorComensal(message: string): string {
   if (message.includes('inventario_insuficiente')) {
     return 'No hay suficiente, prueba una cantidad más baja.';
   }
+  if (message.includes('sin_mesa_para_pedidos')) {
+    return 'Para pedir, primero debes estar sentado en tu mesa.';
+  }
+  if (message.includes('sin_mesa_activa_para_terminar')) {
+    return 'En este momento no tienes una visita activa.';
+  }
   return mapCocinaRpcError(message);
 }
 

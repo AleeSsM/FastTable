@@ -16,21 +16,26 @@ export function primerNombre(raw: string | null | undefined): string {
   return first.charAt(0).toUpperCase() + first.slice(1).toLowerCase();
 }
 
-export function nombreParaSaludo(profileNombre: string | null | undefined, email: string | null | undefined): string {
-  const fromProfile = primerNombre(profileNombre);
-  if (fromProfile) return fromProfile;
-  const local = email?.split('@')[0]?.trim();
-  return primerNombre(local ?? '');
+/**
+ * Nombre real del cliente: primero el del perfil y, si falta, el que quedó en
+ * los metadatos de la cuenta al registrarse. Nunca usamos el correo, para no
+ * mostrar identificadores tipo "usuario123".
+ */
+export function nombreParaSaludo(
+  profileNombre: string | null | undefined,
+  metaNombre?: string | null | undefined,
+): string {
+  return primerNombre(profileNombre) || primerNombre(metaNombre);
 }
 
 /** Ej. "Buenas tardes, Ana." o "Buenos días." si no hay nombre. */
 export function textoSaludoComensal(
   profileNombre: string | null | undefined,
-  email: string | null | undefined,
+  metaNombre?: string | null | undefined,
   now: Date = new Date(),
 ): string {
   const saludo = saludoPorHora(now);
-  const nombre = nombreParaSaludo(profileNombre, email);
+  const nombre = nombreParaSaludo(profileNombre, metaNombre);
   if (!nombre) return `${saludo}.`;
   return `${saludo}, ${nombre}.`;
 }

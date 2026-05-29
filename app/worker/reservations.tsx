@@ -42,6 +42,7 @@ export default function WorkerReservationsScreen() {
   const [names, setNames] = useState<Record<string, string | null>>({});
 
   const load = useCallback(async () => {
+    await supabase.rpc('expirar_reservas_vencidas');
     const { data: resData } = await supabase
       .from('reservas_mesa')
       .select(
