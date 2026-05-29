@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 
+import { Avatar } from '@/components/avatar';
 import { useAuth } from '@/contexts/auth-context';
 import { FtColors } from '@/constants/fasttable';
 import {
@@ -40,6 +41,7 @@ export default function WorkerReservationsScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [reservas, setReservas] = useState<ReservaStaffRow[]>([]);
   const [names, setNames] = useState<Record<string, string | null>>({});
+  const [fotos, setFotos] = useState<Record<string, string | null>>({});
 
   const load = useCallback(async () => {
     await supabase.rpc('expirar_reservas_vencidas');
@@ -57,14 +59,21 @@ export default function WorkerReservationsScreen() {
 
     const userIds = [...new Set(rows.map((r) => r.id_usuario))];
     if (userIds.length > 0) {
-      const { data: profs } = await supabase.from('perfiles').select('id, nombre_completo').in('id', userIds);
+      const { data: profs } = await supabase
+        .from('perfiles')
+        .select('id, nombre_completo, foto_url')
+        .in('id', userIds);
       const m: Record<string, string | null> = {};
+      const f: Record<string, string | null> = {};
       for (const p of profs ?? []) {
         m[p.id] = p.nombre_completo;
+        f[p.id] = p.foto_url;
       }
       setNames(m);
+      setFotos(f);
     } else {
       setNames({});
+      setFotos({});
     }
   }, []);
 
@@ -182,9 +191,12 @@ export default function WorkerReservationsScreen() {
 
           return (
             <View key={r.id} style={styles.card}>
-              <Text style={styles.cardTitle}>
-                Mesa {code} · {guest}
-              </Text>
+              <View style={styles.guestRow}>
+                <Avatar uri={fotos[r.id_usuario]} name={guest} size={42} />
+                <Text style={[styles.cardTitle, { flex: 1, marginBottom: 0 }]}>
+                  Mesa {code} · {guest}
+                </Text>
+              </View>
               <Text style={[styles.badge, isLate ? styles.badgeWarn : styles.badgeInfo]}>
                 {isLate ? 'Prioridad alta' : 'Próxima atención'}
               </Text>
@@ -226,13 +238,16 @@ export default function WorkerReservationsScreen() {
           const t = r.mesas;
           const guest = names[r.id_usuario]?.trim() || 'Cliente';
           return (
-            <View key={r.id} style={styles.cardMuted}>
-              <Text style={styles.cardTitle}>
-                Mesa {t?.codigo ?? '—'} · {guest}
-              </Text>
-              <Text style={styles.line}>
-                {fmt(r.fecha_hora_reserva)} · {r.personas_grupo} pers.
-              </Text>
+            <View key={r.id} style={[styles.cardMuted, styles.guestRow]}>
+              <Avatar uri={fotos[r.id_usuario]} name={guest} size={40} />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.cardTitle}>
+                  Mesa {t?.codigo ?? '—'} · {guest}
+                </Text>
+                <Text style={styles.line}>
+                  {fmt(r.fecha_hora_reserva)} · {r.personas_grupo} pers.
+                </Text>
+              </View>
             </View>
           );
         })
@@ -242,6 +257,7 @@ export default function WorkerReservationsScreen() {
 }
 
 const styles = StyleSheet.create({
+  guestRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 8 },
   boot: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: FtColors.background },
   scroll: { flex: 1, backgroundColor: FtColors.background },
   content: { padding: 18, paddingBottom: 44 },

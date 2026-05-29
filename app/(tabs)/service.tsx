@@ -3,6 +3,7 @@ import { ActivityIndicator, Alert, Pressable, RefreshControl, ScrollView, StyleS
 import { useFocusEffect } from 'expo-router';
 
 import { ComensalGreetingLine } from '@/components/comensal-greeting-line';
+import { ComensalMeseroCard } from '@/components/comensal-mesero-card';
 import { useAuth } from '@/contexts/auth-context';
 import { Comensal } from '@/constants/theme-comensal';
 import { fetchMesaActivaComensal, type MesaActiva } from '@/lib/mesa-activa';
@@ -97,6 +98,8 @@ export default function ServiceScreen() {
           <Text style={styles.metaWarning}>No tienes mesa activa en este momento.</Text>
         )}
       </View>
+
+      {mesaActiva ? <ComensalMeseroCard idMesa={mesaActiva.id_mesa} /> : null}
 
       <View style={styles.card}>
         <Text style={styles.label}>Mensaje para el mesero (opcional)</Text>

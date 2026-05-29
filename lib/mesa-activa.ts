@@ -1,5 +1,24 @@
 import { supabase } from '@/lib/supabase';
 
+export type MeseroAsignado = {
+  id: string;
+  nombre_visible: string;
+  foto_url: string | null;
+};
+
+/** Mesero asignado a la mesa del comensal (nombre + foto), o null si no hay. */
+export async function fetchMeseroDeMesa(idMesa: string): Promise<MeseroAsignado | null> {
+  const { data, error } = await supabase.rpc('comensal_mesa_mesero', { p_id_mesa: idMesa });
+  if (error || !data || (Array.isArray(data) && data.length === 0)) return null;
+  const row = Array.isArray(data) ? data[0] : data;
+  if (!row?.id) return null;
+  return {
+    id: row.id as string,
+    nombre_visible: (row.nombre_visible as string) ?? 'Mesero',
+    foto_url: (row.foto_url as string | null) ?? null,
+  };
+}
+
 export type MesaActiva = {
   id_mesa: string;
   codigo: string;

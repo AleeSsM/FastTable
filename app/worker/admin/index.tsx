@@ -17,6 +17,12 @@ type HubItem = {
 
 const HUB: HubItem[] = [
   {
+    href: '/worker/admin/personal' as Href,
+    title: 'Personal',
+    sub: 'Da de alta, cambia el rol, activa o elimina a los miembros del equipo.',
+    icon: 'people-outline',
+  },
+  {
     href: '/worker/admin/mesas' as Href,
     title: 'Mesas',
     sub: 'Crear, editar y eliminar mesas. Estados libre, ocupada o reservada.',

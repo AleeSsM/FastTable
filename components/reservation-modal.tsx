@@ -12,9 +12,8 @@ import {
   View,
 } from 'react-native';
 import { Image } from 'expo-image';
-import type { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import DateTimePicker from '@react-native-community/datetimepicker/src/datetimepicker';
 
+import { DateTimeField } from '@/components/date-time-field';
 import { Comensal } from '@/constants/theme-comensal';
 import { tableImageUrl } from '@/lib/table-image';
 
@@ -59,8 +58,6 @@ export function ReservationModal({
   const [partySize, setPartySize] = useState('2');
   const [note, setNote] = useState('');
   const [busy, setBusy] = useState(false);
-  const [showAndroidDate, setShowAndroidDate] = useState(false);
-  const [showAndroidTime, setShowAndroidTime] = useState(false);
 
   useEffect(() => {
     if (!visible) return;
@@ -80,30 +77,7 @@ export function ReservationModal({
     const defaultParty = cap != null ? Math.min(2, cap) : 2;
     setPartySize(String(defaultParty));
     setNote('');
-    setShowAndroidDate(false);
-    setShowAndroidTime(false);
   }, [visible, suggestedDayYmd, capacity]);
-
-  const onIosChange = (_e: DateTimePickerEvent, date?: Date) => {
-    if (date) setWhen(date);
-  };
-
-  const onAndroidDateChange = (_event: DateTimePickerEvent, selected?: Date) => {
-    setShowAndroidDate(false);
-    if (!selected) return;
-    const n = new Date(when);
-    n.setFullYear(selected.getFullYear(), selected.getMonth(), selected.getDate());
-    setWhen(n);
-    setShowAndroidTime(true);
-  };
-
-  const onAndroidTimeChange = (_event: DateTimePickerEvent, selected?: Date) => {
-    setShowAndroidTime(false);
-    if (!selected) return;
-    const n = new Date(when);
-    n.setHours(selected.getHours(), selected.getMinutes(), 0, 0);
-    setWhen(n);
-  };
 
   const submit = async () => {
     const n = parseInt(partySize, 10);
@@ -128,14 +102,6 @@ export function ReservationModal({
       setBusy(false);
     }
   };
-
-  const formattedWhen = when.toLocaleString('es', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
 
   return (
     <Modal
@@ -174,51 +140,7 @@ export function ReservationModal({
             <Text style={styles.lead}>Elige fecha, hora y tamaño del grupo.</Text>
 
             <Text style={styles.label}>Fecha y hora</Text>
-            {Platform.OS === 'ios' ? (
-              <View style={styles.iosPickerShell}>
-                <DateTimePicker
-                  value={when}
-                  mode="datetime"
-                  display="inline"
-                  onChange={onIosChange}
-                  locale="es_ES"
-                  themeVariant="dark"
-                  accentColor={Comensal.accent}
-                  minimumDate={minFutureDate()}
-                  style={styles.iosPicker}
-                />
-              </View>
-            ) : (
-              <>
-                <Pressable
-                  style={styles.dateTrigger}
-                  onPress={() => {
-                    setShowAndroidTime(false);
-                    setShowAndroidDate(true);
-                  }}>
-                  <Text style={styles.dateTriggerText}>{formattedWhen}</Text>
-                  <Text style={styles.dateTriggerHint}>Toca para cambiar</Text>
-                </Pressable>
-                {showAndroidDate ? (
-                  <DateTimePicker
-                    value={when}
-                    mode="date"
-                    display="default"
-                    onChange={onAndroidDateChange}
-                    minimumDate={minFutureDate()}
-                  />
-                ) : null}
-                {showAndroidTime ? (
-                  <DateTimePicker
-                    value={when}
-                    mode="time"
-                    display="default"
-                    onChange={onAndroidTimeChange}
-                    is24Hour
-                  />
-                ) : null}
-              </>
-            )}
+            <DateTimeField value={when} onChange={setWhen} minDate={minFutureDate()} />
 
             <Text style={styles.label}>Personas</Text>
             {capacity != null && capacity > 0 ? (
@@ -348,37 +270,6 @@ const styles = StyleSheet.create({
     color: Comensal.textMuted,
     marginTop: -4,
     marginBottom: 8,
-  },
-  iosPickerShell: {
-    overflow: 'hidden',
-    alignItems: 'center',
-    marginHorizontal: 0,
-    marginBottom: 8,
-    minHeight: 380,
-    justifyContent: 'center',
-  },
-  iosPicker: {
-    width: '100%',
-    maxWidth: 340,
-    height: 380,
-  },
-  dateTrigger: {
-    paddingVertical: 14,
-    paddingHorizontal: 12,
-    borderRadius: Comensal.radiusSm,
-    borderWidth: 1,
-    borderColor: Comensal.border,
-    backgroundColor: Comensal.surfaceInput,
-  },
-  dateTriggerText: {
-    fontSize: 17,
-    color: Comensal.text,
-    fontWeight: '400',
-  },
-  dateTriggerHint: {
-    fontSize: 12,
-    color: Comensal.textFaint,
-    marginTop: 4,
   },
   input: {
     borderWidth: 1,

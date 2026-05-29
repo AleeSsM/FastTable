@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Redirect, Tabs } from 'expo-router';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
 
+import { SoloPersonalWeb } from '@/components/solo-personal-web';
 import { useAuth } from '@/contexts/auth-context';
 import { Comensal } from '@/constants/theme-comensal';
 
@@ -22,6 +23,11 @@ export default function GuestTabLayout() {
 
   if (staffMember) {
     return <Redirect href="/worker" />;
+  }
+
+  // La versión web es exclusiva para personal; los clientes usan la app móvil.
+  if (Platform.OS === 'web') {
+    return <SoloPersonalWeb />;
   }
 
   return (

@@ -7,6 +7,14 @@
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 DROP TRIGGER IF EXISTS tr_auth_alta_perfil ON auth.users;
 
+-- Storage: políticas y bucket de avatares (las fotos se borran con el bucket).
+DROP POLICY IF EXISTS avatars_lectura_publica ON storage.objects;
+DROP POLICY IF EXISTS avatars_insert_propio ON storage.objects;
+DROP POLICY IF EXISTS avatars_update_propio ON storage.objects;
+DROP POLICY IF EXISTS avatars_delete_propio ON storage.objects;
+DELETE FROM storage.objects WHERE bucket_id = 'avatars';
+DELETE FROM storage.buckets WHERE id = 'avatars';
+
 DROP FUNCTION IF EXISTS public.handle_new_user() CASCADE;
 DROP FUNCTION IF EXISTS public.perfiles_tras_alta_usuario() CASCADE;
 DROP FUNCTION IF EXISTS public.set_updated_at() CASCADE;
@@ -46,6 +54,16 @@ DROP FUNCTION IF EXISTS public.personal_marcar_mesa_libre_ocupada(uuid, boolean)
 
 DROP FUNCTION IF EXISTS public.comensal_terminar_servicio() CASCADE;
 DROP FUNCTION IF EXISTS public.comensal_mi_posicion_fila() CASCADE;
+DROP FUNCTION IF EXISTS public.comensal_mesa_mesero(uuid) CASCADE;
+DROP FUNCTION IF EXISTS public.comensal_mis_recibos() CASCADE;
+DROP FUNCTION IF EXISTS public.personal_reasignar_mesa(uuid, uuid) CASCADE;
+DROP FUNCTION IF EXISTS public.personal_reasignar_mesero(uuid, uuid) CASCADE;
+DROP FUNCTION IF EXISTS public.gerente_listar_personal() CASCADE;
+DROP FUNCTION IF EXISTS public.gerente_vincular_personal(text, text, text, text) CASCADE;
+DROP FUNCTION IF EXISTS public.gerente_cambiar_rol_personal(uuid, text) CASCADE;
+DROP FUNCTION IF EXISTS public.gerente_set_activo_personal(uuid, boolean) CASCADE;
+DROP FUNCTION IF EXISTS public.gerente_eliminar_personal(uuid) CASCADE;
+DROP FUNCTION IF EXISTS public.comensal_crear_reporte(text, text) CASCADE;
 DROP FUNCTION IF EXISTS public.gerente_dashboard_stats() CASCADE;
 DROP FUNCTION IF EXISTS public.personal_sentar_desde_fila(uuid, uuid, uuid) CASCADE;
 

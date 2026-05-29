@@ -14,6 +14,7 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Redirect, useFocusEffect } from 'expo-router';
 
+import { Avatar } from '@/components/avatar';
 import { Comensal } from '@/constants/theme-comensal';
 import { useAuth } from '@/contexts/auth-context';
 import { formatPriceFromCents } from '@/lib/format';
@@ -23,7 +24,9 @@ type CuentaCerrada = {
   id: string;
   total_centavos: number;
   cerrado_en: string | null;
-  mesas: { codigo: string } | { codigo: string }[] | null;
+  mesa_codigo: string | null;
+  mesero_nombre: string | null;
+  mesero_foto: string | null;
 };
 
 type LineaRecibo = {
@@ -36,12 +39,6 @@ const cardShadow =
   Platform.OS === 'ios'
     ? { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.18, shadowRadius: 8 }
     : { elevation: 3 };
-
-function mesaCodigo(m: CuentaCerrada['mesas']): string {
-  if (m == null) return '—';
-  const z = Array.isArray(m) ? m[0] : m;
-  return z?.codigo ?? '—';
-}
 
 function itemNombre(raw: LineaRecibo['items_menu']): string {
   if (raw == null) return '—';
@@ -82,13 +79,7 @@ export default function MisCuentasScreen() {
       setLista([]);
       return;
     }
-    const { data, error } = await supabase
-      .from('servicios_mesa')
-      .select('id, total_centavos, cerrado_en, mesas ( codigo )')
-      .eq('id_usuario', user.id)
-      .eq('estado', 'cerrado')
-      .order('cerrado_en', { ascending: false })
-      .limit(50);
+    const { data, error } = await supabase.rpc('comensal_mis_recibos');
     if (!error && data) setLista(data as CuentaCerrada[]);
     else setLista([]);
   }, [user?.id]);
@@ -178,10 +169,16 @@ export default function MisCuentasScreen() {
             {lista.map((s) => (
               <Pressable key={s.id} style={[styles.card, cardShadow]} onPress={() => void abrirDetalle(s.id)}>
                 <View style={styles.cardTop}>
-                  <Text style={styles.mesa}>Mesa {mesaCodigo(s.mesas)}</Text>
+                  <Text style={styles.mesa}>Mesa {s.mesa_codigo ?? '—'}</Text>
                   <Text style={styles.total}>{formatPriceFromCents(s.total_centavos)}</Text>
                 </View>
                 <Text style={styles.fecha}>{fechaLarga(s.cerrado_en)}</Text>
+                {s.mesero_nombre ? (
+                  <View style={styles.meseroRow}>
+                    <Avatar uri={s.mesero_foto} name={s.mesero_nombre} size={26} />
+                    <Text style={styles.meseroText}>Te atendió {s.mesero_nombre}</Text>
+                  </View>
+                ) : null}
                 <Text style={styles.ver}>Ver detalle →</Text>
               </Pressable>
             ))}
@@ -195,9 +192,15 @@ export default function MisCuentasScreen() {
             <Pressable onPress={() => setDetalleId(null)} hitSlop={12}>
               <Ionicons name="close" size={28} color={Comensal.text} />
             </Pressable>
-            <Text style={styles.modalTitle}>Recibo — Mesa {cuentaSel ? mesaCodigo(cuentaSel.mesas) : ''}</Text>
+            <Text style={styles.modalTitle}>Recibo — Mesa {cuentaSel?.mesa_codigo ?? ''}</Text>
           </View>
           {cuentaSel ? <Text style={styles.modalFecha}>{fechaLarga(cuentaSel.cerrado_en)}</Text> : null}
+          {cuentaSel?.mesero_nombre ? (
+            <View style={styles.modalMeseroRow}>
+              <Avatar uri={cuentaSel.mesero_foto} name={cuentaSel.mesero_nombre} size={32} />
+              <Text style={styles.modalMeseroText}>Te atendió {cuentaSel.mesero_nombre}</Text>
+            </View>
+          ) : null}
           {detalleBusy ? (
             <ActivityIndicator color={Comensal.accent} style={{ marginTop: 24 }} />
           ) : (
@@ -281,11 +284,15 @@ const styles = StyleSheet.create({
   mesa: { fontSize: 17, fontWeight: '800', color: Comensal.text },
   total: { fontSize: 18, fontWeight: '800', color: Comensal.accent },
   fecha: { fontSize: 13, color: Comensal.textMuted, marginTop: 6 },
+  meseroRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 10 },
+  meseroText: { fontSize: 13, color: Comensal.textMuted, fontWeight: '600' },
   ver: { fontSize: 13, color: Comensal.accent, marginTop: 10, fontWeight: '700' },
   modalSafe: { flex: 1, backgroundColor: Comensal.background },
   modalHead: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 12 },
   modalTitle: { fontSize: 18, fontWeight: '800', color: Comensal.text, flex: 1 },
   modalFecha: { fontSize: 13, color: Comensal.textMuted, paddingHorizontal: 16, marginTop: -4, marginBottom: 4 },
+  modalMeseroRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16, marginTop: 6, marginBottom: 4 },
+  modalMeseroText: { fontSize: 14, color: Comensal.text, fontWeight: '600' },
   modalScroll: { padding: 16, paddingBottom: 32 },
   linea: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
   lineaNombre: { flex: 1, fontSize: 15, color: Comensal.text, paddingRight: 12 },

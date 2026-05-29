@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router';
+import { Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { FtColors } from '@/constants/fasttable';
@@ -12,7 +13,12 @@ export default function WorkerLayout() {
         headerTintColor: FtColors.accent,
         headerTitleStyle: { fontWeight: '700', color: FtColors.text },
         headerShadowVisible: false,
-        contentStyle: { backgroundColor: FtColors.background },
+        contentStyle: {
+          backgroundColor: FtColors.background,
+          ...(Platform.OS === 'web'
+            ? { maxWidth: 1100, width: '100%', alignSelf: 'center' as const }
+            : null),
+        },
       }}>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="reservations" options={{ title: 'Reservas y mesas' }} />

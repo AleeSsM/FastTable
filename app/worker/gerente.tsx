@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   Alert,
   BackHandler,
+  Linking,
   Platform,
   Pressable,
   RefreshControl,
@@ -15,6 +16,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Redirect, useFocusEffect, useRouter, type Href } from 'expo-router';
 
+import { Avatar } from '@/components/avatar';
 import { useAuth } from '@/contexts/auth-context';
 import { FtColors } from '@/constants/fasttable';
 import { REALTIME_GERENTE, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
@@ -46,7 +48,11 @@ type ReporteProblema = {
   descripcion: string;
   estado: 'abierto' | 'revisado' | 'cerrado';
   creado_en: string;
+  mesero_nombre: string | null;
+  correo_contacto: string | null;
+  telefono_contacto: string | null;
 };
+type EquipoMiembro = { nombre_visible: string; rol: string; foto_url: string | null };
 
 function priceFromItem(raw: unknown): number {
   if (raw == null) return 0;
@@ -89,6 +95,7 @@ export default function GerenteScreen() {
   const [dailyRevenue, setDailyRevenue] = useState<DailyMetric[]>([]);
   const [snapshot, setSnapshot] = useState<LiveSnapshot | null>(null);
   const [topDishes, setTopDishes] = useState<TopDish[]>([]);
+  const [equipo, setEquipo] = useState<EquipoMiembro[]>([]);
   const [reportes, setReportes] = useState<ReporteProblema[]>([]);
   const [reportBusyId, setReportBusyId] = useState<string | null>(null);
   const [previousPeriodTotal, setPreviousPeriodTotal] = useState<number | null>(null);
@@ -105,7 +112,7 @@ export default function GerenteScreen() {
     previousStart.setDate(rangeStart.getDate() - rangeDays);
     const previousEndExclusive = new Date(rangeStart);
 
-    const [statsRes, pedidosRes, previousRes, mesasRes, solRes, reservasRes, cocinaPendRes, reportesRes] =
+    const [statsRes, pedidosRes, previousRes, mesasRes, solRes, reservasRes, cocinaPendRes, reportesRes, equipoRes] =
       await Promise.all([
       supabase.rpc('gerente_dashboard_stats'),
       supabase
@@ -133,9 +140,16 @@ export default function GerenteScreen() {
         .eq('estado', 'pendiente'),
       supabase
         .from('reportes_problema')
-        .select('id, nombre_usuario, titulo, descripcion, estado, creado_en')
+        .select(
+          'id, nombre_usuario, titulo, descripcion, estado, creado_en, mesero_nombre, correo_contacto, telefono_contacto',
+        )
         .order('creado_en', { ascending: false })
         .limit(40),
+      supabase
+        .from('personal')
+        .select('nombre_visible, rol, foto_url')
+        .eq('activo', true)
+        .order('nombre_visible'),
       ]);
 
     const { data, error } = statsRes;
@@ -152,10 +166,12 @@ export default function GerenteScreen() {
       setSnapshot(null);
       setTopDishes([]);
       setReportes([]);
+      setEquipo([]);
       setPreviousPeriodTotal(null);
       return;
     }
     setStats(data as GerenteStats);
+    setEquipo((equipoRes.data as EquipoMiembro[] | null) ?? []);
 
     const byDay = new Map<string, number>();
     for (let i = 0; i < rangeDays; i += 1) {
@@ -444,9 +460,39 @@ export default function GerenteScreen() {
                 </View>
                 <Text style={styles.repTitle}>{r.titulo}</Text>
                 <Text style={styles.repDesc}>{r.descripcion}</Text>
+                {r.mesero_nombre ? (
+                  <View style={styles.repInfoRow}>
+                    <Ionicons name="restaurant-outline" size={14} color={FtColors.textMuted} />
+                    <Text style={styles.repInfoText}>Atendió: {r.mesero_nombre}</Text>
+                  </View>
+                ) : null}
                 <Text style={styles.repMeta}>
                   {new Date(r.creado_en).toLocaleString('es', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
                 </Text>
+                {r.telefono_contacto || r.correo_contacto ? (
+                  <View style={styles.repContactRow}>
+                    {r.telefono_contacto ? (
+                      <Pressable
+                        style={styles.repContactBtn}
+                        onPress={() => Linking.openURL(`tel:${r.telefono_contacto}`)}>
+                        <Ionicons name="call-outline" size={15} color={FtColors.accent} />
+                        <Text style={styles.repContactText}>{r.telefono_contacto}</Text>
+                      </Pressable>
+                    ) : null}
+                    {r.correo_contacto ? (
+                      <Pressable
+                        style={styles.repContactBtn}
+                        onPress={() =>
+                          Linking.openURL(
+                            `mailto:${r.correo_contacto}?subject=${encodeURIComponent('Sobre tu reporte en FastTable')}`,
+                          )
+                        }>
+                        <Ionicons name="mail-outline" size={15} color={FtColors.accent} />
+                        <Text style={styles.repContactText}>{r.correo_contacto}</Text>
+                      </Pressable>
+                    ) : null}
+                  </View>
+                ) : null}
                 {r.estado === 'abierto' ? (
                   <Pressable
                     style={[styles.repBtn, reportBusyId === r.id && styles.repBtnDisabled]}
@@ -471,12 +517,13 @@ export default function GerenteScreen() {
             Listado de fichas activas en el sistema. La “sesión abierta” en el móvil no se registra aquí; esto
             refleja quién está dado de alta como personal.
           </Text>
-          {(stats?.equipo ?? []).length === 0 ? (
+          {equipo.length === 0 ? (
             <Text style={styles.muted}>Sin registros.</Text>
           ) : (
-            stats!.equipo.map((p, i) => (
-              <View key={`${p.nombre}-${i}`} style={styles.equipoRow}>
-                <Text style={styles.equipoName}>{p.nombre}</Text>
+            equipo.map((p, i) => (
+              <View key={`${p.nombre_visible}-${i}`} style={styles.equipoRow}>
+                <Avatar uri={p.foto_url} name={p.nombre_visible} size={38} />
+                <Text style={styles.equipoName}>{p.nombre_visible}</Text>
                 <Text style={styles.equipoRol}>{roleLabel(p.rol)}</Text>
               </View>
             ))
@@ -526,6 +573,12 @@ export default function GerenteScreen() {
         <Pressable style={styles.linkKitchen} onPress={() => router.push('/worker')}>
           <Ionicons name="people-outline" size={18} color={FtColors.accent} />
           <Text style={styles.linkKitchenText}>Abrir panel anfitrión (modo operativo)</Text>
+          <Ionicons name="chevron-forward" size={18} color={FtColors.textMuted} />
+        </Pressable>
+
+        <Pressable style={styles.linkKitchen} onPress={() => router.push('/perfil')}>
+          <Ionicons name="person-circle-outline" size={18} color={FtColors.accent} />
+          <Text style={styles.linkKitchenText}>Mi perfil (nombre y foto)</Text>
           <Ionicons name="chevron-forward" size={18} color={FtColors.textMuted} />
         </Pressable>
 
@@ -634,8 +687,8 @@ const styles = StyleSheet.create({
   muted: { fontSize: 14, color: FtColors.textFaint },
   equipoRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    gap: 10,
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: FtColors.border,
@@ -666,6 +719,21 @@ const styles = StyleSheet.create({
   repStateDone: { color: FtColors.success, backgroundColor: 'rgba(125,206,160,0.2)' },
   repTitle: { fontSize: 15, fontWeight: '800', color: FtColors.text, marginTop: 8 },
   repDesc: { fontSize: 13, color: FtColors.textMuted, lineHeight: 19, marginTop: 5 },
+  repInfoRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8 },
+  repInfoText: { fontSize: 12.5, color: FtColors.text, fontWeight: '600' },
+  repContactRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 },
+  repContactBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 7,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: FtColors.border,
+    backgroundColor: FtColors.surface,
+  },
+  repContactText: { fontSize: 12.5, color: FtColors.accent, fontWeight: '600' },
   repMeta: { fontSize: 11, color: FtColors.textFaint, marginTop: 8 },
   repBtn: {
     marginTop: 10,

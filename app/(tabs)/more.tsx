@@ -14,6 +14,7 @@ import {
   View,
 } from 'react-native';
 
+import { Avatar } from '@/components/avatar';
 import { useAuth } from '@/contexts/auth-context';
 import { Comensal } from '@/constants/theme-comensal';
 import { supabase } from '@/lib/supabase';
@@ -36,12 +37,9 @@ export default function MoreScreen() {
     }
     setSending(true);
     try {
-      const { error } = await supabase.from('reportes_problema').insert({
-        id_usuario: user.id,
-        nombre_usuario: profile?.nombre_completo?.trim() || user.email?.split('@')[0] || 'Comensal',
-        titulo: title,
-        descripcion: detail,
-        estado: 'abierto',
+      const { error } = await supabase.rpc('comensal_crear_reporte', {
+        p_titulo: title,
+        p_descripcion: detail,
       });
       if (error) {
         Alert.alert('Reporte', error.message);
@@ -49,7 +47,10 @@ export default function MoreScreen() {
       }
       setIssueTitle('');
       setIssueDetail('');
-      Alert.alert('Reporte enviado', 'El gerente lo verá en su bandeja.');
+      Alert.alert(
+        'Reporte enviado',
+        'El gerente lo verá en su bandeja junto con quién te atendió y tus datos de contacto.',
+      );
     } finally {
       setSending(false);
     }
@@ -91,6 +92,17 @@ export default function MoreScreen() {
       keyboardDismissMode="interactive">
       <Text style={styles.eyebrow}>Cuenta y soporte</Text>
       <Text style={styles.title}>Más opciones</Text>
+
+      <Pressable style={styles.linkCard} onPress={() => router.push('/perfil')}>
+        <View style={styles.linkIcon}>
+          <Avatar uri={profile?.foto_url} name={profile?.nombre_completo} size={42} />
+        </View>
+        <View style={styles.linkTextWrap}>
+          <Text style={styles.sectionTitle}>Mi perfil</Text>
+          <Text style={styles.sectionHint}>Edita tu nombre, teléfono y foto.</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={20} color={Comensal.textMuted} />
+      </Pressable>
 
       <Pressable style={styles.linkCard} onPress={() => router.push('/mis-cuentas')}>
         <View style={styles.linkIcon}>

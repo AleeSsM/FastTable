@@ -7,6 +7,7 @@ export type Database = {
           id: string;
           nombre_completo: string | null;
           telefono: string | null;
+          foto_url: string | null;
           creado_en: string;
           actualizado_en: string;
         };
@@ -14,10 +15,12 @@ export type Database = {
           id: string;
           nombre_completo?: string | null;
           telefono?: string | null;
+          foto_url?: string | null;
         };
         Update: {
           nombre_completo?: string | null;
           telefono?: string | null;
+          foto_url?: string | null;
         };
       };
       personal: {
@@ -27,9 +30,14 @@ export type Database = {
           nombre_visible: string;
           rol: 'anfitrion' | 'mesero' | 'gerente' | 'cocina';
           codigo_empleado: string | null;
+          foto_url: string | null;
           activo: boolean;
           creado_en: string;
           actualizado_en: string;
+        };
+        Update: {
+          nombre_visible?: string;
+          foto_url?: string | null;
         };
       };
       zonas: {
@@ -231,6 +239,7 @@ export type Database = {
           nombre_invitado: string | null;
           id_personal_apertura: string | null;
           id_personal_cierre: string | null;
+          id_personal_atendio: string | null;
           estado: 'activo' | 'cerrado';
           total_centavos: number;
           abierto_en: string;
@@ -245,6 +254,10 @@ export type Database = {
           titulo: string;
           descripcion: string;
           estado: 'abierto' | 'revisado' | 'cerrado';
+          id_personal_atendio: string | null;
+          mesero_nombre: string | null;
+          correo_contacto: string | null;
+          telefono_contacto: string | null;
           creado_en: string;
           actualizado_en: string;
         };

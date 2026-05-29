@@ -43,6 +43,7 @@ export default function RootLayout() {
               headerTintColor: Comensal.accent,
             }}
           />
+          <Stack.Screen name="perfil" options={{ headerShown: false }} />
           <Stack.Screen name="worker" options={{ headerShown: false }} />
         </Stack>
         <StatusBar style="light" />

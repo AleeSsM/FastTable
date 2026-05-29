@@ -303,6 +303,12 @@ export default function KitchenScreen() {
           )}
         </View>
 
+        <Pressable style={styles.perfilLink} onPress={() => router.push('/perfil')}>
+          <Ionicons name="person-circle-outline" size={18} color={FtColors.accent} />
+          <Text style={styles.perfilLinkText}>Mi perfil (nombre y foto)</Text>
+          <Ionicons name="chevron-forward" size={18} color={FtColors.textMuted} />
+        </Pressable>
+
         <Pressable style={styles.signOut} onPress={() => signOut()}>
           <Text style={styles.signOutText}>Cerrar sesión</Text>
         </Pressable>
@@ -485,6 +491,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalCloseText: { fontSize: 15, fontWeight: '600', color: FtColors.textMuted },
+  perfilLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 14,
+    paddingHorizontal: 4,
+  },
+  perfilLinkText: { flex: 1, fontSize: 15, color: FtColors.accent, fontWeight: '600' },
   signOut: { paddingVertical: 16, alignItems: 'center' },
   signOutText: { fontSize: 15, color: FtColors.textFaint, textDecorationLine: 'underline' },
 });

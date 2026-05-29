@@ -35,6 +35,10 @@ Plantilla: `.env.example`. La *service role* solo en máquina local para scripts
 | `06_terminar_servicio_mesa_unificado.sql` | Cierre de servicio igual para comensal y mesero; pedidos sin mezclar visitas. |
 | `07_reservas_turno_2h.sql` | Reservas por turno fijo de 2 h (elige día y hora, sin solapamiento); caducan solas al pasar el turno sin presentarse. |
 | `08_liberar_manual_cierra_servicio.sql` | Liberar mesa con el toggle manual cierra el servicio y genera recibo (evita heredar la cuenta al siguiente cliente). |
+| `09_perfiles_fotos_y_storage.sql` | Foto de perfil para comensales y personal (`foto_url`) + bucket público `avatars` con políticas de Storage (cada quien sube en su carpeta). |
+| `10_mesero_atiende_servicio.sql` | El comensal ve quién lo atiende (nombre + foto) en vivo y en su recibo; se guarda `id_personal_atendio` al cerrar el servicio. |
+| `11_reasignar_meseros_y_perfiles.sql` | Recepción/gerencia reasigna mesas de un mesero a otro (mesero indispuesto); política INSERT en `perfiles` + backfill de filas faltantes (arregla guardado de foto en cuentas antiguas). |
+| `12_admin_personal_y_reportes.sql` | Gerencia administra personal (alta por correo, cambio de rol, activar/desactivar, eliminar) vía RPCs `SECURITY DEFINER`; reportes de problema guardan el mesero que atendió y el contacto del comensal (`comensal_crear_reporte`). |
 | `demo-accounts.txt` | Correos y contraseña de cuentas demo de personal. |
 | `SCHEMA_CHANGE_GUIDE.txt` | Notas para alterar el esquema con cuidado en producción. |
 

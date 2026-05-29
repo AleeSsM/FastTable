@@ -16,6 +16,7 @@ import { Image } from 'expo-image';
 import { useFocusEffect } from 'expo-router';
 
 import { ComensalGreetingLine } from '@/components/comensal-greeting-line';
+import { ComensalMeseroCard } from '@/components/comensal-mesero-card';
 import { useAuth } from '@/contexts/auth-context';
 import { Comensal } from '@/constants/theme-comensal';
 import { REALTIME_MENU_COMENSAL, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
@@ -201,6 +202,8 @@ export default function MenuScreen() {
           </Text>
         </View>
       )}
+
+      {mesaActiva ? <ComensalMeseroCard idMesa={mesaActiva.id_mesa} /> : null}
 
       {mesaActiva ? (
         <View style={styles.cuentaCard}>

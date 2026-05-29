@@ -13,6 +13,7 @@ export default function AdminLayout() {
         contentStyle: { backgroundColor: FtColors.background },
       }}>
       <Stack.Screen name="index" options={{ title: 'Administración', headerShown: false }} />
+      <Stack.Screen name="personal" options={{ title: 'Personal' }} />
       <Stack.Screen name="mesas" options={{ title: 'Mesas' }} />
       <Stack.Screen name="ingredientes" options={{ title: 'Ingredientes' }} />
       <Stack.Screen name="platillos" options={{ title: 'Platillos' }} />
