@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Redirect, useRouter, type Href } from 'expo-router';
+import { Redirect, useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import { ActivityIndicator, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 
 import { Avatar } from '@/components/avatar';
@@ -14,10 +14,18 @@ import {
   type MesaToggle,
   type WaitlistEntry,
 } from '@/hooks/use-worker-dashboard';
-import { roleLabel } from '@/lib/worker-nav';
+import { DEFAULT_MESERO_SECTION, roleLabel, type MeseroSection } from '@/lib/worker-nav';
+
+const SECTION_TITLE: Record<MeseroSection, string> = {
+  resumen: 'Un vistazo a tu turno: mesas, solicitudes y disponibilidad.',
+  mesas: 'Tus mesas asignadas y el comensal que atiende cada una.',
+  solicitudes: 'Llamadas de atención de tus comensales.',
+  libres: 'Ocupa una mesa para un walk-in o libérala al terminar.',
+};
 
 export default function WorkerDashboardWebScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams<{ sec?: string }>();
   const { loading: authLoading } = useAuth();
   const d = useWorkerDashboard();
   const { staffMember, session, isHost, isWaiter } = d;
@@ -129,18 +137,115 @@ export default function WorkerDashboardWebScreen() {
     );
   };
 
-  const summary = isHost
-    ? [
-        { icon: 'grid-outline' as const, label: 'Mesas libres', value: d.available ?? 0, tone: FtColors.success },
-        { icon: 'people-outline' as const, label: 'En fila', value: d.waiting ?? 0, tone: FtColors.warning },
-        { icon: 'calendar-outline' as const, label: 'Reservas a atender', value: d.attendOrdered.length, tone: FtColors.accent },
-        { icon: 'time-outline' as const, label: 'Próximas reservas', value: d.upcoming.length, tone: FtColors.text },
-      ]
-    : [
-        { icon: 'bookmark-outline' as const, label: 'Mis mesas', value: d.myMesas.length, tone: FtColors.accent },
-        { icon: 'chatbubble-ellipses-outline' as const, label: 'Solicitudes', value: d.openReqCount ?? 0, tone: FtColors.warning },
-        { icon: 'grid-outline' as const, label: 'Mesas libres', value: d.available ?? 0, tone: FtColors.success },
-      ];
+  const hostSummary = [
+    { icon: 'grid-outline' as const, label: 'Mesas libres', value: d.available ?? 0, tone: FtColors.success },
+    { icon: 'people-outline' as const, label: 'En fila', value: d.waiting ?? 0, tone: FtColors.warning },
+    { icon: 'calendar-outline' as const, label: 'Reservas a atender', value: d.attendOrdered.length, tone: FtColors.accent },
+    { icon: 'time-outline' as const, label: 'Próximas reservas', value: d.upcoming.length, tone: FtColors.text },
+  ];
+  const waiterSummary = [
+    { icon: 'bookmark-outline' as const, label: 'Mis mesas', value: d.myMesas.length, tone: FtColors.accent },
+    { icon: 'chatbubble-ellipses-outline' as const, label: 'Solicitudes', value: d.openReqCount ?? 0, tone: FtColors.warning },
+    { icon: 'grid-outline' as const, label: 'Mesas libres', value: d.available ?? 0, tone: FtColors.success },
+  ];
+
+  const sec: MeseroSection = (() => {
+    const raw = typeof params.sec === 'string' ? params.sec : DEFAULT_MESERO_SECTION;
+    return (['resumen', 'mesas', 'solicitudes', 'libres'] as const).includes(raw as MeseroSection)
+      ? (raw as MeseroSection)
+      : DEFAULT_MESERO_SECTION;
+  })();
+
+  const loader = d.loading && !d.refreshing ? (
+    <ActivityIndicator color={FtColors.accent} style={{ marginVertical: 16 }} />
+  ) : null;
+
+  const mesaMiaCard = (m: (typeof d.myMesas)[number]) => {
+    const cli = d.mesaClientes[m.id];
+    return (
+      <View key={m.id} style={styles.subCard}>
+        <View style={styles.rowHead}>
+          <Avatar uri={cli?.foto} name={cli?.nombre ?? m.codigo} size={48} />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.itemName} numberOfLines={1}>
+              {cli?.nombre || 'Comensal sin nombre'}
+            </Text>
+            <Text style={styles.itemMeta}>Mesa {m.codigo}</Text>
+          </View>
+          <View style={[styles.pill, m.estado === 'reservada' ? styles.pillInfo : styles.pillOk]}>
+            <Text style={[styles.pillText, m.estado === 'reservada' ? styles.pillTextInfo : styles.pillTextOk]}>
+              {m.estado === 'reservada' ? 'Reservada' : 'Ocupada'}
+            </Text>
+          </View>
+        </View>
+        {m.estado === 'ocupada' ? (
+          <View style={styles.btnRow}>
+            <Pressable
+              style={[styles.btnOutline, { flex: 1 }]}
+              onPress={() =>
+                router.push({ pathname: '/worker/mesa-pedidos', params: { mesaId: m.id, codigo: m.codigo } } as Href)
+              }>
+              <Text style={styles.btnOutlineText}>Pedir / ver cuenta</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.btnPrimary, { flex: 1, marginTop: 0 }, d.terminarBusyId === m.id && styles.btnDisabled]}
+              onPress={() => void d.confirmarTerminarServicio(m)}
+              disabled={d.terminarBusyId === m.id}>
+              {d.terminarBusyId === m.id ? (
+                <ActivityIndicator color={FtColors.onAccent} />
+              ) : (
+                <Text style={styles.btnPrimaryText}>Terminar servicio</Text>
+              )}
+            </Pressable>
+          </View>
+        ) : (
+          <Text style={styles.hintSmall}>Esperando llegada del comensal.</Text>
+        )}
+      </View>
+    );
+  };
+
+  const misMesasCard = (
+    <WebCard>
+      <WebCardHead icon="bookmark-outline" title="Mis mesas" />
+      {d.myMesas.length === 0 ? (
+        <Text style={styles.empty}>No tienes mesas asignadas ahora mismo.</Text>
+      ) : (
+        d.myMesas.map((m) => mesaMiaCard(m))
+      )}
+    </WebCard>
+  );
+
+  const solicitudesCard = (
+    <WebCard>
+      <WebCardHead icon="chatbubble-ellipses-outline" color={FtColors.warning} title="Solicitudes de servicio" />
+      {d.solicitudes.length === 0 ? (
+        <Text style={styles.empty}>No hay solicitudes abiertas.</Text>
+      ) : (
+        d.solicitudes.map((s) => (
+          <View key={s.id} style={styles.subCard}>
+            <Text style={styles.itemName}>Mesa {solicitudCodigo(s.mesas)}</Text>
+            <Text style={styles.itemMeta}>{s.mensaje?.trim() || '(Sin mensaje)'}</Text>
+            <Pressable style={styles.btnPrimary} onPress={() => d.marcarSolicitudAtendida(s.id)}>
+              <Text style={styles.btnPrimaryText}>Marcar como atendida</Text>
+            </Pressable>
+          </View>
+        ))
+      )}
+    </WebCard>
+  );
+
+  const mesasLibresCard = (
+    <WebCard>
+      <WebCardHead icon="apps-outline" color={FtColors.success} title="Mesas libres" />
+      <Text style={styles.cardHint}>Ocupa una mesa para un walk-in o libérala cuando termine el servicio.</Text>
+      {d.allMesas.length === 0 ? (
+        <Text style={styles.empty}>No hay mesas registradas.</Text>
+      ) : (
+        <View style={styles.mesaGrid}>{d.allMesas.map((m) => mesaTile(m))}</View>
+      )}
+    </WebCard>
+  );
 
   return (
     <WebScroll
@@ -149,102 +254,54 @@ export default function WorkerDashboardWebScreen() {
       <WebHeader
         eyebrow={roleLabel(staffMember.rol)}
         title={`Hola, ${staffMember.nombre_visible}`}
-        subtitle={isHost ? 'Recepción: gestiona fila, reservas y el mapa de mesas en vivo.' : 'Tus mesas asignadas y las solicitudes de tus comensales.'}
+        subtitle={isHost ? 'Recepción: gestiona fila, reservas y el mapa de mesas en vivo.' : SECTION_TITLE[sec]}
       />
 
-      <WebRow>
-        {summary.map((s) => (
-          <StatCard key={s.label} icon={s.icon} tone={s.tone} value={s.value} label={s.label} />
-        ))}
-      </WebRow>
-
-      <View style={{ height: 18 }} />
-
-      {d.loading && !d.refreshing ? <ActivityIndicator color={FtColors.accent} style={{ marginVertical: 16 }} /> : null}
-
       {isWaiter ? (
-        <WebRow>
-          <View style={[webStyles.col, { flex: 1.5, minWidth: 380 }]}>
-            <WebCard>
-              <WebCardHead icon="bookmark-outline" title="Mis mesas" />
-              {d.myMesas.length === 0 ? (
-                <Text style={styles.empty}>No tienes mesas asignadas ahora mismo.</Text>
-              ) : (
-                d.myMesas.map((m) => (
-                  <View key={m.id} style={styles.subCard}>
-                    <View style={styles.rowHead}>
-                      <Text style={styles.mesaCodeLg}>{m.codigo}</Text>
-                      <View style={[styles.pill, m.estado === 'reservada' ? styles.pillInfo : styles.pillOk]}>
-                        <Text style={[styles.pillText, m.estado === 'reservada' ? styles.pillTextInfo : styles.pillTextOk]}>
-                          {m.estado === 'reservada' ? 'Reservada' : 'Ocupada'}
-                        </Text>
-                      </View>
-                    </View>
-                    {(() => {
-                      const cli = d.mesaClientes[m.id];
-                      if (!cli || (!cli.nombre && !cli.foto)) return null;
-                      return (
-                        <View style={styles.clienteRow}>
-                          <Avatar uri={cli.foto} name={cli.nombre} size={36} />
-                          <View style={styles.clienteMeta}>
-                            <Text style={styles.clienteNombre} numberOfLines={1}>
-                              {cli.nombre || 'Comensal'}
-                            </Text>
-                            <Text style={styles.clienteSub}>Comensal en esta mesa</Text>
-                          </View>
-                        </View>
-                      );
-                    })()}
-                    {m.estado === 'ocupada' ? (
-                      <View style={styles.btnRow}>
-                        <Pressable
-                          style={[styles.btnOutline, { flex: 1 }]}
-                          onPress={() =>
-                            router.push({ pathname: '/worker/mesa-pedidos', params: { mesaId: m.id, codigo: m.codigo } } as Href)
-                          }>
-                          <Text style={styles.btnOutlineText}>Pedir / ver cuenta</Text>
-                        </Pressable>
-                        <Pressable
-                          style={[styles.btnPrimary, { flex: 1, marginTop: 0 }, d.terminarBusyId === m.id && styles.btnDisabled]}
-                          onPress={() => void d.confirmarTerminarServicio(m)}
-                          disabled={d.terminarBusyId === m.id}>
-                          {d.terminarBusyId === m.id ? (
-                            <ActivityIndicator color={FtColors.onAccent} />
-                          ) : (
-                            <Text style={styles.btnPrimaryText}>Terminar servicio</Text>
-                          )}
-                        </Pressable>
-                      </View>
-                    ) : (
-                      <Text style={styles.hintSmall}>Esperando llegada del comensal.</Text>
-                    )}
-                  </View>
-                ))
-              )}
-            </WebCard>
-          </View>
-
-          <View style={[webStyles.col, { flex: 1, minWidth: 320 }]}>
-            <WebCard>
-              <WebCardHead icon="chatbubble-ellipses-outline" color={FtColors.warning} title="Solicitudes de servicio" />
-              {d.solicitudes.length === 0 ? (
-                <Text style={styles.empty}>No hay solicitudes abiertas.</Text>
-              ) : (
-                d.solicitudes.map((s) => (
-                  <View key={s.id} style={styles.subCard}>
-                    <Text style={styles.itemName}>Mesa {solicitudCodigo(s.mesas)}</Text>
-                    <Text style={styles.itemMeta}>{s.mensaje?.trim() || '(Sin mensaje)'}</Text>
-                    <Pressable style={styles.btnPrimary} onPress={() => d.marcarSolicitudAtendida(s.id)}>
-                      <Text style={styles.btnPrimaryText}>Marcar como atendida</Text>
-                    </Pressable>
-                  </View>
-                ))
-              )}
-            </WebCard>
-          </View>
-        </WebRow>
+        <>
+          {sec === 'resumen' ? (
+            <>
+              <WebRow>
+                {waiterSummary.map((s) => (
+                  <StatCard key={s.label} icon={s.icon} tone={s.tone} value={s.value} label={s.label} />
+                ))}
+              </WebRow>
+              <View style={{ height: 18 }} />
+              {loader}
+              <WebRow>
+                <View style={[webStyles.col, { flex: 1.5, minWidth: 380 }]}>{misMesasCard}</View>
+                <View style={[webStyles.col, { flex: 1, minWidth: 320 }]}>{solicitudesCard}</View>
+              </WebRow>
+            </>
+          ) : sec === 'mesas' ? (
+            <>
+              {loader}
+              {misMesasCard}
+            </>
+          ) : sec === 'solicitudes' ? (
+            <>
+              {loader}
+              {solicitudesCard}
+            </>
+          ) : (
+            <>
+              {loader}
+              {mesasLibresCard}
+            </>
+          )}
+        </>
       ) : (
         <>
+        <WebRow>
+          {hostSummary.map((s) => (
+            <StatCard key={s.label} icon={s.icon} tone={s.tone} value={s.value} label={s.label} />
+          ))}
+        </WebRow>
+
+        <View style={{ height: 18 }} />
+
+        {loader}
+
         <WebRow>
           {/* Fila */}
           <View style={[webStyles.col, { flex: 1.4, minWidth: 360 }]}>

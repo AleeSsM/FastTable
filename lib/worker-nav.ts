@@ -10,7 +10,14 @@ export type WorkerNavItem = {
   href: string;
   icon: IoniconName;
   roles: WorkerRol[];
+  /** Para vistas con secciones en una misma ruta (p. ej. mesero en /worker). */
+  section?: string;
 };
+
+/** Secciones de la consola del mesero (web). La primera es la de inicio. */
+export const MESERO_SECTIONS = ['resumen', 'mesas', 'solicitudes', 'libres'] as const;
+export type MeseroSection = (typeof MESERO_SECTIONS)[number];
+export const DEFAULT_MESERO_SECTION: MeseroSection = 'resumen';
 
 /**
  * Navegación lateral del personal en WEB. El orden aquí es el orden visual.
@@ -19,7 +26,16 @@ export type WorkerNavItem = {
 export const WORKER_NAV: WorkerNavItem[] = [
   { label: 'Resumen', href: '/worker/gerente', icon: 'speedometer-outline', roles: ['gerente'] },
   { label: 'Recepción', href: '/worker', icon: 'people-outline', roles: ['anfitrion'] },
-  { label: 'Mis mesas', href: '/worker', icon: 'grid-outline', roles: ['mesero'] },
+  { label: 'Resumen', href: '/worker', section: 'resumen', icon: 'speedometer-outline', roles: ['mesero'] },
+  { label: 'Mis mesas', href: '/worker', section: 'mesas', icon: 'grid-outline', roles: ['mesero'] },
+  {
+    label: 'Solicitudes',
+    href: '/worker',
+    section: 'solicitudes',
+    icon: 'chatbubble-ellipses-outline',
+    roles: ['mesero'],
+  },
+  { label: 'Mesas libres', href: '/worker', section: 'libres', icon: 'apps-outline', roles: ['mesero'] },
   {
     label: 'Reservas y mesas',
     href: '/worker/reservations',

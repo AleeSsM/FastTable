@@ -1,11 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
-import { usePathname, useRouter, type Href } from 'expo-router';
+import { useLocalSearchParams, usePathname, useRouter, type Href } from 'expo-router';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Avatar } from '@/components/avatar';
 import { FtColors } from '@/constants/fasttable';
 import { useAuth } from '@/contexts/auth-context';
-import { navForRole, roleLabel } from '@/lib/worker-nav';
+import { DEFAULT_MESERO_SECTION, navForRole, roleLabel } from '@/lib/worker-nav';
 
 const SIDEBAR_WIDTH = 256;
 
@@ -22,6 +22,8 @@ function isActive(pathname: string, href: string): boolean {
 export function WorkerWebShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname() ?? '';
+  const params = useLocalSearchParams<{ sec?: string }>();
+  const currentSec = typeof params.sec === 'string' ? params.sec : DEFAULT_MESERO_SECTION;
   const { staffMember, loading, signOut } = useAuth();
 
   if (loading) {
@@ -55,11 +57,14 @@ export function WorkerWebShell({ children }: { children: React.ReactNode }) {
 
         <View style={styles.nav}>
           {items.map((item) => {
-            const active = isActive(pathname, item.href);
+            const active = item.section
+              ? isActive(pathname, item.href) && currentSec === item.section
+              : isActive(pathname, item.href);
+            const href = (item.section ? `${item.href}?sec=${item.section}` : item.href) as Href;
             return (
               <Pressable
-                key={`${item.label}-${item.href}`}
-                onPress={() => router.push(item.href as Href)}
+                key={`${item.label}-${item.section ?? item.href}`}
+                onPress={() => router.push(href)}
                 style={({ hovered }: { hovered?: boolean }) => [
                   styles.navItem,
                   hovered && styles.navItemHover,
