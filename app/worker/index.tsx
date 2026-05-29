@@ -302,15 +302,24 @@ export default function WorkerDashboardScreen() {
             </View>
             {(() => {
               const cli = d.mesaClientes[m.id];
-              if (!cli || (!cli.nombre && !cli.foto)) return null;
+              const tieneCuenta = !!cli?.userId;
+              const displayName = cli?.nombre?.trim() || (tieneCuenta ? 'Comensal' : 'Walk-in');
               return (
                 <View style={styles.clienteRow}>
-                  <Avatar uri={cli.foto} name={cli.nombre} size={36} />
+                  {tieneCuenta || cli?.foto ? (
+                    <Avatar uri={cli?.foto} name={displayName} size={36} />
+                  ) : (
+                    <View style={styles.walkinAvatar}>
+                      <Ionicons name="walk-outline" size={20} color={FtColors.textMuted} />
+                    </View>
+                  )}
                   <View style={styles.clienteMeta}>
                     <Text style={styles.clienteNombre} numberOfLines={1}>
-                      {cli.nombre || 'Comensal'}
+                      {displayName}
                     </Text>
-                    <Text style={styles.clienteSub}>Comensal en esta mesa</Text>
+                    <Text style={styles.clienteSub}>
+                      {tieneCuenta ? 'Comensal en esta mesa' : 'Walk-in · sin cuenta'}
+                    </Text>
                   </View>
                 </View>
               );
@@ -706,6 +715,16 @@ const styles = StyleSheet.create({
   clienteMeta: { flex: 1 },
   clienteNombre: { fontSize: 15, fontWeight: '700', color: FtColors.text },
   clienteSub: { fontSize: 12, color: FtColors.textMuted, marginTop: 1 },
+  walkinAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: FtColors.surfaceElevated,
+    borderWidth: 1,
+    borderColor: FtColors.border,
+  },
   mesaState: { fontSize: 12, color: FtColors.textMuted, fontWeight: '600' },
   mesaBtn: {
     paddingVertical: 8,

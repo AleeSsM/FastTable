@@ -217,20 +217,70 @@ export function useWorkerDashboard() {
     const mineRows = (mine.data as MesaAsignada[]) ?? [];
     setMyMesas(mineRows);
 
-    // Cliente que ocupa cada una de mis mesas (para que el mesero vea nombre + foto).
+    // Quién ocupa cada una de mis mesas (para que el mesero vea nombre + foto).
+    // El comensal puede llegar por 3 vías y el servicio NO siempre existe aún
+    // (sentado desde fila sin pedidos todavía), así que combinamos las fuentes:
+    //   servicio activo  >  fila sentado (más reciente)  >  reserva atendida.
     const myMesaIds = mineRows.map((m) => m.id);
     if (myMesaIds.length > 0) {
-      const { data: servAct } = await supabase
-        .from('servicios_mesa')
-        .select('id_mesa, id_usuario, nombre_invitado')
-        .eq('estado', 'activo')
-        .in('id_mesa', myMesaIds);
-      const serv = (servAct ?? []) as {
+      const [servRes, filaSent, resComp] = await Promise.all([
+        supabase
+          .from('servicios_mesa')
+          .select('id_mesa, id_usuario, nombre_invitado')
+          .eq('estado', 'activo')
+          .in('id_mesa', myMesaIds),
+        supabase
+          .from('fila_espera')
+          .select('id_mesa_asignada, id_usuario, nombre_cliente, sentado_en')
+          .eq('estado', 'sentado')
+          .in('id_mesa_asignada', myMesaIds)
+          .order('sentado_en', { ascending: false }),
+        supabase
+          .from('reservas_mesa')
+          .select('id_mesa, id_usuario, creado_en')
+          .eq('ciclo', 'completada')
+          .eq('comensal_llego', true)
+          .in('id_mesa', myMesaIds)
+          .order('creado_en', { ascending: false }),
+      ]);
+
+      type Cand = { userId: string | null; nombre: string | null };
+      const servByMesa: Record<string, Cand> = {};
+      for (const s of (servRes.data ?? []) as {
         id_mesa: string;
         id_usuario: string | null;
         nombre_invitado: string | null;
-      }[];
-      const clientIds = [...new Set(serv.map((s) => s.id_usuario).filter((id): id is string => !!id))];
+      }[]) {
+        servByMesa[s.id_mesa] = { userId: s.id_usuario, nombre: s.nombre_invitado };
+      }
+      const filaByMesa: Record<string, Cand> = {};
+      for (const f of (filaSent.data ?? []) as {
+        id_mesa_asignada: string | null;
+        id_usuario: string | null;
+        nombre_cliente: string | null;
+      }[]) {
+        if (f.id_mesa_asignada && !filaByMesa[f.id_mesa_asignada]) {
+          filaByMesa[f.id_mesa_asignada] = { userId: f.id_usuario, nombre: f.nombre_cliente };
+        }
+      }
+      const resByMesa: Record<string, Cand> = {};
+      for (const r of (resComp.data ?? []) as { id_mesa: string; id_usuario: string | null }[]) {
+        if (!resByMesa[r.id_mesa]) resByMesa[r.id_mesa] = { userId: r.id_usuario, nombre: null };
+      }
+
+      const chosen: Record<string, Cand> = {};
+      for (const id of myMesaIds) {
+        const c = servByMesa[id] ?? filaByMesa[id] ?? resByMesa[id];
+        if (c) chosen[id] = c;
+      }
+
+      const clientIds = [
+        ...new Set(
+          Object.values(chosen)
+            .map((c) => c.userId)
+            .filter((id): id is string => !!id),
+        ),
+      ];
       const profMap: Record<string, { nombre: string | null; foto: string | null }> = {};
       if (clientIds.length > 0) {
         const { data: cps } = await supabase
@@ -239,14 +289,11 @@ export function useWorkerDashboard() {
           .in('id', clientIds);
         for (const p of cps ?? []) profMap[p.id] = { nombre: p.nombre_completo, foto: p.foto_url };
       }
+
       const mc: Record<string, MesaClienteInfo> = {};
-      for (const s of serv) {
-        const pr = s.id_usuario ? profMap[s.id_usuario] : undefined;
-        mc[s.id_mesa] = {
-          userId: s.id_usuario,
-          nombre: pr?.nombre ?? s.nombre_invitado ?? null,
-          foto: pr?.foto ?? null,
-        };
+      for (const [id, c] of Object.entries(chosen)) {
+        const pr = c.userId ? profMap[c.userId] : undefined;
+        mc[id] = { userId: c.userId, nombre: pr?.nombre ?? c.nombre ?? null, foto: pr?.foto ?? null };
       }
       setMesaClientes(mc);
     } else {

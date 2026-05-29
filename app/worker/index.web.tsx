@@ -162,15 +162,23 @@ export default function WorkerDashboardWebScreen() {
 
   const mesaMiaCard = (m: (typeof d.myMesas)[number]) => {
     const cli = d.mesaClientes[m.id];
+    const tieneCuenta = !!cli?.userId;
+    const displayName = cli?.nombre?.trim() || (tieneCuenta ? 'Comensal' : 'Walk-in');
     return (
       <View key={m.id} style={styles.subCard}>
         <View style={styles.rowHead}>
-          <Avatar uri={cli?.foto} name={cli?.nombre ?? m.codigo} size={48} />
+          {tieneCuenta || cli?.foto ? (
+            <Avatar uri={cli?.foto} name={displayName} size={48} />
+          ) : (
+            <View style={styles.walkinAvatar}>
+              <Ionicons name="walk-outline" size={24} color={FtColors.textMuted} />
+            </View>
+          )}
           <View style={{ flex: 1 }}>
             <Text style={styles.itemName} numberOfLines={1}>
-              {cli?.nombre || 'Comensal sin nombre'}
+              {displayName}
             </Text>
-            <Text style={styles.itemMeta}>Mesa {m.codigo}</Text>
+            <Text style={styles.itemMeta}>{tieneCuenta ? `Mesa ${m.codigo}` : `Mesa ${m.codigo} · sin cuenta`}</Text>
           </View>
           <View style={[styles.pill, m.estado === 'reservada' ? styles.pillInfo : styles.pillOk]}>
             <Text style={[styles.pillText, m.estado === 'reservada' ? styles.pillTextInfo : styles.pillTextOk]}>
@@ -559,6 +567,16 @@ const styles = StyleSheet.create({
   btnDangerText: { color: FtColors.danger, fontWeight: '800', fontSize: 14 },
   btnDisabled: { opacity: 0.6 },
   mesaCodeLg: { fontSize: 20, fontWeight: '800', color: FtColors.text, flex: 1 },
+  walkinAvatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: FtColors.surfaceElevated,
+    borderWidth: 1,
+    borderColor: FtColors.border,
+  },
   clienteRow: {
     flexDirection: 'row',
     alignItems: 'center',
