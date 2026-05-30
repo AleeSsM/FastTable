@@ -15,7 +15,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Avatar } from '@/components/avatar';
-import { AuthBoot } from '@/components/auth-boot';
 import { BRAND, RADII } from '@/constants/palette';
 import { useAuth } from '@/contexts/auth-context';
 import { useNavigateToWelcomeOnceWhen } from '@/hooks/use-auth-navigation';

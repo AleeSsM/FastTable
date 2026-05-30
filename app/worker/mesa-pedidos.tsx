@@ -14,8 +14,7 @@ import {
   View,
 } from 'react-native';
 import { Image } from 'expo-image';
-import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
-import { useFocusEffect } from 'expo-router';
+import { Redirect, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuth } from '@/contexts/auth-context';

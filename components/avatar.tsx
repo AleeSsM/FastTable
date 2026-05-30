@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { StyleSheet, Text, View, type ViewStyle } from 'react-native';
+import { StyleSheet, Text, View, type ImageStyle, type StyleProp, type ViewStyle } from 'react-native';
 
 import { BRAND, withAlpha, BRAND_RGB } from '@/constants/palette';
 
@@ -24,14 +24,15 @@ export function Avatar({
   uri?: string | null;
   name?: string | null;
   size?: number;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }) {
   const radius = size / 2;
+  const sizeStyle = { width: size, height: size, borderRadius: radius };
   if (uri) {
     return (
       <Image
         source={{ uri }}
-        style={[{ width: size, height: size, borderRadius: radius }, styles.img, style]}
+        style={[sizeStyle, styles.img, style as StyleProp<ImageStyle>]}
         contentFit="cover"
         transition={150}
       />
@@ -40,7 +41,7 @@ export function Avatar({
   return (
     <View
       style={[
-        { width: size, height: size, borderRadius: radius },
+        sizeStyle,
         styles.fallback,
         style,
       ]}>

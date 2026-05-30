@@ -19,6 +19,7 @@ export async function fetchLineasCuentaComensal(
       nombre: ln.nombre,
       precio_unit_centavos: ln.precio_unit_centavos,
       subtotal_centavos: ln.subtotal_centavos,
+      registrado_por_mesero: ln.registrado_por_mesero,
     })),
     total_centavos: cuenta.total_centavos,
   };

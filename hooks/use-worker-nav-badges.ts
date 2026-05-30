@@ -32,113 +32,112 @@ export function useWorkerNavBadges(
 
     if (keys.has('solicitudes')) {
       tasks.push(
-        supabase
-          .from('solicitudes_servicio')
-          .select('*', { count: 'exact', head: true })
-          .eq('estado', 'abierta')
-          .then(({ count }) => {
-            next.solicitudes = count ?? 0;
-          }),
+        (async () => {
+          const { count } = await supabase
+            .from('solicitudes_servicio')
+            .select('*', { count: 'exact', head: true })
+            .eq('estado', 'abierta');
+          next.solicitudes = count ?? 0;
+        })(),
       );
     }
 
     if (keys.has('mesas_libres')) {
       tasks.push(
-        supabase
-          .from('mesas')
-          .select('*', { count: 'exact', head: true })
-          .eq('estado', 'libre')
-          .then(({ count }) => {
-            next.mesas_libres = count ?? 0;
-          }),
+        (async () => {
+          const { count } = await supabase
+            .from('mesas')
+            .select('*', { count: 'exact', head: true })
+            .eq('estado', 'libre');
+          next.mesas_libres = count ?? 0;
+        })(),
       );
     }
 
     if (keys.has('fila')) {
       tasks.push(
-        supabase
-          .from('fila_espera')
-          .select('*', { count: 'exact', head: true })
-          .eq('estado', 'esperando')
-          .then(({ count }) => {
-            next.fila = count ?? 0;
-          }),
+        (async () => {
+          const { count } = await supabase
+            .from('fila_espera')
+            .select('*', { count: 'exact', head: true })
+            .eq('estado', 'esperando');
+          next.fila = count ?? 0;
+        })(),
       );
     }
 
     if (keys.has('reservas')) {
       tasks.push(
-        supabase
-          .from('reservas_mesa')
-          .select('*', { count: 'exact', head: true })
-          .eq('ciclo', 'activa')
-          .then(({ count }) => {
-            next.reservas = count ?? 0;
-          }),
+        (async () => {
+          const { count } = await supabase
+            .from('reservas_mesa')
+            .select('*', { count: 'exact', head: true })
+            .eq('ciclo', 'activa');
+          next.reservas = count ?? 0;
+        })(),
       );
     }
 
     if (keys.has('reservas_atender')) {
       tasks.push(
-        supabase.rpc('expirar_reservas_vencidas').then(() =>
-          supabase
+        (async () => {
+          await supabase.rpc('expirar_reservas_vencidas');
+          const { count } = await supabase
             .from('reservas_mesa')
             .select('*', { count: 'exact', head: true })
             .eq('ciclo', 'activa')
-            .is('comensal_llego', null)
-            .then(({ count }) => {
-              next.reservas_atender = count ?? 0;
-            }),
-        ),
+            .is('comensal_llego', null);
+          next.reservas_atender = count ?? 0;
+        })(),
       );
     }
 
     if (keys.has('reportes')) {
       tasks.push(
-        supabase
-          .from('reportes_problema')
-          .select('*', { count: 'exact', head: true })
-          .eq('estado', 'abierto')
-          .then(({ count }) => {
-            next.reportes = count ?? 0;
-          }),
+        (async () => {
+          const { count } = await supabase
+            .from('reportes_problema')
+            .select('*', { count: 'exact', head: true })
+            .eq('estado', 'abierto');
+          next.reportes = count ?? 0;
+        })(),
       );
     }
 
     if (keys.has('pedidos')) {
       tasks.push(
-        supabase
-          .from('pedidos_cocina')
-          .select('*', { count: 'exact', head: true })
-          .eq('estado', 'pendiente')
-          .then(({ count }) => {
-            next.pedidos = count ?? 0;
-          }),
+        (async () => {
+          const { count } = await supabase
+            .from('pedidos_cocina')
+            .select('*', { count: 'exact', head: true })
+            .eq('estado', 'pendiente');
+          next.pedidos = count ?? 0;
+        })(),
       );
     }
 
     if (keys.has('no_disponibles')) {
       tasks.push(
-        supabase
-          .from('items_menu')
-          .select('*', { count: 'exact', head: true })
-          .eq('disponible', false)
-          .then(({ count }) => {
-            next.no_disponibles = count ?? 0;
-          }),
+        (async () => {
+          const { count } = await supabase
+            .from('items_menu')
+            .select('*', { count: 'exact', head: true })
+            .eq('disponible', false);
+          next.no_disponibles = count ?? 0;
+        })(),
       );
     }
 
     if (keys.has('mis_mesas') && staffId) {
       tasks.push(
-        supabase
-          .from('mesas')
-          .select('*', { count: 'exact', head: true })
-          .eq('id_personal_atendiendo', staffId)
-          .in('estado', ['ocupada', 'reservada'])
-          .then(({ count }) => {
-            next.mis_mesas = count ?? 0;
-          }),
+        (async () => {
+          const { count } = await supabase
+            .from('mesas')
+            .select('*', { count: 'exact', head: true })
+            .eq('id_personal_atendiendo', staffId)
+            .in('estado', ['ocupada', 'reservada']);
+          next.mis_mesas = count ?? 0;
+        })(),
       );
     }
 

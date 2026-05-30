@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform } from 'react-native';
 
 import { AuthBoot } from '@/components/auth-boot';
 import { SoloPersonalWeb } from '@/components/solo-personal-web';
@@ -95,12 +95,3 @@ export default function GuestTabLayout() {
     </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  boot: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: Comensal.background,
-  },
-});

@@ -12,8 +12,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Redirect } from 'expo-router';
-import { useFocusEffect } from 'expo-router';
+import { Redirect, useFocusEffect } from 'expo-router';
 
 import { useAuth } from '@/contexts/auth-context';
 import { FtColors } from '@/constants/fasttable';
