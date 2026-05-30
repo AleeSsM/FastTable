@@ -7,6 +7,8 @@ function hrefToPath(href: Href): string {
   return href.pathname ?? '/';
 }
 
+const TAB_SEGMENT_NAMES = new Set(['index', 'queue', 'menu', 'service', 'more']);
+
 export function isOnGuestTabRoute(pathname: string): boolean {
   if (pathname.startsWith('/(tabs)')) return true;
   const first = pathname.replace(/^\//, '').split('/')[0];
