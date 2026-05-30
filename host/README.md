@@ -145,7 +145,7 @@ Configura en [expo.dev](https://expo.dev) → proyecto → **Environment variabl
 - `EXPO_PUBLIC_SUPABASE_ANON_KEY`
 - `EXPO_PUBLIC_APP_URL` → `https://fast-table.vercel.app`
 
-Package Android fijo: `com.alacarta.app` (en `app.json`).
+Package Android fijo: `com.alacarta.app` (en `app.json`). El slug de Expo sigue `FastTable` (ID del proyecto EAS); el nombre visible de la app es **A la Carta**.
 
 ### Generar APK
 
