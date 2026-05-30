@@ -8,6 +8,8 @@
       content="FastTable — la app que opera tu restaurante de punta a punta: reservas, menú, cocina, sala y gerencia en tiempo real."
     />
     <title>FastTable · Tu restaurante, en una sola app</title>
+    <link rel="icon" href="/assets/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/assets/logo-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -25,24 +27,21 @@
     <header class="nav" id="nav">
       <div class="container nav__inner">
         <a href="#hero" class="brand" aria-label="FastTable inicio">
-          <span class="brand__mark" aria-hidden="true">
-            <svg viewBox="0 0 32 32" width="28" height="28">
-              <rect x="3" y="3" width="26" height="26" rx="8" fill="url(#g)" />
-              <path
-                d="M11 10h10M11 16h10M11 22h6"
-                stroke="#f5f7ff"
-                stroke-width="2.4"
-                stroke-linecap="round"
-              />
-              <defs>
-                <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stop-color="#7c8cff" />
-                  <stop offset="1" stop-color="#5f6ece" />
-                </linearGradient>
-              </defs>
-            </svg>
-          </span>
-          <span class="brand__name">FastTable</span>
+          <img
+            src="/assets/logo-wordmark.png"
+            alt="FastTable"
+            class="brand__logo brand__logo--wordmark"
+            width="200"
+            height="40"
+          />
+          <img
+            src="/assets/logo-icon.png"
+            alt=""
+            class="brand__logo brand__logo--icon"
+            width="36"
+            height="36"
+            aria-hidden="true"
+          />
         </a>
 
         <nav class="nav__links" aria-label="Secciones">
@@ -390,7 +389,9 @@
             <div class="download__qr" aria-hidden="true">
               <div class="qr">
                 <div class="qr__grid"></div>
-                <div class="qr__logo">FT</div>
+                <div class="qr__logo">
+                  <img src="/assets/logo-icon.png" alt="" width="34" height="34" />
+                </div>
               </div>
               <span>Escanea para descargar</span>
             </div>
@@ -403,7 +404,13 @@
     <footer class="footer">
       <div class="container footer__inner">
         <div class="footer__brand">
-          <span class="brand__name">FastTable</span>
+          <img
+            src="/assets/logo-wordmark.png"
+            alt="FastTable"
+            class="footer__logo"
+            width="180"
+            height="36"
+          />
           <p>Reservas · menú · cocina · sala · gerencia.</p>
         </div>
         <div class="footer__cols">

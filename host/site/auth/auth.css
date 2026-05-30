@@ -36,6 +36,15 @@ body {
   padding: 28px 24px;
 }
 
+.auth-brand {
+  display: block;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  border-radius: 12px;
+  object-fit: contain;
+}
+
 h1 {
   margin: 0 0 8px;
   font-size: 1.35rem;

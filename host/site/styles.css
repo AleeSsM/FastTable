@@ -182,6 +182,24 @@ img {
   align-items: center;
   gap: 10px;
 }
+.brand__logo {
+  display: block;
+  height: auto;
+  object-fit: contain;
+}
+.brand__logo--wordmark {
+  width: auto;
+  max-height: 38px;
+  border-radius: 10px;
+  background: #f5f2eb;
+  padding: 4px 10px;
+}
+.brand__logo--icon {
+  display: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+}
 .brand__mark {
   display: inline-flex;
 }
@@ -768,16 +786,19 @@ img {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   display: grid;
   place-items: center;
-  font-weight: 800;
-  font-size: 15px;
-  color: var(--on-accent);
-  background: linear-gradient(135deg, var(--accent), var(--accent-muted));
+  background: #f5f2eb;
   border-radius: 11px;
   border: 3px solid var(--text);
+  overflow: hidden;
+}
+.qr__logo img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
 }
 
 /* ===================== Footer ===================== */
@@ -798,6 +819,15 @@ img {
   color: var(--text-faint);
   font-size: 14px;
   margin: 10px 0 0;
+}
+.footer__logo {
+  display: block;
+  width: auto;
+  max-height: 34px;
+  opacity: 0.95;
+  border-radius: 8px;
+  background: #f5f2eb;
+  padding: 4px 10px;
 }
 .footer__cols {
   display: grid;
@@ -882,6 +912,12 @@ img {
 }
 
 @media (max-width: 640px) {
+  .brand__logo--wordmark {
+    display: none;
+  }
+  .brand__logo--icon {
+    display: block;
+  }
   .nav__links,
   .nav__cta {
     display: none;
