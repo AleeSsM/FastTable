@@ -2,11 +2,12 @@ import { Ionicons } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Redirect, useRouter, type Href } from 'expo-router';
+import { useRouter, type Href } from 'expo-router';
 
+import { AuthBoot } from '@/components/auth-boot';
 import { adminCardShadow, adminStyles } from '@/constants/worker-admin-styles';
 import { FtColors } from '@/constants/fasttable';
-import { useGerenteGuard } from '@/lib/use-gerente-guard';
+import { useGerenteGuardNavigation } from '@/hooks/use-gerente-guard-navigation';
 
 type HubItem = {
   href: Href;
@@ -44,8 +45,10 @@ const HUB: HubItem[] = [
 
 export default function AdminHubScreen() {
   const router = useRouter();
-  const guard = useGerenteGuard();
-  if (guard.redirectHref) return <Redirect href={guard.redirectHref} />;
+  const guard = useGerenteGuardNavigation();
+  if (guard.boot === false || guard.redirectHref) {
+    return <AuthBoot variant="worker" />;
+  }
 
   return (
     <SafeAreaView style={adminStyles.safe} edges={['top', 'left', 'right']}>

@@ -6,18 +6,19 @@ import { AuthBoot } from '@/components/auth-boot';
 import { SoloPersonalWeb } from '@/components/solo-personal-web';
 import { useAuth } from '@/contexts/auth-context';
 import { Comensal } from '@/constants/theme-comensal';
-import { useReplaceWhen } from '@/hooks/use-auth-navigation';
+import { useNavigateToWelcomeOnceWhen, useNavigateToWorkerWhen } from '@/hooks/use-auth-navigation';
 
 export default function GuestTabLayout() {
   const { session, staffMember, loading, signingOut } = useAuth();
 
-  const needsHome = !loading && !signingOut && !session;
   const needsWorker = !loading && !signingOut && !!session && !!staffMember;
+  const needsHome = !signingOut && !session;
 
-  useReplaceWhen(needsHome, '/');
-  useReplaceWhen(needsWorker, '/worker');
+  useNavigateToWelcomeOnceWhen(needsHome);
+  useNavigateToWorkerWhen(needsWorker);
 
-  if (loading || signingOut || needsHome || needsWorker) {
+  // Spinner al cerrar sesión, redirigir personal, o volver a bienvenida sin sesión.
+  if (signingOut || needsWorker || needsHome) {
     return <AuthBoot />;
   }
 

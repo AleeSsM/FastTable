@@ -161,10 +161,16 @@ Los usuarios que abren el correo **en el teléfono con la app instalada** usan e
 → No hay archivo en `host/site/apk/fasttable.apk` o no hiciste build + deploy después de copiarlo.
 
 **`/app/` en blanco**  
-→ Falló `expo export` en el build; revisa logs de Vercel y variables de entorno.
+→ Casi siempre: el build web no incrustó `EXPO_PUBLIC_SUPABASE_*` (revisa que existan en Vercel **antes** del deploy y redeploy). El código usa referencias estáticas en `constants/env.ts` para que Metro las embeba.  
+→ También: falló `expo export` en los logs de Vercel.  
+→ En consola del navegador (F12) puede aparecer: *Falta EXPO_PUBLIC_SUPABASE_URL…*
+
+**`config.js` con `siteUrl: ""`**  
+→ Falta `EXPO_PUBLIC_APP_URL` en el build; pon `https://tu-proyecto.vercel.app` en Vercel y redeploy (afecta enlaces de correo, no solo la landing).
 
 **Personal no entra**  
-→ Misma cuenta que en móvil; en web `/app/` → inicio de sesión → redirige a `/app/worker` si es personal.
+→ Misma cuenta que en móvil; en web `/app/` → inicio de sesión → redirige a `/app/worker` si es personal.  
+→ Si eres **comensal** (sin fila en `personal`), la web muestra el aviso «Versión web exclusiva para personal» (comportamiento esperado).
 
 ---
 

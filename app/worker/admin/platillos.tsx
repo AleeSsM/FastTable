@@ -14,14 +14,16 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Redirect, useFocusEffect } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
+
+import { AuthBoot } from '@/components/auth-boot';
 
 import { adminCardShadow, adminStyles } from '@/constants/worker-admin-styles';
 import { FtColors } from '@/constants/fasttable';
 import { REALTIME_ADMIN, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { centavosToPrecioInput, parsePrecioPesosToCentavos } from '@/lib/admin-price';
 import { formatPriceFromCents, formatCantidadInventario, parseCantidadInventario, etiquetaCampoCantidad, tecladoCantidadInventario, placeholderCantidadInventario } from '@/lib/format';
-import { useGerenteGuard } from '@/lib/use-gerente-guard';
+import { useGerenteGuardNavigation } from '@/hooks/use-gerente-guard-navigation';
 import { supabase } from '@/lib/supabase';
 
 type Categoria = { id: string; nombre: string };
@@ -54,7 +56,7 @@ function catNombre(c: PlatilloRow['categorias_menu']): string {
 }
 
 export default function AdminPlatillosScreen() {
-  const guard = useGerenteGuard();
+  const guard = useGerenteGuardNavigation();
   const [platillos, setPlatillos] = useState<PlatilloRow[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [ingredientes, setIngredientes] = useState<IngredienteOpt[]>([]);
@@ -342,7 +344,9 @@ export default function AdminPlatillosScreen() {
     setRefreshing(false);
   };
 
-  if (guard.redirectHref) return <Redirect href={guard.redirectHref} />;
+  if (guard.boot === false || guard.redirectHref) {
+    return <AuthBoot variant="worker" />;
+  }
 
   return (
     <SafeAreaView style={adminStyles.safe} edges={['bottom']}>

@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Redirect, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -15,8 +15,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Avatar } from '@/components/avatar';
+import { AuthBoot } from '@/components/auth-boot';
 import { BRAND, RADII } from '@/constants/palette';
 import { useAuth } from '@/contexts/auth-context';
+import { useNavigateToWelcomeOnceWhen } from '@/hooks/use-auth-navigation';
 import { pickAndUploadAvatar } from '@/lib/avatar';
 import { notify } from '@/lib/confirm';
 import { supabase } from '@/lib/supabase';
@@ -48,6 +50,9 @@ export default function PerfilScreen() {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  const needsHome = !loading && !signingOut && (!session || !user);
+  useNavigateToWelcomeOnceWhen(needsHome);
+
   useEffect(() => {
     if (staffMember) {
       setNombre(staffMember.nombre_visible ?? '');
@@ -65,14 +70,13 @@ export default function PerfilScreen() {
     }
   }, [profile, staffMember, user]);
 
-  if (loading || signingOut) {
+  if (loading || signingOut || needsHome || !session || !user) {
     return (
       <View style={styles.boot}>
         <ActivityIndicator color={BRAND.accent} size="large" />
       </View>
     );
   }
-  if (!session || !user) return <Redirect href="/" />;
 
   const goBack = () => {
     if (router.canGoBack()) router.back();

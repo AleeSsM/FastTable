@@ -1,22 +1,67 @@
-import { useRouter, type Href } from 'expo-router';
+import { usePathname } from 'expo-router';
 import { useEffect, useRef } from 'react';
 
-/**
- * Navega con replace una sola vez cuando `when` es true.
- * Evita <Redirect> en render, que en iOS provoca "Maximum update depth exceeded".
- */
-export function useReplaceWhen(when: boolean, href: Href) {
-  const router = useRouter();
-  const lastHref = useRef<Href | null>(null);
+import {
+  navigateToGuestTabsRoot,
+  navigateToWelcomeRoot,
+  navigateToWorkerRoot,
+} from '@/lib/navigate-root';
+import { isSignOutNavigationActive } from '@/lib/sign-out-nav';
+import { isAlreadyAtRoute } from '@/hooks/use-replace-when';
+
+/** Ir al stack de tabs comensal (solo desde index / pantallas raíz). */
+export function useNavigateToGuestTabsWhen(when: boolean) {
+  const pathname = usePathname();
+  const sent = useRef(false);
 
   useEffect(() => {
-    if (!when) {
-      lastHref.current = null;
+    if (!when || isSignOutNavigationActive()) {
+      sent.current = false;
       return;
     }
-    if (lastHref.current === href) return;
-    lastHref.current = href;
-    router.replace(href);
-    // router estable en expo-router; no incluirlo en deps (evita bucle de replace).
-  }, [when, href]);
+    if (isAlreadyAtRoute(pathname, '/(tabs)')) {
+      sent.current = false;
+      return;
+    }
+    if (sent.current) return;
+    sent.current = true;
+    navigateToGuestTabsRoot();
+  }, [when, pathname]);
 }
+
+/** Ir al stack worker desde index o layouts anidados. */
+export function useNavigateToWorkerWhen(when: boolean) {
+  const pathname = usePathname();
+  const sent = useRef(false);
+
+  useEffect(() => {
+    if (!when || isSignOutNavigationActive()) {
+      sent.current = false;
+      return;
+    }
+    if (pathname.startsWith('/worker')) {
+      sent.current = false;
+      return;
+    }
+    if (sent.current) return;
+    sent.current = true;
+    navigateToWorkerRoot();
+  }, [when, pathname]);
+}
+
+/** Sesión expirada en tabs/worker (no durante cierre de sesión manual). */
+export function useNavigateToWelcomeOnceWhen(when: boolean) {
+  const sent = useRef(false);
+
+  useEffect(() => {
+    if (!when || isSignOutNavigationActive()) {
+      sent.current = false;
+      return;
+    }
+    if (sent.current) return;
+    sent.current = true;
+    navigateToWelcomeRoot();
+  }, [when]);
+}
+
+export { isAlreadyAtRoute, useReplaceWhen } from '@/hooks/use-replace-when';

@@ -12,13 +12,15 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Redirect, useFocusEffect } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
+
+import { AuthBoot } from '@/components/auth-boot';
 
 import { adminCardShadow, adminStyles, estadoMesaStyle } from '@/constants/worker-admin-styles';
 import { FtColors } from '@/constants/fasttable';
 import { REALTIME_ADMIN, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { mapAdminSupabaseError } from '@/lib/admin-errors';
-import { useGerenteGuard } from '@/lib/use-gerente-guard';
+import { useGerenteGuardNavigation } from '@/hooks/use-gerente-guard-navigation';
 import { supabase } from '@/lib/supabase';
 
 type EstadoMesa = 'libre' | 'ocupada' | 'reservada';
@@ -35,7 +37,7 @@ type MesaRow = {
 const ESTADOS: readonly EstadoMesa[] = ['libre', 'ocupada', 'reservada'] as const;
 
 export default function AdminMesasScreen() {
-  const guard = useGerenteGuard();
+  const guard = useGerenteGuardNavigation();
   const [rows, setRows] = useState<MesaRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -177,7 +179,9 @@ export default function AdminMesasScreen() {
     ]);
   };
 
-  if (guard.redirectHref) return <Redirect href={guard.redirectHref} />;
+  if (guard.boot === false || guard.redirectHref) {
+    return <AuthBoot variant="worker" />;
+  }
 
   return (
     <SafeAreaView style={adminStyles.safe} edges={['bottom']}>

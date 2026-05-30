@@ -4,11 +4,11 @@ type GerenteGuardResult =
   | { boot: true; redirectHref: null }
   | { boot: false; redirectHref: '/' | '/login' | '/worker' };
 
-/** Rutas de redirección para pantallas solo gerente (usar con `<Redirect href={…} />`). */
+/** Rutas de redirección para pantallas solo gerente (usar con AuthBoot + useReplaceWhen). */
 export function useGerenteGuard(): GerenteGuardResult {
-  const { session, staffMember, loading: authLoading } = useAuth();
+  const { session, staffMember, loading: authLoading, signingOut } = useAuth();
 
-  if (authLoading) {
+  if (authLoading || signingOut) {
     return { boot: true, redirectHref: null };
   }
   if (!session) {

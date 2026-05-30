@@ -1,44 +1,47 @@
-import { useRouter, type Href } from 'expo-router';
+import type { Href } from 'expo-router';
 import { useCallback } from 'react';
 
 import { useAuth } from '@/contexts/auth-context';
-import { afterSignOutUiSettled, runSignOutTask } from '@/lib/sign-out';
+import { navigateToWelcomeRoot } from '@/lib/navigate-root';
+import {
+  markSignOutNavigationEnd,
+  markSignOutNavigationStart,
+} from '@/lib/sign-out-nav';
+import {
+  afterSignOutNavigationSettled,
+  afterSignOutUiSettled,
+  runSignOutTask,
+} from '@/lib/sign-out';
 
 type Options = {
   redirectTo?: Href;
 };
 
 /**
- * Cierra sesión, vacía el stack de navegación y va al inicio sin Redirect en bucle (iOS).
+ * Cierra sesión: una sola navegación a bienvenida, luego limpia Supabase.
  */
-export function useSafeSignOut(options: Options = {}) {
-  const router = useRouter();
-  const { signOut, finishSignOutNavigation, signingOut } = useAuth();
-  const redirectTo = options.redirectTo ?? ('/' as Href);
+export function useSafeSignOut(_options: Options = {}) {
+  const { beginSignOut, signOut, finishSignOutNavigation, signingOut } = useAuth();
 
   const safeSignOut = useCallback(() => {
     if (signingOut) return;
 
     runSignOutTask(async () => {
+      markSignOutNavigationStart();
+
       try {
         await afterSignOutUiSettled();
+        beginSignOut();
+        navigateToWelcomeRoot();
+        await afterSignOutNavigationSettled();
         await signOut();
-
-        await new Promise<void>((resolve) => {
-          requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
-        });
-
-        if (typeof router.dismissAll === 'function') {
-          router.dismissAll();
-        }
-        router.replace(redirectTo);
-
         await afterSignOutUiSettled();
       } finally {
-        requestAnimationFrame(() => finishSignOutNavigation());
+        finishSignOutNavigation();
+        markSignOutNavigationEnd();
       }
     });
-  }, [signOut, finishSignOutNavigation, router, redirectTo, signingOut]);
+  }, [beginSignOut, signOut, finishSignOutNavigation, signingOut]);
 
   return { safeSignOut, signingOut };
 }

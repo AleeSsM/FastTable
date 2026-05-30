@@ -1,5 +1,5 @@
+import { useCallback } from 'react';
 import {
-  ActivityIndicator,
   Platform,
   Pressable,
   ScrollView,
@@ -13,19 +13,37 @@ import { useRouter } from 'expo-router';
 import { AuthBoot } from '@/components/auth-boot';
 import { useAuth } from '@/contexts/auth-context';
 import { Comensal } from '@/constants/theme-comensal';
-import { useReplaceWhen } from '@/hooks/use-auth-navigation';
+import { isSignOutNavigationActive } from '@/lib/sign-out-nav';
+import { useNavigateToGuestTabsWhen, useNavigateToWorkerWhen } from '@/hooks/use-auth-navigation';
 
 export default function WelcomeScreen() {
   const router = useRouter();
   const { session, user, staffMember, loading, signingOut } = useAuth();
 
-  const goWorker = !loading && !signingOut && !!session && !!user && !!staffMember;
-  const goTabs = !loading && !signingOut && !!session && !!user && !staffMember;
+  const goWorker =
+    !isSignOutNavigationActive() &&
+    !loading &&
+    !signingOut &&
+    !!session &&
+    !!user &&
+    !!staffMember;
+  const goTabs =
+    !isSignOutNavigationActive() &&
+    !loading &&
+    !signingOut &&
+    !!session &&
+    !!user &&
+    !staffMember;
+  const showBoot =
+    signingOut ||
+    isSignOutNavigationActive() ||
+    (loading && !session) ||
+    (!!session && (goWorker || goTabs));
 
-  useReplaceWhen(goWorker, '/worker');
-  useReplaceWhen(goTabs, '/(tabs)');
+  useNavigateToWorkerWhen(goWorker);
+  useNavigateToGuestTabsWhen(goTabs);
 
-  if (loading || signingOut || goWorker || goTabs) {
+  if (showBoot) {
     return <AuthBoot />;
   }
 

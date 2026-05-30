@@ -1,0 +1,29 @@
+FastTable — bugs pendientes (registro interno)
+==============================================
+Actualizado: 2026-05-29
+
+-------------------------------------------------------------------------------
+1. [CRÍTICO — iOS] Cerrar sesión → bucle infinito / Maximum update depth
+-------------------------------------------------------------------------------
+Estado: SIN RESOLVER (sigue presente tras varios intentos de fix).
+
+Síntoma:
+  - Desde la app móvil (cliente/comensal, pestaña Más → Cerrar sesión), en iOS
+    la navegación entra en bucle o pantalla negra / error de profundidad de
+    actualización.
+  - El swipe atrás tras login ya quedó resuelto (gestureEnabled + guards).
+
+Contexto técnico (para quien retome):
+  - Varios guards compiten: app/index.tsx, (tabs)/_layout.tsx, useSafeSignOut,
+    useNavigateToWelcomeOnceWhen, signOutNavigationActive en lib/sign-out-nav.ts.
+  - Flujo deseado: markSignOutNavigationStart → navigateToWelcomeRoot → signOut
+    → finishSignOutNavigation → markSignOutNavigationEnd.
+  - Archivos clave: hooks/use-safe-sign-out.ts, hooks/use-auth-navigation.ts,
+    lib/navigate-root.ts, lib/sign-out-nav.ts, contexts/auth-context.tsx,
+    app/(tabs)/_layout.tsx, app/index.tsx.
+
+Prueba de aceptación:
+  - Cerrar sesión en iOS → spinner breve → pantalla de bienvenida, sin bucle
+    ni error rojo; volver a iniciar sesión funciona.
+
+-------------------------------------------------------------------------------

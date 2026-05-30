@@ -26,14 +26,21 @@ export default function RootLayout() {
     <ThemeProvider value={RootNavigationTheme}>
       <AuthProvider>
         <DeepLinkBridge />
-        <Stack>
+        <Stack screenOptions={{ headerBackTitle: 'Atrás' }}>
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="register" options={{ title: 'Crear cuenta', headerBackTitle: 'Atrás' }} />
           <Stack.Screen name="login" options={{ title: 'Iniciar sesión', headerBackTitle: 'Atrás' }} />
           <Stack.Screen name="forgot-password" options={{ title: 'Recuperar contraseña', headerBackTitle: 'Atrás' }} />
           <Stack.Screen name="auth/callback" options={{ headerShown: false, title: 'Acceso' }} />
           <Stack.Screen name="reset-password" options={{ title: 'Nueva contraseña', headerBackTitle: 'Atrás' }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="(tabs)"
+            options={{
+              headerShown: false,
+              gestureEnabled: false,
+              fullScreenGestureEnabled: false,
+            }}
+          />
           <Stack.Screen
             name="mis-cuentas"
             options={{
@@ -45,7 +52,14 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen name="perfil" options={{ headerShown: false }} />
-          <Stack.Screen name="worker" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="worker"
+            options={{
+              headerShown: false,
+              gestureEnabled: false,
+              fullScreenGestureEnabled: false,
+            }}
+          />
         </Stack>
         <StatusBar style="light" />
       </AuthProvider>

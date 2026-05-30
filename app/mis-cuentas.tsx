@@ -12,13 +12,15 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Redirect, useFocusEffect } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
 
+import { AuthBoot } from '@/components/auth-boot';
 import { Avatar } from '@/components/avatar';
 import { Comensal } from '@/constants/theme-comensal';
 import { useAuth } from '@/contexts/auth-context';
 import { formatPriceFromCents } from '@/lib/format';
 import { supabase } from '@/lib/supabase';
+import { useNavigateToWelcomeOnceWhen } from '@/hooks/use-auth-navigation';
 
 type CuentaCerrada = {
   id: string;
@@ -66,7 +68,9 @@ function fechaLarga(iso: string | null): string {
 
 export default function MisCuentasScreen() {
   const insets = useSafeAreaInsets();
-  const { session, user, loading: authLoading } = useAuth();
+  const { session, user, loading: authLoading, signingOut } = useAuth();
+  const needsHome = !authLoading && !signingOut && !session;
+  useNavigateToWelcomeOnceWhen(needsHome);
   const [lista, setLista] = useState<CuentaCerrada[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -110,16 +114,8 @@ export default function MisCuentasScreen() {
     setDetalleBusy(false);
   };
 
-  if (authLoading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator color={Comensal.accent} />
-      </View>
-    );
-  }
-
-  if (!session) {
-    return <Redirect href="/" />;
+  if (authLoading || signingOut || needsHome) {
+    return <AuthBoot />;
   }
 
   const cuentaSel = lista.find((s) => s.id === detalleId);

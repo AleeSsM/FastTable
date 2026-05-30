@@ -26,6 +26,8 @@ type AuthContextValue = {
   signingOut: boolean;
   refreshProfile: () => Promise<void>;
   refreshStaff: () => Promise<void>;
+  /** Marca cierre de sesión sin vaciar sesión (navegar antes de limpiar auth). */
+  beginSignOut: () => void;
   signOut: () => Promise<void>;
   finishSignOutNavigation: () => void;
 };
@@ -125,7 +127,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, s) => {
+    } = supabase.auth.onAuthStateChange((event, s) => {
       if (signingOutRef.current) {
         if (!s?.user) {
           setSession(null);
@@ -137,9 +139,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setSession(s);
       if (s?.user) {
-        setLoading(true);
+        // TOKEN_REFRESHED / INITIAL_SESSION no deben desmontar tabs (vuelve a "Mesas").
+        const silent =
+          event === 'TOKEN_REFRESHED' ||
+          event === 'INITIAL_SESSION' ||
+          event === 'USER_UPDATED';
+        if (!silent) setLoading(true);
         void Promise.all([loadProfile(s.user.id), loadStaff(s.user.id)]).finally(() => {
-          if (!signingOutRef.current) setLoading(false);
+          if (!signingOutRef.current && !silent) setLoading(false);
         });
       } else {
         setProfile(null);
@@ -164,11 +171,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (id) await loadStaff(id);
   }, [session?.user?.id, loadStaff]);
 
-  const signOut = useCallback(async () => {
+  const beginSignOut = useCallback(() => {
     if (signingOutRef.current) return;
     signingOutRef.current = true;
     setSigningOut(true);
-    setLoading(true);
+  }, []);
+
+  const signOut = useCallback(async () => {
+    if (!signingOutRef.current) {
+      signingOutRef.current = true;
+      setSigningOut(true);
+    }
     setSession(null);
     setProfile(null);
     setStaffMember(null);
@@ -177,7 +190,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       await clearInvalidLocalSession();
     }
-    setLoading(false);
   }, []);
 
   const finishSignOutNavigation = useCallback(() => {
@@ -195,6 +207,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signingOut,
       refreshProfile,
       refreshStaff,
+      beginSignOut,
       signOut,
       finishSignOutNavigation,
     }),
@@ -206,6 +219,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signingOut,
       refreshProfile,
       refreshStaff,
+      beginSignOut,
       signOut,
       finishSignOutNavigation,
     ],

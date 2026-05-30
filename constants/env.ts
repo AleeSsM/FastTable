@@ -1,14 +1,19 @@
-/** Variables públicas (EXPO_PUBLIC_*). Defínelas en `.env` en la raíz del proyecto. */
-function envStr(key: string): string {
-  const v = process.env[key];
-  return typeof v === 'string' ? v.trim() : '';
+/**
+ * Variables públicas (EXPO_PUBLIC_*). Defínelas en `.env` o en Vercel al hacer build.
+ *
+ * Importante: referencias estáticas a `process.env.EXPO_PUBLIC_*` para que Metro
+ * las incruste en el bundle web (`expo export`). Un acceso dinámico `process.env[key]`
+ * deja el bundle vacío en producción → pantalla en blanco en /app/.
+ */
+function trimEnv(value: string | undefined): string {
+  return typeof value === 'string' ? value.trim() : '';
 }
 
 export const env = {
-  supabaseUrl: envStr('EXPO_PUBLIC_SUPABASE_URL'),
-  supabaseAnonKey: envStr('EXPO_PUBLIC_SUPABASE_ANON_KEY'),
-  /** Dominio público de la app web (sin barra final). Ej. https://app.midominio.com */
-  appUrl: envStr('EXPO_PUBLIC_APP_URL'),
+  supabaseUrl: trimEnv(process.env.EXPO_PUBLIC_SUPABASE_URL),
+  supabaseAnonKey: trimEnv(process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY),
+  /** Dominio público de la app web (sin barra final). Ej. https://fast-table.vercel.app */
+  appUrl: trimEnv(process.env.EXPO_PUBLIC_APP_URL),
 };
 
 export function assertSupabaseConfigured(): void {

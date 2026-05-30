@@ -13,7 +13,9 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Redirect, useFocusEffect } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
+
+import { AuthBoot } from '@/components/auth-boot';
 
 import { adminCardShadow, adminStyles } from '@/constants/worker-admin-styles';
 import { FtColors } from '@/constants/fasttable';
@@ -27,7 +29,7 @@ import {
   tecladoCantidadInventario,
   type UnidadMedidaInventario,
 } from '@/lib/format';
-import { useGerenteGuard } from '@/lib/use-gerente-guard';
+import { useGerenteGuardNavigation } from '@/hooks/use-gerente-guard-navigation';
 import { supabase } from '@/lib/supabase';
 
 type CategoriaInventario = 'Bebidas' | 'Alimentos' | 'Ingredientes' | 'Otros';
@@ -72,7 +74,7 @@ function unidadLabel(u: UnidadMedidaInventario): string {
 }
 
 export default function AdminIngredientesScreen() {
-  const guard = useGerenteGuard();
+  const guard = useGerenteGuardNavigation();
   const [rows, setRows] = useState<IngredienteRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -231,7 +233,9 @@ export default function AdminIngredientesScreen() {
     );
   };
 
-  if (guard.redirectHref) return <Redirect href={guard.redirectHref} />;
+  if (guard.boot === false || guard.redirectHref) {
+    return <AuthBoot variant="worker" />;
+  }
 
   return (
     <SafeAreaView style={adminStyles.safe} edges={['bottom']}>
