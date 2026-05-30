@@ -1,7 +1,7 @@
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { Comensal } from '@/constants/theme-comensal';
-import { FtColors } from '@/constants/fasttable';
+import { AcColors } from '@/constants/alacarta';
 
 type Props = {
   variant?: 'comensal' | 'worker';
@@ -9,8 +9,8 @@ type Props = {
 
 /** Pantalla neutra mientras auth carga o cierra sesión (evita Redirect en bucle). */
 export function AuthBoot({ variant = 'comensal' }: Props) {
-  const color = variant === 'worker' ? FtColors.accent : Comensal.accent;
-  const bg = variant === 'worker' ? FtColors.background : Comensal.background;
+  const color = variant === 'worker' ? AcColors.accent : Comensal.accent;
+  const bg = variant === 'worker' ? AcColors.background : Comensal.background;
 
   return (
     <View style={[styles.boot, { backgroundColor: bg }]}>

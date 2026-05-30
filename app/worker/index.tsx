@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AuthBoot } from '@/components/auth-boot';
 import { Avatar } from '@/components/avatar';
-import { FtColors, FtSurfaces } from '@/constants/fasttable';
+import { AcColors, AcSurfaces } from '@/constants/alacarta';
 import { useAuth } from '@/contexts/auth-context';
 import { useSafeSignOut } from '@/hooks/use-safe-sign-out';
 import { mesaEtiqueta, mesaEtiquetaFromJoin } from '@/lib/mesa-label';
@@ -236,7 +236,7 @@ export default function WorkerDashboardScreen() {
 
       <Pressable style={styles.linkRow} onPress={() => router.push('/worker/reservations')}>
         <Text style={styles.linkText}>Vista detallada de reservas</Text>
-        <Ionicons name="chevron-forward" size={18} color={FtColors.accentMuted} />
+        <Ionicons name="chevron-forward" size={18} color={AcColors.accentMuted} />
       </Pressable>
     </View>
   );
@@ -255,7 +255,7 @@ export default function WorkerDashboardScreen() {
             disabled={busy}
             onPress={() => d.onToggleMesaWalkIn(m)}>
             {busy ? (
-              <ActivityIndicator color={FtColors.onAccent} size="small" />
+              <ActivityIndicator color={AcColors.onAccent} size="small" />
             ) : (
               <Text style={styles.mesaBtnFillText}>Ocupar</Text>
             )}
@@ -265,7 +265,7 @@ export default function WorkerDashboardScreen() {
         ) : (
           <Pressable style={styles.mesaBtn} disabled={busy} onPress={() => d.onToggleMesaWalkIn(m)}>
             {busy ? (
-              <ActivityIndicator color={FtColors.accent} size="small" />
+              <ActivityIndicator color={AcColors.accent} size="small" />
             ) : (
               <Text style={styles.mesaBtnText}>Liberar</Text>
             )}
@@ -309,7 +309,7 @@ export default function WorkerDashboardScreen() {
                     <Avatar uri={cli?.foto} name={displayName} size={36} />
                   ) : (
                     <View style={styles.walkinAvatar}>
-                      <Ionicons name="walk-outline" size={20} color={FtColors.textMuted} />
+                      <Ionicons name="walk-outline" size={20} color={AcColors.textMuted} />
                     </View>
                   )}
                   <View style={styles.clienteMeta}>
@@ -337,7 +337,7 @@ export default function WorkerDashboardScreen() {
                   onPress={() => void d.confirmarTerminarServicio(m)}
                   disabled={d.terminarBusyId === m.id}>
                   {d.terminarBusyId === m.id ? (
-                    <ActivityIndicator color={FtColors.onAccent} />
+                    <ActivityIndicator color={AcColors.onAccent} />
                   ) : (
                     <Text style={styles.btnPrimaryText}>Terminar servicio</Text>
                   )}
@@ -432,14 +432,14 @@ export default function WorkerDashboardScreen() {
 
   const summary = isHost
     ? [
-        { label: 'Mesas libres', value: d.available, tone: FtColors.success },
-        { label: 'En fila', value: d.waiting, tone: FtColors.warning },
-        { label: 'A atender', value: d.attendOrdered.length, tone: FtColors.accent },
+        { label: 'Mesas libres', value: d.available, tone: AcColors.success },
+        { label: 'En fila', value: d.waiting, tone: AcColors.warning },
+        { label: 'A atender', value: d.attendOrdered.length, tone: AcColors.accent },
       ]
     : [
-        { label: 'Mis mesas', value: d.myMesas.length, tone: FtColors.accent },
-        { label: 'Solicitudes', value: d.openReqCount, tone: FtColors.warning },
-        { label: 'Mesas libres', value: d.available, tone: FtColors.success },
+        { label: 'Mis mesas', value: d.myMesas.length, tone: AcColors.accent },
+        { label: 'Solicitudes', value: d.openReqCount, tone: AcColors.warning },
+        { label: 'Mesas libres', value: d.available, tone: AcColors.success },
       ];
 
   return (
@@ -451,14 +451,14 @@ export default function WorkerDashboardScreen() {
           <RefreshControl
             refreshing={d.refreshing}
             onRefresh={d.onRefresh}
-            tintColor={FtColors.accent}
-            colors={[FtColors.accent]}
+            tintColor={AcColors.accent}
+            colors={[AcColors.accent]}
           />
         }
         showsVerticalScrollIndicator={false}>
         {staffMember.rol === 'gerente' ? (
           <Pressable style={styles.backRow} onPress={() => router.replace('/worker/gerente')}>
-            <Ionicons name="chevron-back" size={18} color={FtColors.accent} />
+            <Ionicons name="chevron-back" size={18} color={AcColors.accent} />
             <Text style={styles.backText}>Volver a panel gerente</Text>
           </Pressable>
         ) : null}
@@ -486,7 +486,7 @@ export default function WorkerDashboardScreen() {
                 key={t.key}
                 style={[styles.tab, active && styles.tabActive]}
                 onPress={() => (isHost ? setHostTab(t.key as HostTab) : setWaiterTab(t.key as WaiterTab))}>
-                <Ionicons name={t.icon} size={18} color={active ? FtColors.onAccent : FtColors.textMuted} />
+                <Ionicons name={t.icon} size={18} color={active ? AcColors.onAccent : AcColors.textMuted} />
                 <Text style={[styles.tabText, active && styles.tabTextActive]}>{t.label}</Text>
                 {t.count > 0 ? (
                   <View style={[styles.tabBadge, active && styles.tabBadgeActive]}>
@@ -499,7 +499,7 @@ export default function WorkerDashboardScreen() {
         </View>
 
         {d.loading && !d.refreshing ? (
-          <ActivityIndicator color={FtColors.accent} style={{ marginVertical: 24 }} />
+          <ActivityIndicator color={AcColors.accent} style={{ marginVertical: 24 }} />
         ) : isWaiter ? (
           waiterTab === 'mesas' ? (
             renderMisMesas()
@@ -518,7 +518,7 @@ export default function WorkerDashboardScreen() {
 
         <Pressable style={styles.linkRow} onPress={() => router.push('/perfil')}>
           <Text style={styles.linkText}>Mi perfil (nombre y foto)</Text>
-          <Ionicons name="chevron-forward" size={18} color={FtColors.accentMuted} />
+          <Ionicons name="chevron-forward" size={18} color={AcColors.accentMuted} />
         </Pressable>
 
         <Pressable style={styles.signOut} onPress={safeSignOut} disabled={signingOut}>
@@ -530,42 +530,42 @@ export default function WorkerDashboardScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: FtColors.background },
-  boot: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: FtColors.background },
+  safe: { flex: 1, backgroundColor: AcColors.background },
+  boot: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: AcColors.background },
   scroll: { flex: 1 },
   content: { paddingHorizontal: 18, paddingBottom: 48 },
   backRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 8, marginTop: 4, alignSelf: 'flex-start' },
-  backText: { fontSize: 14, color: FtColors.accentText, fontWeight: '700' },
+  backText: { fontSize: 14, color: AcColors.accentText, fontWeight: '700' },
   hero: { marginTop: 6, marginBottom: 18 },
   heroEyebrow: {
     fontSize: 12,
     fontWeight: '700',
-    color: FtColors.accentMuted,
+    color: AcColors.accentMuted,
     letterSpacing: 1.2,
     textTransform: 'uppercase',
   },
-  heroTitle: { fontSize: 27, fontWeight: '800', color: FtColors.text, marginTop: 4, letterSpacing: -0.4 },
-  heroGreeting: { fontSize: 14, color: FtColors.textMuted, marginTop: 6, lineHeight: 20 },
+  heroTitle: { fontSize: 27, fontWeight: '800', color: AcColors.text, marginTop: 4, letterSpacing: -0.4 },
+  heroGreeting: { fontSize: 14, color: AcColors.textMuted, marginTop: 6, lineHeight: 20 },
   summaryRow: { flexDirection: 'row', gap: 10, marginBottom: 16 },
   summaryCard: {
     flex: 1,
     paddingVertical: 14,
     paddingHorizontal: 12,
     borderRadius: 16,
-    backgroundColor: FtColors.surfaceElevated,
+    backgroundColor: AcColors.surfaceElevated,
     borderWidth: 1,
-    borderColor: FtColors.border,
+    borderColor: AcColors.border,
   },
   summaryValue: { fontSize: 26, fontWeight: '800', letterSpacing: -1 },
-  summaryLabel: { fontSize: 12, color: FtColors.textMuted, marginTop: 4, fontWeight: '600' },
+  summaryLabel: { fontSize: 12, color: AcColors.textMuted, marginTop: 4, fontWeight: '600' },
   tabBar: {
     flexDirection: 'row',
     gap: 6,
     padding: 5,
     borderRadius: 14,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderWidth: 1,
-    borderColor: FtColors.border,
+    borderColor: AcColors.border,
     marginBottom: 18,
   },
   tab: {
@@ -577,27 +577,27 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 10,
   },
-  tabActive: { backgroundColor: FtColors.accent },
-  tabText: { fontSize: 13, fontWeight: '700', color: FtColors.textMuted },
-  tabTextActive: { color: FtColors.onAccent },
+  tabActive: { backgroundColor: AcColors.accent },
+  tabText: { fontSize: 13, fontWeight: '700', color: AcColors.textMuted },
+  tabTextActive: { color: AcColors.onAccent },
   tabBadge: {
     minWidth: 20,
     paddingHorizontal: 6,
     height: 20,
     borderRadius: 999,
-    backgroundColor: FtColors.surfaceElevated,
+    backgroundColor: AcColors.surfaceElevated,
     alignItems: 'center',
     justifyContent: 'center',
   },
   tabBadgeActive: { backgroundColor: 'rgba(18,16,14,0.22)' },
-  tabBadgeText: { fontSize: 11, fontWeight: '800', color: FtColors.textMuted },
-  tabBadgeTextActive: { color: FtColors.onAccent },
+  tabBadgeText: { fontSize: 11, fontWeight: '800', color: AcColors.textMuted },
+  tabBadgeTextActive: { color: AcColors.onAccent },
   section: { marginBottom: 8 },
-  sub: { fontSize: 13, color: FtColors.textMuted, lineHeight: 20, marginBottom: 14 },
+  sub: { fontSize: 13, color: AcColors.textMuted, lineHeight: 20, marginBottom: 14 },
   miniTitle: {
     fontSize: 13,
     fontWeight: '800',
-    color: FtColors.textFaint,
+    color: AcColors.textFaint,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
     marginTop: 18,
@@ -606,28 +606,28 @@ const styles = StyleSheet.create({
   card: {
     padding: 16,
     borderRadius: 16,
-    backgroundColor: FtColors.surfaceElevated,
+    backgroundColor: AcColors.surfaceElevated,
     borderWidth: 1,
-    borderColor: FtColors.border,
+    borderColor: AcColors.border,
     marginBottom: 12,
   },
   cardSoft: {
     padding: 12,
     borderRadius: 14,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderWidth: 1,
-    borderColor: FtColors.borderSubtle,
+    borderColor: AcColors.borderSubtle,
     marginBottom: 10,
   },
   rowHead: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  turnTag: { fontSize: 11, color: FtColors.accentMuted, textTransform: 'uppercase', letterSpacing: 1, fontWeight: '700' },
-  cardName: { fontSize: 16, fontWeight: '800', color: FtColors.text, marginTop: 2 },
-  cardMeta: { fontSize: 13, color: FtColors.textMuted, marginTop: 3, lineHeight: 18 },
-  note: { fontSize: 13, color: FtColors.textMuted, marginTop: 10, lineHeight: 19 },
+  turnTag: { fontSize: 11, color: AcColors.accentMuted, textTransform: 'uppercase', letterSpacing: 1, fontWeight: '700' },
+  cardName: { fontSize: 16, fontWeight: '800', color: AcColors.text, marginTop: 2 },
+  cardMeta: { fontSize: 13, color: AcColors.textMuted, marginTop: 3, lineHeight: 18 },
+  note: { fontSize: 13, color: AcColors.textMuted, marginTop: 10, lineHeight: 19 },
   fieldLabel: {
     fontSize: 12,
     fontWeight: '700',
-    color: FtColors.textFaint,
+    color: AcColors.textFaint,
     marginTop: 14,
     marginBottom: 8,
     textTransform: 'uppercase',
@@ -639,53 +639,53 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: FtColors.border,
-    backgroundColor: FtColors.surface,
+    borderColor: AcColors.border,
+    backgroundColor: AcColors.surface,
     marginRight: 8,
   },
-  choiceChipActive: { borderColor: FtColors.accent, backgroundColor: FtSurfaces.accentChip },
-  choiceChipText: { fontSize: 13, fontWeight: '700', color: FtColors.textMuted },
-  choiceChipTextActive: { color: FtColors.text },
+  choiceChipActive: { borderColor: AcColors.accent, backgroundColor: AcSurfaces.accentChip },
+  choiceChipText: { fontSize: 13, fontWeight: '700', color: AcColors.textMuted },
+  choiceChipTextActive: { color: AcColors.text },
   loadRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 7 },
-  loadName: { fontSize: 14, color: FtColors.text, fontWeight: '600' },
-  loadCount: { fontSize: 13, color: FtColors.textMuted, fontWeight: '700' },
-  empty: { fontSize: 14, color: FtColors.textMuted, marginVertical: 8 },
-  warn: { fontSize: 13, color: FtColors.warning, marginTop: 10 },
-  hintSmall: { fontSize: 12, color: FtColors.textMuted, lineHeight: 17, marginTop: 10 },
+  loadName: { fontSize: 14, color: AcColors.text, fontWeight: '600' },
+  loadCount: { fontSize: 13, color: AcColors.textMuted, fontWeight: '700' },
+  empty: { fontSize: 14, color: AcColors.textMuted, marginVertical: 8 },
+  warn: { fontSize: 13, color: AcColors.warning, marginTop: 10 },
+  hintSmall: { fontSize: 12, color: AcColors.textMuted, lineHeight: 17, marginTop: 10 },
   pill: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999 },
-  pillInfo: { backgroundColor: FtSurfaces.accentPill },
-  pillWarn: { backgroundColor: FtSurfaces.warningBanner },
-  pillOk: { backgroundColor: FtSurfaces.successBadge },
+  pillInfo: { backgroundColor: AcSurfaces.accentPill },
+  pillWarn: { backgroundColor: AcSurfaces.warningBanner },
+  pillOk: { backgroundColor: AcSurfaces.successBadge },
   pillText: { fontSize: 11, fontWeight: '800' },
-  pillTextInfo: { color: FtColors.accentText },
-  pillTextWarn: { color: FtColors.warning },
-  pillTextOk: { color: FtColors.success },
+  pillTextInfo: { color: AcColors.accentText },
+  pillTextWarn: { color: AcColors.warning },
+  pillTextOk: { color: AcColors.success },
   btnPrimary: {
     marginTop: 12,
     paddingVertical: 13,
     borderRadius: 12,
-    backgroundColor: FtColors.accent,
+    backgroundColor: AcColors.accent,
     alignItems: 'center',
   },
-  btnPrimaryText: { color: FtColors.onAccent, fontWeight: '800', fontSize: 15 },
+  btnPrimaryText: { color: AcColors.onAccent, fontWeight: '800', fontSize: 15 },
   btnOutline: {
     marginTop: 12,
     paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: FtColors.accent,
+    borderColor: AcColors.accent,
     alignItems: 'center',
   },
-  btnOutlineText: { color: FtColors.accentText, fontWeight: '800', fontSize: 15 },
+  btnOutlineText: { color: AcColors.accentText, fontWeight: '800', fontSize: 15 },
   btnDanger: {
     marginTop: 10,
     paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: FtColors.danger,
+    borderColor: AcColors.danger,
     alignItems: 'center',
   },
-  btnDangerText: { color: FtColors.danger, fontWeight: '800', fontSize: 15 },
+  btnDangerText: { color: AcColors.danger, fontWeight: '800', fontSize: 15 },
   btnDisabled: { opacity: 0.6 },
   mesaGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   mesaTile: {
@@ -693,14 +693,14 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 14,
     borderRadius: 14,
-    backgroundColor: FtColors.surfaceElevated,
+    backgroundColor: AcColors.surfaceElevated,
     borderWidth: 1,
-    borderColor: FtColors.border,
+    borderColor: AcColors.border,
     alignItems: 'center',
     gap: 10,
   },
-  mesaCode: { fontSize: 18, fontWeight: '800', color: FtColors.text },
-  mesaCodeLg: { fontSize: 22, fontWeight: '800', color: FtColors.text, flex: 1 },
+  mesaCode: { fontSize: 18, fontWeight: '800', color: AcColors.text },
+  mesaCodeLg: { fontSize: 22, fontWeight: '800', color: AcColors.text, flex: 1 },
   clienteRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -709,54 +709,54 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     paddingTop: 10,
     borderTopWidth: 1,
-    borderTopColor: FtColors.border,
+    borderTopColor: AcColors.border,
   },
   clienteMeta: { flex: 1 },
-  clienteNombre: { fontSize: 15, fontWeight: '700', color: FtColors.text },
-  clienteSub: { fontSize: 12, color: FtColors.textMuted, marginTop: 1 },
+  clienteNombre: { fontSize: 15, fontWeight: '700', color: AcColors.text },
+  clienteSub: { fontSize: 12, color: AcColors.textMuted, marginTop: 1 },
   walkinAvatar: {
     width: 36,
     height: 36,
     borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: FtColors.surfaceElevated,
+    backgroundColor: AcColors.surfaceElevated,
     borderWidth: 1,
-    borderColor: FtColors.border,
+    borderColor: AcColors.border,
   },
-  mesaState: { fontSize: 12, color: FtColors.textMuted, fontWeight: '600' },
+  mesaState: { fontSize: 12, color: AcColors.textMuted, fontWeight: '600' },
   mesaBtn: {
     paddingVertical: 8,
     paddingHorizontal: 20,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: FtColors.accent,
+    borderColor: AcColors.accent,
     alignItems: 'center',
     minWidth: 110,
   },
-  mesaBtnText: { fontSize: 14, fontWeight: '700', color: FtColors.accentText },
-  mesaBtnFill: { backgroundColor: FtColors.accent, borderColor: FtColors.accent },
-  mesaBtnFillText: { fontSize: 14, fontWeight: '800', color: FtColors.onAccent },
+  mesaBtnText: { fontSize: 14, fontWeight: '700', color: AcColors.accentText },
+  mesaBtnFill: { backgroundColor: AcColors.accent, borderColor: AcColors.accent },
+  mesaBtnFillText: { fontSize: 14, fontWeight: '800', color: AcColors.onAccent },
   mesaChipsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
   mesaChipTag: {
     paddingHorizontal: 12,
     paddingVertical: 7,
     borderRadius: 10,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderWidth: 1,
-    borderColor: FtColors.border,
+    borderColor: AcColors.border,
   },
-  mesaChipTagText: { fontSize: 14, fontWeight: '800', color: FtColors.text },
+  mesaChipTagText: { fontSize: 14, fontWeight: '800', color: AcColors.text },
   linkRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 14,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: FtColors.border,
+    borderTopColor: AcColors.border,
     marginTop: 8,
   },
-  linkText: { fontSize: 15, fontWeight: '600', color: FtColors.accentText },
+  linkText: { fontSize: 15, fontWeight: '600', color: AcColors.accentText },
   signOut: { paddingVertical: 16, alignItems: 'center' },
-  signOutText: { fontSize: 15, color: FtColors.textFaint, textDecorationLine: 'underline' },
+  signOutText: { fontSize: 15, color: AcColors.textFaint, textDecorationLine: 'underline' },
 });

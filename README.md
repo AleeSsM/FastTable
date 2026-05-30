@@ -2,13 +2,13 @@
 
 <pre>
 ╔═══════════════════════════════════════════════════════════╗
-║                        FastTable                          ║
+║                        A la Carta                          ║
 ║         Reservas · menú · cocina · sala · gerencia        ║
 ╚═══════════════════════════════════════════════════════════╝
 </pre>
 
 [![IPN](https://img.shields.io/badge/IPN-Instituto_Polit%C3%A9cnico_Nacional-6B1520?style=for-the-badge)](https://www.ipn.mx)
-[![Stack](https://img.shields.io/badge/Stack-TypeScript_·_React_Native_·_Supabase-1e3a5f?style=for-the-badge)](https://github.com/aletzsc/FastTable)
+[![Stack](https://img.shields.io/badge/Stack-TypeScript_·_React_Native_·_Supabase-1e3a5f?style=for-the-badge)](https://github.com/AleeSsM/FastTable)
 
 <br />
 
@@ -92,7 +92,7 @@ Alta de personal: `npm run staff:console` (requiere service role en `.env` local
 | Recurso | Contenido |
 |---------|-----------|
 | [`supabase/README.md`](supabase/README.md) | Instalación: teardown + bootstrap |
-| `supabase/00_schema_teardown.sql` | Borrado del esquema FastTable (opcional) |
+| `supabase/00_schema_teardown.sql` | Borrado del esquema A la Carta (opcional) |
 | `supabase/01_schema_bootstrap.sql` | Esquema completo alineado con la app |
 
 ---
@@ -105,6 +105,6 @@ Alta de personal: `npm run staff:console` (requiere service role en `.env` local
 
 <br />
 
-<sub>FastTable — documentación del producto. El runtime (Expo / React Native) es el vehículo; el dominio es la operación del restaurante.</sub>
+<sub>A la Carta — documentación del producto. El runtime (Expo / React Native) es el vehículo; el dominio es la operación del restaurante.</sub>
 
 </div>

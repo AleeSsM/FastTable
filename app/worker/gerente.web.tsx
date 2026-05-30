@@ -5,7 +5,7 @@ import { ActivityIndicator, Linking, Pressable, RefreshControl, StyleSheet, Text
 
 import { Avatar } from '@/components/avatar';
 import { StatCard, WebCard, WebCardHead, WebHeader, WebRow, WebScroll, webStyles } from '@/components/web/ui';
-import { FtColors, FtSurfaces } from '@/constants/fasttable';
+import { AcColors, AcSurfaces } from '@/constants/alacarta';
 import { useAuth } from '@/contexts/auth-context';
 import { REALTIME_GERENTE, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { formatPriceFromCents } from '@/lib/format';
@@ -218,7 +218,7 @@ export default function GerenteWebScreen() {
   if (authLoading) {
     return (
       <View style={styles.boot}>
-        <ActivityIndicator color={FtColors.accent} size="large" />
+        <ActivityIndicator color={AcColors.accent} size="large" />
       </View>
     );
   }
@@ -239,7 +239,7 @@ export default function GerenteWebScreen() {
   return (
     <WebScroll
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={FtColors.accent} />
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={AcColors.accent} />
       }>
       <WebHeader
         eyebrow="Gerencia"
@@ -261,13 +261,13 @@ export default function GerenteWebScreen() {
         }
       />
 
-      {loading && !refreshing ? <ActivityIndicator color={FtColors.accent} style={{ marginVertical: 12 }} /> : null}
+      {loading && !refreshing ? <ActivityIndicator color={AcColors.accent} style={{ marginVertical: 12 }} /> : null}
 
       {sec === 'reportes' ? (
         <WebCard>
           <WebCardHead
             icon="mail-unread-outline"
-            color={FtColors.warning}
+            color={AcColors.warning}
             title={`Problemas reportados${reportesAbiertos > 0 ? ` · ${reportesAbiertos} abiertos` : ''}`}
           />
           {reportes.length === 0 ? (
@@ -290,7 +290,7 @@ export default function GerenteWebScreen() {
                   </Text>
                   {r.mesero_nombre ? (
                     <View style={styles.repInfoRow}>
-                      <Ionicons name="restaurant-outline" size={14} color={FtColors.textMuted} />
+                      <Ionicons name="restaurant-outline" size={14} color={AcColors.textMuted} />
                       <Text style={styles.repInfoText}>Atendió: {r.mesero_nombre}</Text>
                     </View>
                   ) : null}
@@ -308,7 +308,7 @@ export default function GerenteWebScreen() {
                         <Pressable
                           style={styles.repContactBtn}
                           onPress={() => Linking.openURL(`tel:${r.telefono_contacto}`)}>
-                          <Ionicons name="call-outline" size={14} color={FtColors.accent} />
+                          <Ionicons name="call-outline" size={14} color={AcColors.accent} />
                           <Text style={styles.repContactText} numberOfLines={1}>
                             {r.telefono_contacto}
                           </Text>
@@ -319,10 +319,10 @@ export default function GerenteWebScreen() {
                           style={styles.repContactBtn}
                           onPress={() =>
                             Linking.openURL(
-                              `mailto:${r.correo_contacto}?subject=${encodeURIComponent('Sobre tu reporte en FastTable')}`,
+                              `mailto:${r.correo_contacto}?subject=${encodeURIComponent('Sobre tu reporte en A la Carta')}`,
                             )
                           }>
-                          <Ionicons name="mail-outline" size={14} color={FtColors.accent} />
+                          <Ionicons name="mail-outline" size={14} color={AcColors.accent} />
                           <Text style={styles.repContactText} numberOfLines={1}>
                             {r.correo_contacto}
                           </Text>
@@ -335,7 +335,7 @@ export default function GerenteWebScreen() {
                       style={[styles.repBtn, reportBusyId === r.id && styles.btnDisabled]}
                       onPress={() => onMarcarReporteRevisado(r.id)}
                       disabled={reportBusyId === r.id}>
-                      <Ionicons name="checkmark-circle-outline" size={16} color={FtColors.onAccent} />
+                      <Ionicons name="checkmark-circle-outline" size={16} color={AcColors.onAccent} />
                       <Text style={styles.repBtnText}>{reportBusyId === r.id ? 'Guardando…' : 'Marcar revisado'}</Text>
                     </Pressable>
                   ) : null}
@@ -349,25 +349,25 @@ export default function GerenteWebScreen() {
       <WebRow>
         <StatCard
           icon="cash-outline"
-          tone={FtColors.accent}
+          tone={AcColors.accent}
           value={stats != null ? formatPriceFromCents(stats.total_centavos) : '—'}
           label="Ingresos (histórico)"
         />
         <StatCard
           icon="trending-up-outline"
-          tone={variation == null ? FtColors.textMuted : variation >= 0 ? FtColors.success : FtColors.danger}
+          tone={variation == null ? AcColors.textMuted : variation >= 0 ? AcColors.success : AcColors.danger}
           value={variation == null ? '—' : `${variation >= 0 ? '+' : ''}${variation.toFixed(1)}%`}
           label={`Variación vs ${rangeDays} días previos`}
         />
         <StatCard
           icon="trophy-outline"
-          tone={FtColors.warning}
+          tone={AcColors.warning}
           value={stats?.plato_top?.nombre ?? '—'}
           label={stats?.plato_top ? `${stats.plato_top.unidades} uds. vendidas` : 'Sin datos aún'}
         />
         <StatCard
           icon="cash-outline"
-          tone={FtColors.text}
+          tone={AcColors.text}
           value={formatPriceFromCents(rangeTotal)}
           label={`Ingresos últimos ${rangeDays} días`}
         />
@@ -396,7 +396,7 @@ export default function GerenteWebScreen() {
           <View style={{ height: 16 }} />
 
           <WebCard>
-            <WebCardHead icon="analytics-outline" color={FtColors.warning} title="Top platos del periodo" />
+            <WebCardHead icon="analytics-outline" color={AcColors.warning} title="Top platos del periodo" />
             {topDishes.length === 0 ? (
               <Text style={styles.muted}>Sin pedidos en este rango.</Text>
             ) : (
@@ -415,15 +415,15 @@ export default function GerenteWebScreen() {
 
         <View style={[webStyles.col, { flex: 1, minWidth: 300 }]}>
           <WebCard>
-            <WebCardHead icon="pulse-outline" color={FtColors.success} title="Operación en vivo" />
+            <WebCardHead icon="pulse-outline" color={AcColors.success} title="Operación en vivo" />
             <View style={styles.liveGrid}>
               {[
-                { v: snapshot?.mesasLibres, l: 'Mesas libres', c: FtColors.success },
-                { v: snapshot?.mesasOcupadas, l: 'Mesas ocupadas', c: FtColors.warning },
-                { v: snapshot?.mesasReservadas, l: 'Mesas reservadas', c: FtColors.accent },
-                { v: snapshot?.solicitudesAbiertas, l: 'Solicitudes', c: FtColors.danger },
-                { v: snapshot?.reservasActivas, l: 'Reservas activas', c: FtColors.accent },
-                { v: snapshot?.pedidosPendientes, l: 'Pedidos en cocina', c: FtColors.warning },
+                { v: snapshot?.mesasLibres, l: 'Mesas libres', c: AcColors.success },
+                { v: snapshot?.mesasOcupadas, l: 'Mesas ocupadas', c: AcColors.warning },
+                { v: snapshot?.mesasReservadas, l: 'Mesas reservadas', c: AcColors.accent },
+                { v: snapshot?.solicitudesAbiertas, l: 'Solicitudes', c: AcColors.danger },
+                { v: snapshot?.reservasActivas, l: 'Reservas activas', c: AcColors.accent },
+                { v: snapshot?.pedidosPendientes, l: 'Pedidos en cocina', c: AcColors.warning },
               ].map((m) => (
                 <View key={m.l} style={styles.livePill}>
                   <Text style={[styles.liveValue, { color: m.c }]}>{m.v ?? '—'}</Text>
@@ -436,7 +436,7 @@ export default function GerenteWebScreen() {
           <View style={{ height: 16 }} />
 
           <WebCard>
-            <WebCardHead icon="people-outline" color={FtColors.success} title="Equipo activo" />
+            <WebCardHead icon="people-outline" color={AcColors.success} title="Equipo activo" />
             {equipo.length === 0 ? (
               <Text style={styles.muted}>Sin registros.</Text>
             ) : (
@@ -455,7 +455,7 @@ export default function GerenteWebScreen() {
           <View style={{ height: 16 }} />
 
           <WebCard>
-            <WebCardHead icon="close-circle-outline" color={FtColors.danger} title="Platos no disponibles" />
+            <WebCardHead icon="close-circle-outline" color={AcColors.danger} title="Platos no disponibles" />
             {(stats?.no_disponibles ?? []).length === 0 ? (
               <Text style={styles.muted}>Todo el menú está disponible.</Text>
             ) : (
@@ -477,40 +477,40 @@ export default function GerenteWebScreen() {
 }
 
 const styles = StyleSheet.create({
-  boot: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: FtColors.background },
+  boot: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: AcColors.background },
   segment: {
     flexDirection: 'row',
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderRadius: 11,
     borderWidth: 1,
-    borderColor: FtColors.border,
+    borderColor: AcColors.border,
     padding: 3,
   },
   segItem: { paddingVertical: 7, paddingHorizontal: 14, borderRadius: 8 },
-  segItemOn: { backgroundColor: FtColors.accent },
-  segText: { fontSize: 13, fontWeight: '700', color: FtColors.textMuted },
-  segTextOn: { color: FtColors.onAccent },
+  segItemOn: { backgroundColor: AcColors.accent },
+  segText: { fontSize: 13, fontWeight: '700', color: AcColors.textMuted },
+  segTextOn: { color: AcColors.onAccent },
   chartRow: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', gap: 8, height: 190 },
   barCol: { flex: 1, alignItems: 'center', justifyContent: 'flex-end', height: '100%' },
   barTrack: {
     width: '100%',
     flex: 1,
     borderRadius: 10,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     justifyContent: 'flex-end',
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: FtColors.borderSubtle,
+    borderColor: AcColors.borderSubtle,
   },
-  barFill: { width: '100%', backgroundColor: FtColors.accent, borderTopLeftRadius: 8, borderTopRightRadius: 8 },
-  barLabel: { marginTop: 8, fontSize: 11, color: FtColors.textMuted, textTransform: 'capitalize' },
+  barFill: { width: '100%', backgroundColor: AcColors.accent, borderTopLeftRadius: 8, borderTopRightRadius: 8 },
+  barLabel: { marginTop: 8, fontSize: 11, color: AcColors.textMuted, textTransform: 'capitalize' },
   topRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: FtColors.borderSubtle,
+    borderBottomColor: AcColors.borderSubtle,
   },
   topRank: {
     width: 24,
@@ -520,12 +520,12 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     fontSize: 12,
     fontWeight: '800',
-    color: FtColors.accentText,
-    backgroundColor: FtColors.surface,
+    color: AcColors.accentText,
+    backgroundColor: AcColors.surface,
   },
-  topName: { flex: 1, fontSize: 14, color: FtColors.text },
-  topUnits: { fontSize: 13, color: FtColors.accentText, fontWeight: '700' },
-  muted: { fontSize: 14, color: FtColors.textFaint },
+  topName: { flex: 1, fontSize: 14, color: AcColors.text },
+  topUnits: { fontSize: 13, color: AcColors.accentText, fontWeight: '700' },
+  muted: { fontSize: 14, color: AcColors.textFaint },
   liveGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   livePill: {
     flexGrow: 1,
@@ -534,23 +534,23 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 10,
     borderRadius: 12,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderWidth: 1,
-    borderColor: FtColors.borderSubtle,
+    borderColor: AcColors.borderSubtle,
   },
   liveValue: { fontSize: 22, fontWeight: '800' },
-  liveLabel: { fontSize: 11, color: FtColors.textMuted, marginTop: 4, lineHeight: 14 },
+  liveLabel: { fontSize: 11, color: AcColors.textMuted, marginTop: 4, lineHeight: 14 },
   equipoRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
     paddingVertical: 9,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: FtColors.border,
+    borderBottomColor: AcColors.border,
   },
-  equipoName: { fontSize: 14, fontWeight: '600', color: FtColors.text, flex: 1, marginRight: 8 },
-  equipoRol: { fontSize: 12, color: FtColors.textMuted },
-  listItem: { fontSize: 14, color: FtColors.text, marginTop: 6, lineHeight: 22 },
+  equipoName: { fontSize: 14, fontWeight: '600', color: AcColors.text, flex: 1, marginRight: 8 },
+  equipoRol: { fontSize: 12, color: AcColors.textMuted },
+  listItem: { fontSize: 14, color: AcColors.text, marginTop: 6, lineHeight: 22 },
   repGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 14 },
   repCard: {
     flexGrow: 1,
@@ -559,27 +559,27 @@ const styles = StyleSheet.create({
     maxWidth: 360,
     padding: 14,
     borderRadius: 14,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderWidth: 1,
-    borderColor: FtColors.borderSubtle,
+    borderColor: AcColors.borderSubtle,
   },
   repTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 },
-  repName: { fontSize: 13, fontWeight: '700', color: FtColors.textMuted, flex: 1 },
+  repName: { fontSize: 13, fontWeight: '700', color: AcColors.textMuted, flex: 1 },
   repState: {
     fontSize: 11,
     fontWeight: '800',
-    color: FtColors.warning,
+    color: AcColors.warning,
     textTransform: 'uppercase',
-    backgroundColor: FtSurfaces.warningBanner,
+    backgroundColor: AcSurfaces.warningBanner,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 999,
   },
-  repStateDone: { color: FtColors.success, backgroundColor: FtSurfaces.successBanner },
-  repTitle: { fontSize: 15, fontWeight: '800', color: FtColors.text, marginTop: 8 },
-  repDesc: { fontSize: 13, color: FtColors.textMuted, lineHeight: 19, marginTop: 5 },
+  repStateDone: { color: AcColors.success, backgroundColor: AcSurfaces.successBanner },
+  repTitle: { fontSize: 15, fontWeight: '800', color: AcColors.text, marginTop: 8 },
+  repDesc: { fontSize: 13, color: AcColors.textMuted, lineHeight: 19, marginTop: 5 },
   repInfoRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8 },
-  repInfoText: { fontSize: 12.5, color: FtColors.text, fontWeight: '600' },
+  repInfoText: { fontSize: 12.5, color: AcColors.text, fontWeight: '600' },
   repContactRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 },
   repContactBtn: {
     flexDirection: 'row',
@@ -589,12 +589,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: FtColors.border,
-    backgroundColor: FtColors.surface,
+    borderColor: AcColors.border,
+    backgroundColor: AcColors.surface,
     maxWidth: '100%',
   },
-  repContactText: { fontSize: 12.5, color: FtColors.accentText, fontWeight: '600', flexShrink: 1 },
-  repMeta: { fontSize: 11, color: FtColors.textFaint, marginTop: 8 },
+  repContactText: { fontSize: 12.5, color: AcColors.accentText, fontWeight: '600', flexShrink: 1 },
+  repMeta: { fontSize: 11, color: AcColors.textFaint, marginTop: 8 },
   repBtn: {
     marginTop: 12,
     flexDirection: 'row',
@@ -603,8 +603,8 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: FtColors.accent,
+    backgroundColor: AcColors.accent,
   },
-  repBtnText: { fontSize: 13, fontWeight: '800', color: FtColors.onAccent },
+  repBtnText: { fontSize: 13, fontWeight: '800', color: AcColors.onAccent },
   btnDisabled: { opacity: 0.6 },
 });

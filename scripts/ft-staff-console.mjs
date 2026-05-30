@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * FastTable — consola local de personal (independiente de la app).
+ * A la Carta — consola local de personal (independiente de la app).
  *
  * Requiere en .env (raíz del proyecto) o variables de entorno:
  *   EXPO_PUBLIC_SUPABASE_URL
@@ -61,7 +61,7 @@ function banner() {
   const b = [
     '',
     `${t.line}  ╭${'─'.repeat(58)}╮${t.reset}`,
-    `  ${t.cyan}│${t.reset}  ${t.bold}${t.amber}FASTTABLE${t.reset} ${t.dim}·${t.reset} ${t.magenta}staff control matrix${t.reset}${' '.repeat(18)}${t.cyan}│${t.reset}`,
+    `  ${t.cyan}│${t.reset}  ${t.bold}${t.amber}A la Carta${t.reset} ${t.dim}·${t.reset} ${t.magenta}staff control matrix${t.reset}${' '.repeat(18)}${t.cyan}│${t.reset}`,
     `  ${t.cyan}│${t.reset}  ${t.dim}auth.users ↔ public.personal  (service role local)${t.reset}     ${t.cyan}│${t.reset}`,
     `${t.line}  ╰${'─'.repeat(58)}╯${t.reset}`,
     '',

@@ -20,7 +20,7 @@ import { Avatar } from '@/components/avatar';
 import { AuthBoot } from '@/components/auth-boot';
 import { useAuth } from '@/contexts/auth-context';
 import { useSafeSignOut } from '@/hooks/use-safe-sign-out';
-import { FtColors, FtSurfaces } from '@/constants/fasttable';
+import { AcColors, AcSurfaces } from '@/constants/alacarta';
 import { REALTIME_GERENTE, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { formatPriceFromCents } from '@/lib/format';
 import { supabase } from '@/lib/supabase';
@@ -309,7 +309,7 @@ export default function GerenteScreen() {
         style={styles.scroll}
         contentContainerStyle={styles.content}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={FtColors.accent} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={AcColors.accent} />
         }>
         <View style={styles.hero}>
           <Text style={styles.heroEyebrow}>Gerencia</Text>
@@ -327,11 +327,11 @@ export default function GerenteScreen() {
           </View>
         </View>
 
-        {loading && !refreshing ? <ActivityIndicator color={FtColors.accent} style={styles.loader} /> : null}
+        {loading && !refreshing ? <ActivityIndicator color={AcColors.accent} style={styles.loader} /> : null}
 
         <View style={[styles.card, cardShadow]}>
           <View style={styles.cardHead}>
-            <Ionicons name="cash-outline" size={22} color={FtColors.accent} />
+            <Ionicons name="cash-outline" size={22} color={AcColors.accent} />
             <Text style={styles.cardTitle}>Ingresos (pedidos registrados)</Text>
           </View>
           <Text style={styles.bigNumber}>
@@ -342,7 +342,7 @@ export default function GerenteScreen() {
 
         <View style={[styles.card, cardShadow]}>
           <View style={styles.cardHead}>
-            <Ionicons name="trending-up-outline" size={22} color={FtColors.success} />
+            <Ionicons name="trending-up-outline" size={22} color={AcColors.success} />
             <Text style={styles.cardTitle}>Variación vs periodo previo</Text>
           </View>
           <Text style={styles.emphasis}>
@@ -357,7 +357,7 @@ export default function GerenteScreen() {
 
         <View style={[styles.card, cardShadow]}>
           <View style={styles.cardHead}>
-            <Ionicons name="trophy-outline" size={22} color={FtColors.warning} />
+            <Ionicons name="trophy-outline" size={22} color={AcColors.warning} />
             <Text style={styles.cardTitle}>Platillo más pedido</Text>
           </View>
           {stats?.plato_top?.nombre ? (
@@ -374,7 +374,7 @@ export default function GerenteScreen() {
 
         <View style={[styles.card, cardShadow]}>
           <View style={styles.cardHead}>
-            <Ionicons name="bar-chart-outline" size={22} color={FtColors.accent} />
+            <Ionicons name="bar-chart-outline" size={22} color={AcColors.accent} />
             <Text style={styles.cardTitle}>Ingresos últimos 7 días</Text>
           </View>
           <View style={styles.chartRow}>
@@ -392,7 +392,7 @@ export default function GerenteScreen() {
 
         <View style={[styles.card, cardShadow]}>
           <View style={styles.cardHead}>
-            <Ionicons name="analytics-outline" size={22} color={FtColors.warning} />
+            <Ionicons name="analytics-outline" size={22} color={AcColors.warning} />
             <Text style={styles.cardTitle}>Top 5 platos del periodo</Text>
           </View>
           {topDishes.length === 0 ? (
@@ -411,7 +411,7 @@ export default function GerenteScreen() {
 
         <View style={[styles.card, cardShadow]}>
           <View style={styles.cardHead}>
-            <Ionicons name="pulse-outline" size={22} color={FtColors.success} />
+            <Ionicons name="pulse-outline" size={22} color={AcColors.success} />
             <Text style={styles.cardTitle}>Estado operativo en vivo</Text>
           </View>
           <View style={styles.metricsGrid}>
@@ -444,7 +444,7 @@ export default function GerenteScreen() {
 
         <View style={[styles.card, cardShadow]}>
           <View style={styles.cardHead}>
-            <Ionicons name="mail-unread-outline" size={22} color={FtColors.warning} />
+            <Ionicons name="mail-unread-outline" size={22} color={AcColors.warning} />
             <Text style={styles.cardTitle}>Bandeja de problemas reportados</Text>
           </View>
           {reportes.length === 0 ? (
@@ -462,7 +462,7 @@ export default function GerenteScreen() {
                 <Text style={styles.repDesc}>{r.descripcion}</Text>
                 {r.mesero_nombre ? (
                   <View style={styles.repInfoRow}>
-                    <Ionicons name="restaurant-outline" size={14} color={FtColors.textMuted} />
+                    <Ionicons name="restaurant-outline" size={14} color={AcColors.textMuted} />
                     <Text style={styles.repInfoText}>Atendió: {r.mesero_nombre}</Text>
                   </View>
                 ) : null}
@@ -475,7 +475,7 @@ export default function GerenteScreen() {
                       <Pressable
                         style={styles.repContactBtn}
                         onPress={() => Linking.openURL(`tel:${r.telefono_contacto}`)}>
-                        <Ionicons name="call-outline" size={15} color={FtColors.accent} />
+                        <Ionicons name="call-outline" size={15} color={AcColors.accent} />
                         <Text style={styles.repContactText}>{r.telefono_contacto}</Text>
                       </Pressable>
                     ) : null}
@@ -484,10 +484,10 @@ export default function GerenteScreen() {
                         style={styles.repContactBtn}
                         onPress={() =>
                           Linking.openURL(
-                            `mailto:${r.correo_contacto}?subject=${encodeURIComponent('Sobre tu reporte en FastTable')}`,
+                            `mailto:${r.correo_contacto}?subject=${encodeURIComponent('Sobre tu reporte en A la Carta')}`,
                           )
                         }>
-                        <Ionicons name="mail-outline" size={15} color={FtColors.accent} />
+                        <Ionicons name="mail-outline" size={15} color={AcColors.accent} />
                         <Text style={styles.repContactText}>{r.correo_contacto}</Text>
                       </Pressable>
                     ) : null}
@@ -510,7 +510,7 @@ export default function GerenteScreen() {
 
         <View style={[styles.card, cardShadow]}>
           <View style={styles.cardHead}>
-            <Ionicons name="people-outline" size={22} color={FtColors.success} />
+            <Ionicons name="people-outline" size={22} color={AcColors.success} />
             <Text style={styles.cardTitle}>Equipo (personal activo)</Text>
           </View>
           <Text style={styles.cardHint}>
@@ -532,7 +532,7 @@ export default function GerenteScreen() {
 
         <View style={[styles.card, cardShadow]}>
           <View style={styles.cardHead}>
-            <Ionicons name="close-circle-outline" size={22} color={FtColors.danger} />
+            <Ionicons name="close-circle-outline" size={22} color={AcColors.danger} />
             <Text style={styles.cardTitle}>Platos no disponibles</Text>
           </View>
           {(stats?.no_disponibles ?? []).length === 0 ? (
@@ -547,39 +547,39 @@ export default function GerenteScreen() {
         </View>
 
         <Pressable style={styles.linkKitchen} onPress={() => router.push('/worker/admin' as Href)}>
-          <Ionicons name="settings-outline" size={18} color={FtColors.accent} />
+          <Ionicons name="settings-outline" size={18} color={AcColors.accent} />
           <Text style={styles.linkKitchenText}>Administración (mesas, ingredientes, platillos)</Text>
-          <Ionicons name="chevron-forward" size={18} color={FtColors.textMuted} />
+          <Ionicons name="chevron-forward" size={18} color={AcColors.textMuted} />
         </Pressable>
 
         <Pressable style={styles.linkKitchen} onPress={() => router.push('/worker/inventario')}>
-          <Ionicons name="cube-outline" size={18} color={FtColors.accent} />
+          <Ionicons name="cube-outline" size={18} color={AcColors.accent} />
           <Text style={styles.linkKitchenText}>Inventario y almacén (solo gerente)</Text>
-          <Ionicons name="chevron-forward" size={18} color={FtColors.textMuted} />
+          <Ionicons name="chevron-forward" size={18} color={AcColors.textMuted} />
         </Pressable>
 
         <Pressable style={styles.linkKitchen} onPress={() => router.push('/worker/servicios-cerrados')}>
-          <Ionicons name="receipt-outline" size={18} color={FtColors.accent} />
+          <Ionicons name="receipt-outline" size={18} color={AcColors.accent} />
           <Text style={styles.linkKitchenText}>Recibos de servicios cerrados</Text>
-          <Ionicons name="chevron-forward" size={18} color={FtColors.textMuted} />
+          <Ionicons name="chevron-forward" size={18} color={AcColors.textMuted} />
         </Pressable>
 
         <Pressable style={styles.linkKitchen} onPress={() => router.push('/worker/kitchen')}>
-          <Ionicons name="restaurant-outline" size={18} color={FtColors.accent} />
+          <Ionicons name="restaurant-outline" size={18} color={AcColors.accent} />
           <Text style={styles.linkKitchenText}>Abrir cocina (mismo acceso que gerente)</Text>
-          <Ionicons name="chevron-forward" size={18} color={FtColors.textMuted} />
+          <Ionicons name="chevron-forward" size={18} color={AcColors.textMuted} />
         </Pressable>
 
         <Pressable style={styles.linkKitchen} onPress={() => router.push('/worker')}>
-          <Ionicons name="people-outline" size={18} color={FtColors.accent} />
+          <Ionicons name="people-outline" size={18} color={AcColors.accent} />
           <Text style={styles.linkKitchenText}>Abrir panel anfitrión (modo operativo)</Text>
-          <Ionicons name="chevron-forward" size={18} color={FtColors.textMuted} />
+          <Ionicons name="chevron-forward" size={18} color={AcColors.textMuted} />
         </Pressable>
 
         <Pressable style={styles.linkKitchen} onPress={() => router.push('/perfil')}>
-          <Ionicons name="person-circle-outline" size={18} color={FtColors.accent} />
+          <Ionicons name="person-circle-outline" size={18} color={AcColors.accent} />
           <Text style={styles.linkKitchenText}>Mi perfil (nombre y foto)</Text>
-          <Ionicons name="chevron-forward" size={18} color={FtColors.textMuted} />
+          <Ionicons name="chevron-forward" size={18} color={AcColors.textMuted} />
         </Pressable>
 
         <Pressable style={styles.signOut} onPress={safeSignOut} disabled={signingOut}>
@@ -591,8 +591,8 @@ export default function GerenteScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: FtColors.background },
-  boot: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: FtColors.background },
+  safe: { flex: 1, backgroundColor: AcColors.background },
+  boot: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: AcColors.background },
   scroll: { flex: 1 },
   content: { paddingHorizontal: 18, paddingBottom: 40 },
   loader: { marginVertical: 16 },
@@ -600,36 +600,36 @@ const styles = StyleSheet.create({
   heroEyebrow: {
     fontSize: 12,
     fontWeight: '600',
-    color: FtColors.accentMuted,
+    color: AcColors.accentMuted,
     letterSpacing: 1.2,
     textTransform: 'uppercase',
   },
-  heroTitle: { fontSize: 26, fontWeight: '800', color: FtColors.text, marginTop: 4 },
-  heroSub: { fontSize: 14, color: FtColors.textMuted, marginTop: 6, lineHeight: 20 },
+  heroTitle: { fontSize: 26, fontWeight: '800', color: AcColors.text, marginTop: 4 },
+  heroSub: { fontSize: 14, color: AcColors.textMuted, marginTop: 6, lineHeight: 20 },
   rangeRow: { flexDirection: 'row', gap: 8, marginTop: 12 },
   rangeChip: {
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: FtColors.border,
-    backgroundColor: FtColors.surface,
+    borderColor: AcColors.border,
+    backgroundColor: AcColors.surface,
   },
-  rangeChipOn: { borderColor: FtColors.accent, backgroundColor: FtColors.surfaceElevated },
-  rangeChipText: { fontSize: 12, color: FtColors.textMuted, fontWeight: '600' },
-  rangeChipTextOn: { color: FtColors.accentText, fontWeight: '700' },
+  rangeChipOn: { borderColor: AcColors.accent, backgroundColor: AcColors.surfaceElevated },
+  rangeChipText: { fontSize: 12, color: AcColors.textMuted, fontWeight: '600' },
+  rangeChipTextOn: { color: AcColors.accentText, fontWeight: '700' },
   card: {
     padding: 16,
     borderRadius: 16,
-    backgroundColor: FtColors.surfaceElevated,
+    backgroundColor: AcColors.surfaceElevated,
     borderWidth: 1,
-    borderColor: FtColors.border,
+    borderColor: AcColors.border,
     marginBottom: 16,
   },
   cardHead: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
-  cardTitle: { fontSize: 16, fontWeight: '800', color: FtColors.text, flex: 1 },
-  bigNumber: { fontSize: 28, fontWeight: '800', color: FtColors.accentText, letterSpacing: 0.5 },
-  emphasis: { fontSize: 18, fontWeight: '700', color: FtColors.text },
+  cardTitle: { fontSize: 16, fontWeight: '800', color: AcColors.text, flex: 1 },
+  bigNumber: { fontSize: 28, fontWeight: '800', color: AcColors.accentText, letterSpacing: 0.5 },
+  emphasis: { fontSize: 18, fontWeight: '700', color: AcColors.text },
   chartRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',
@@ -642,19 +642,19 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 86,
     borderRadius: 10,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     justifyContent: 'flex-end',
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: FtColors.borderSubtle,
+    borderColor: AcColors.borderSubtle,
   },
   barFill: {
     width: '100%',
-    backgroundColor: FtColors.accent,
+    backgroundColor: AcColors.accent,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
   },
-  barLabel: { marginTop: 6, fontSize: 11, color: FtColors.textMuted, textTransform: 'capitalize' },
+  barLabel: { marginTop: 6, fontSize: 11, color: AcColors.textMuted, textTransform: 'capitalize' },
   metricsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -667,60 +667,60 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 8,
     borderRadius: 12,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderWidth: 1,
-    borderColor: FtColors.borderSubtle,
+    borderColor: AcColors.borderSubtle,
   },
-  metricValue: { fontSize: 18, fontWeight: '800', color: FtColors.text },
-  metricLabel: { marginTop: 2, fontSize: 11, color: FtColors.textMuted, lineHeight: 14 },
+  metricValue: { fontSize: 18, fontWeight: '800', color: AcColors.text },
+  metricLabel: { marginTop: 2, fontSize: 11, color: AcColors.textMuted, lineHeight: 14 },
   topRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 8,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: FtColors.borderSubtle,
+    borderBottomColor: AcColors.borderSubtle,
   },
-  topName: { flex: 1, fontSize: 14, color: FtColors.text, marginRight: 10 },
-  topUnits: { fontSize: 13, color: FtColors.accentText, fontWeight: '700' },
-  cardHint: { fontSize: 12, color: FtColors.textMuted, marginTop: 8, lineHeight: 18 },
-  muted: { fontSize: 14, color: FtColors.textFaint },
+  topName: { flex: 1, fontSize: 14, color: AcColors.text, marginRight: 10 },
+  topUnits: { fontSize: 13, color: AcColors.accentText, fontWeight: '700' },
+  cardHint: { fontSize: 12, color: AcColors.textMuted, marginTop: 8, lineHeight: 18 },
+  muted: { fontSize: 14, color: AcColors.textFaint },
   equipoRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: FtColors.border,
+    borderBottomColor: AcColors.border,
   },
-  equipoName: { fontSize: 15, fontWeight: '600', color: FtColors.text, flex: 1 },
-  equipoRol: { fontSize: 13, color: FtColors.textMuted },
-  listItem: { fontSize: 14, color: FtColors.text, marginTop: 6, lineHeight: 22 },
+  equipoName: { fontSize: 15, fontWeight: '600', color: AcColors.text, flex: 1 },
+  equipoRol: { fontSize: 13, color: AcColors.textMuted },
+  listItem: { fontSize: 14, color: AcColors.text, marginTop: 6, lineHeight: 22 },
   repCard: {
     padding: 12,
     borderRadius: 12,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderWidth: 1,
-    borderColor: FtColors.borderSubtle,
+    borderColor: AcColors.borderSubtle,
     marginBottom: 10,
   },
   repTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  repName: { fontSize: 13, fontWeight: '700', color: FtColors.textMuted },
+  repName: { fontSize: 13, fontWeight: '700', color: AcColors.textMuted },
   repState: {
     fontSize: 11,
     fontWeight: '800',
-    color: FtColors.warning,
+    color: AcColors.warning,
     textTransform: 'uppercase',
-    backgroundColor: FtSurfaces.warningBanner,
+    backgroundColor: AcSurfaces.warningBanner,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 999,
   },
-  repStateDone: { color: FtColors.success, backgroundColor: FtSurfaces.successBanner },
-  repTitle: { fontSize: 15, fontWeight: '800', color: FtColors.text, marginTop: 8 },
-  repDesc: { fontSize: 13, color: FtColors.textMuted, lineHeight: 19, marginTop: 5 },
+  repStateDone: { color: AcColors.success, backgroundColor: AcSurfaces.successBanner },
+  repTitle: { fontSize: 15, fontWeight: '800', color: AcColors.text, marginTop: 8 },
+  repDesc: { fontSize: 13, color: AcColors.textMuted, lineHeight: 19, marginTop: 5 },
   repInfoRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8 },
-  repInfoText: { fontSize: 12.5, color: FtColors.text, fontWeight: '600' },
+  repInfoText: { fontSize: 12.5, color: AcColors.text, fontWeight: '600' },
   repContactRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 },
   repContactBtn: {
     flexDirection: 'row',
@@ -730,19 +730,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: FtColors.border,
-    backgroundColor: FtColors.surface,
+    borderColor: AcColors.border,
+    backgroundColor: AcColors.surface,
   },
-  repContactText: { fontSize: 12.5, color: FtColors.accentText, fontWeight: '600' },
-  repMeta: { fontSize: 11, color: FtColors.textFaint, marginTop: 8 },
+  repContactText: { fontSize: 12.5, color: AcColors.accentText, fontWeight: '600' },
+  repMeta: { fontSize: 11, color: AcColors.textFaint, marginTop: 8 },
   repBtn: {
     marginTop: 10,
     paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: FtColors.accent,
+    backgroundColor: AcColors.accent,
     alignItems: 'center',
   },
-  repBtnText: { fontSize: 13, fontWeight: '800', color: FtColors.onAccent },
+  repBtnText: { fontSize: 13, fontWeight: '800', color: AcColors.onAccent },
   repBtnDisabled: { opacity: 0.7 },
   linkKitchen: {
     flexDirection: 'row',
@@ -752,7 +752,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     marginBottom: 8,
   },
-  linkKitchenText: { flex: 1, fontSize: 15, color: FtColors.accentText, fontWeight: '600' },
+  linkKitchenText: { flex: 1, fontSize: 15, color: AcColors.accentText, fontWeight: '600' },
   signOut: { paddingVertical: 16, alignItems: 'center' },
-  signOutText: { fontSize: 15, color: FtColors.textFaint, textDecorationLine: 'underline' },
+  signOutText: { fontSize: 15, color: AcColors.textFaint, textDecorationLine: 'underline' },
 });

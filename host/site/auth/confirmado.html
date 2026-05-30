@@ -3,31 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FastTable · Cuenta verificada</title>
+    <title>A la Carta · Cuenta verificada</title>
     <link rel="icon" href="/assets/favicon.png" type="image/png" />
     <link rel="stylesheet" href="auth.css" />
     <script src="/config.js"></script>
   </head>
   <body>
     <div class="card center">
-      <img src="/assets/logo-icon.png" alt="FastTable" class="auth-brand" width="48" height="48" />
+      <img src="/assets/logo-icon.png" alt="A la Carta" class="auth-brand" width="48" height="48" />
       <h1 class="success">¡Listo!</h1>
-      <p>Tu correo quedó verificado. Ya puedes usar FastTable con normalidad.</p>
+      <p>Tu correo quedó verificado. Ya puedes usar A la Carta con normalidad.</p>
       <div class="links">
         <a class="btn" id="app-btn" href="#">Abrir la app</a>
-        <a class="btn btn--ghost" href="/apk/fasttable.apk" id="apk-btn">Descargar APK (Android)</a>
+        <a class="btn btn--ghost" href="/apk/alacarta.apk" id="apk-btn">Descargar APK (Android)</a>
         <a href="/">Volver a la página principal</a>
       </div>
     </div>
     <script src="auth.js"></script>
     <script>
-      document.getElementById("app-btn").href = FastTableAuth.appUrl("/login");
+      document.getElementById("app-btn").href = AlaCartaAuth.appUrl("/login");
       document.getElementById("apk-btn").addEventListener("click", function (e) {
-        fetch("/apk/fasttable.apk", { method: "HEAD" }).then(function (r) {
+        fetch("/apk/alacarta.apk", { method: "HEAD" }).then(function (r) {
           if (!r.ok) {
             e.preventDefault();
             alert(
-              "Aún no hay APK en el servidor. Coloca fasttable.apk en host/site/apk/ y vuelve a desplegar.",
+              "Aún no hay APK en el servidor. Coloca alacarta.apk en host/site/apk/ y vuelve a desplegar.",
             );
           }
         });

@@ -17,7 +17,7 @@ import { useFocusEffect } from 'expo-router';
 import { AuthBoot } from '@/components/auth-boot';
 
 import { adminCardShadow, adminStyles, estadoMesaStyle } from '@/constants/worker-admin-styles';
-import { FtColors } from '@/constants/fasttable';
+import { AcColors } from '@/constants/alacarta';
 import { REALTIME_ADMIN, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { mapAdminSupabaseError } from '@/lib/admin-errors';
 import { mesaEtiqueta } from '@/lib/mesa-label';
@@ -189,28 +189,28 @@ export default function AdminMesasScreen() {
       <ScrollView
         style={adminStyles.scroll}
         contentContainerStyle={adminStyles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={FtColors.accent} />}>
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={AcColors.accent} />}>
         <View style={adminStyles.searchWrap}>
-          <Ionicons name="search" size={18} color={FtColors.textMuted} style={adminStyles.searchIcon} />
+          <Ionicons name="search" size={18} color={AcColors.textMuted} style={adminStyles.searchIcon} />
           <TextInput
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Buscar por código…"
-            placeholderTextColor={FtColors.textMuted}
+            placeholderTextColor={AcColors.textMuted}
             style={adminStyles.searchInput}
           />
           {searchQuery.length > 0 ? (
             <Pressable onPress={() => setSearchQuery('')} style={adminStyles.searchClear}>
-              <Ionicons name="close-circle" size={20} color={FtColors.textMuted} />
+              <Ionicons name="close-circle" size={20} color={AcColors.textMuted} />
             </Pressable>
           ) : null}
         </View>
 
         {loading ? (
-          <ActivityIndicator color={FtColors.accent} style={adminStyles.loader} />
+          <ActivityIndicator color={AcColors.accent} style={adminStyles.loader} />
         ) : filtered.length === 0 ? (
           <View style={adminStyles.emptyCard}>
-            <Ionicons name="grid-outline" size={32} color={FtColors.textMuted} />
+            <Ionicons name="grid-outline" size={32} color={AcColors.textMuted} />
             <Text style={adminStyles.emptyTitle}>Sin mesas</Text>
             <Text style={adminStyles.emptySub}>Crea la primera mesa con el botón +.</Text>
           </View>
@@ -231,13 +231,13 @@ export default function AdminMesasScreen() {
                 </View>
                 <View style={adminStyles.cardActions}>
                   <Pressable style={adminStyles.btnIcon} onPress={() => openEdit(m)}>
-                    <Ionicons name="create-outline" size={18} color={FtColors.accent} />
+                    <Ionicons name="create-outline" size={18} color={AcColors.accent} />
                     <Text style={adminStyles.btnIconText}>Editar</Text>
                   </Pressable>
                   <Pressable
                     style={[adminStyles.btnIcon, adminStyles.btnIconDanger]}
                     onPress={() => confirmDelete(m)}>
-                    <Ionicons name="trash-outline" size={18} color={FtColors.danger} />
+                    <Ionicons name="trash-outline" size={18} color={AcColors.danger} />
                     <Text style={[adminStyles.btnIconText, adminStyles.btnIconTextDanger]}>Eliminar</Text>
                   </Pressable>
                 </View>
@@ -248,7 +248,7 @@ export default function AdminMesasScreen() {
       </ScrollView>
 
       <Pressable style={adminStyles.fab} onPress={openCreate} accessibilityLabel="Nueva mesa">
-        <Ionicons name="add" size={28} color={FtColors.onAccent} />
+        <Ionicons name="add" size={28} color={AcColors.onAccent} />
       </Pressable>
 
       <Modal visible={modalOpen} animationType="slide" transparent onRequestClose={() => !busy && setModalOpen(false)}>
@@ -262,7 +262,7 @@ export default function AdminMesasScreen() {
                 value={codigo}
                 onChangeText={setCodigo}
                 placeholder="1"
-                placeholderTextColor={FtColors.textMuted}
+                placeholderTextColor={AcColors.textMuted}
                 style={adminStyles.input}
                 autoCapitalize="characters"
               />
@@ -278,7 +278,7 @@ export default function AdminMesasScreen() {
                 value={descripcion}
                 onChangeText={setDescripcion}
                 placeholder="Ventana, terraza…"
-                placeholderTextColor={FtColors.textMuted}
+                placeholderTextColor={AcColors.textMuted}
                 style={adminStyles.input}
               />
               <Text style={adminStyles.modalLabel}>Notas internas (opcional)</Text>

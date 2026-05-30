@@ -6,7 +6,7 @@ import { useRouter, type Href } from 'expo-router';
 
 import { AuthBoot } from '@/components/auth-boot';
 import { adminCardShadow, adminStyles } from '@/constants/worker-admin-styles';
-import { FtColors } from '@/constants/fasttable';
+import { AcColors } from '@/constants/alacarta';
 import { useGerenteGuardNavigation } from '@/hooks/use-gerente-guard-navigation';
 
 type HubItem = {
@@ -54,7 +54,7 @@ export default function AdminHubScreen() {
     <SafeAreaView style={adminStyles.safe} edges={['top', 'left', 'right']}>
       <ScrollView style={adminStyles.scroll} contentContainerStyle={adminStyles.content}>
         <Pressable style={adminStyles.backRow} onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={22} color={FtColors.accent} />
+          <Ionicons name="chevron-back" size={22} color={AcColors.accent} />
           <Text style={adminStyles.backText}>Gerencia</Text>
         </Pressable>
         <View style={adminStyles.hero}>
@@ -72,20 +72,20 @@ export default function AdminHubScreen() {
             style={[adminStyles.hubCard, adminCardShadow]}
             onPress={() => router.push(item.href)}>
             <View style={adminStyles.hubIcon}>
-              <Ionicons name={item.icon} size={24} color={FtColors.accent} />
+              <Ionicons name={item.icon} size={24} color={AcColors.accent} />
             </View>
             <View style={adminStyles.hubMeta}>
               <Text style={adminStyles.hubTitle}>{item.title}</Text>
               <Text style={adminStyles.hubSub}>{item.sub}</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color={FtColors.textMuted} />
+            <Ionicons name="chevron-forward" size={20} color={AcColors.textMuted} />
           </Pressable>
         ))}
 
         <Pressable style={styles.inventarioLink} onPress={() => router.push('/worker/inventario')}>
-          <Ionicons name="cube-outline" size={18} color={FtColors.accent} />
+          <Ionicons name="cube-outline" size={18} color={AcColors.accent} />
           <Text style={styles.inventarioLinkText}>Inventario operativo (entradas y ajustes)</Text>
-          <Ionicons name="chevron-forward" size={18} color={FtColors.textMuted} />
+          <Ionicons name="chevron-forward" size={18} color={AcColors.textMuted} />
         </Pressable>
       </ScrollView>
     </SafeAreaView>
@@ -102,8 +102,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: FtColors.border,
-    backgroundColor: FtColors.surface,
+    borderColor: AcColors.border,
+    backgroundColor: AcColors.surface,
   },
-  inventarioLinkText: { flex: 1, fontSize: 14, fontWeight: '600', color: FtColors.text },
+  inventarioLinkText: { flex: 1, fontSize: 14, fontWeight: '600', color: AcColors.text },
 });

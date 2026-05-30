@@ -1,34 +1,34 @@
 /* ============================================================================
-   FastTable — Tokens de marca (GENERADO)
+   A la Carta — Tokens de marca (GENERADO)
    👉 No edites a mano. Cambia constants/palette.ts y ejecuta:
       npm run sync:palette
    ============================================================================ */
 :root {
-  --bg: #000000;
-  --surface: #0c0c0e;
-  --surface-elevated: #14161a;
-  --text: #ffffff;
-  --text-muted: #aeb6c3;
-  --text-faint: #6e7685;
-  --border: #232830;
-  --border-subtle: #181a1f;
-  --accent: #2b5a8c;
-  --accent-text: #6ba3e0;
-  --accent-muted: #8eb4e8;
-  --on-accent: #ffffff;
+  --bg: #121b2e;
+  --surface: #1a2744;
+  --surface-elevated: #223454;
+  --text: #f5efe3;
+  --text-muted: #b4bcc8;
+  --text-faint: #7a8496;
+  --border: #2d4060;
+  --border-subtle: #22304a;
+  --accent: #b8956a;
+  --accent-text: #d4b896;
+  --accent-muted: #c9a86c;
+  --on-accent: #121b2e;
   --success: #5ec996;
   --warning: #ecc05a;
   --danger: #ec8888;
-  --logo-backdrop: #ffffff;
+  --logo-backdrop: #f5efe3;
 
-  --accent-rgb: 43, 90, 140;
-  --accent-text-rgb: 107, 163, 224;
-  --accent-muted-rgb: 142, 180, 232;
+  --accent-rgb: 184, 149, 106;
+  --accent-text-rgb: 212, 184, 150;
+  --accent-muted-rgb: 201, 168, 108;
   --success-rgb: 94, 201, 150;
   --warning-rgb: 236, 192, 90;
   --danger-rgb: 236, 136, 136;
-  --surface-rgb: 12, 12, 14;
-  --shadow-rgb: 0, 0, 0;
+  --surface-rgb: 26, 39, 68;
+  --shadow-rgb: 18, 27, 46;
 
   --radius-sm: 10px;
   --radius-md: 16px;

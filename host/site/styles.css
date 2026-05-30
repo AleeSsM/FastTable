@@ -1,5 +1,5 @@
 /* ============================================================================
-   FastTable landing — estilos (tokens en brand.css)
+   A la Carta landing — estilos (tokens en brand.css)
    👉 Reskin: edita constants/palette.ts y ejecuta npm run sync:palette
    ============================================================================ */
 @import url('./brand.css');
@@ -154,7 +154,7 @@ img {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: var(--logo-backdrop);
+  background: transparent;
   flex-shrink: 0;
   overflow: hidden;
 }
@@ -165,16 +165,14 @@ img {
 }
 .brand__logo {
   display: block;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
-  transform: scale(1.5);
 }
 .brand__icon-wrap--sm .brand__logo,
 .brand__icon-wrap--sm img {
-  width: 28px;
-  height: 28px;
-  transform: scale(1.5);
+  width: 38px;
+  height: 38px;
 }
 .brand__mark {
   display: inline-flex;
@@ -720,7 +718,22 @@ img {
   color: var(--accent-text);
 }
 
-/* QR */
+/* Banner de marca en descarga */
+.download__visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.download__banner {
+  display: block;
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+}
+
+/* QR (legacy) */
 .download__qr {
   text-align: center;
   color: var(--text-faint);

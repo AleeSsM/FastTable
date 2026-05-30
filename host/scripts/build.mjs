@@ -59,7 +59,7 @@ function main() {
 
   if (!appUrl) {
     console.warn(
-      "⚠ EXPO_PUBLIC_APP_URL vacío. Pon tu dominio público (ej. https://fasttable.vercel.app) antes de desplegar.",
+      "⚠ EXPO_PUBLIC_APP_URL vacío. Pon tu dominio público (ej. https://fast-table.vercel.app) antes de desplegar.",
     );
   }
 
@@ -73,7 +73,7 @@ function main() {
   console.log("→ Copiando landing, auth y apk …");
   copyRecursive(SITE, OUT, new Set(["config.template.js"]));
 
-  const configJs = `window.FASTTABLE_CONFIG = {
+  const configJs = `window.ALACARTA_CONFIG = {
   supabaseUrl: ${JSON.stringify(supabaseUrl)},
   supabaseAnonKey: ${JSON.stringify(supabaseAnonKey)},
   appBase: "/app",
@@ -114,7 +114,7 @@ function main() {
   console.log("✔ Sitio listo en host/dist");
   console.log("  · /           → landing");
   console.log("  · /auth/*     → verificar correo y contraseña");
-  console.log("  · /apk/       → coloca fasttable.apk en host/site/apk/");
+  console.log("  · /apk/       → coloca alacarta.apk en host/site/apk/");
   console.log("  · /app/       → app web (comensal + personal)");
   if (appUrl) console.log(`  · Supabase Site URL: ${appUrl}`);
   console.log(`  · Redirect: ${appUrl || "https://TU-DOMINIO"}/auth/callback`);

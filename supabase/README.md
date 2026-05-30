@@ -1,9 +1,9 @@
-# Base de datos FastTable (Supabase)
+# Base de datos A la Carta (Supabase)
 
 ## Instalación desde cero
 
 1. **Supabase → SQL Editor**
-2. (Opcional) Ejecutar **`00_schema_teardown.sql`** si ya existían tablas FastTable.
+2. (Opcional) Ejecutar **`00_schema_teardown.sql`** si ya existían tablas A la Carta.
 3. Ejecutar **`01_schema_bootstrap.sql`** completo (Run, no Explain).
 4. **Authentication → Users**: crear cuentas de comensales y personal.
 5. Enlazar filas en `public.personal` para cada trabajador (ver app de gerencia o consola `npm run staff:console`).
@@ -22,7 +22,7 @@ Plantilla: `.env.example`. La *service role* solo en máquina local para scripts
 
 | Archivo | Uso |
 |---------|-----|
-| `00_schema_teardown.sql` | Borra objetos FastTable en `public` (no borra `auth.users`). |
+| `00_schema_teardown.sql` | Borra objetos A la Carta en `public` (no borra `auth.users`). |
 | `01_schema_bootstrap.sql` | Esquema completo: tablas, RLS, RPC, seed menú/mesas/inventario, Realtime. |
 | `02_mesa_codigos_limpios.sql` | Migración opcional: renombra códigos demo `M1`…`M4` → `1`…`4` en proyectos ya desplegados. |
 

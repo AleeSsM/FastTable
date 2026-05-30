@@ -10,7 +10,7 @@ export function SoloPersonalWeb() {
   return (
     <View style={styles.root}>
       <View style={styles.card}>
-        <Text style={styles.brand}>FastTable</Text>
+        <Text style={styles.brand}>A la Carta</Text>
         <View style={styles.rule} />
         <Text style={styles.title}>Versión web exclusiva para personal</Text>
         <Text style={styles.body}>
@@ -18,7 +18,7 @@ export function SoloPersonalWeb() {
           cocina y meseros).
         </Text>
         <Text style={styles.body}>
-          Si eres cliente, usa la app de FastTable en tu teléfono para reservar mesa, ver el menú y
+          Si eres cliente, usa la app de A la Carta en tu teléfono para reservar mesa, ver el menú y
           pedir servicio.
         </Text>
         <Pressable

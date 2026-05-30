@@ -2,13 +2,12 @@
  * Paleta del personal (worker). Se DERIVA de `constants/palette.ts`.
  *
  * No edites los colores aquí: cambia `BRAND` en `constants/palette.ts` y se
- * actualiza en toda la app. Este archivo solo expone los tokens que ya usan
- * las pantallas del personal, para no tener que tocar sus imports.
+ * actualiza en toda la app.
  */
 import { BRAND } from '@/constants/palette';
 import { SemanticSurfaces } from '@/constants/semantic-surfaces';
 
-export const FtColors = {
+export const AcColors = {
   background: BRAND.background,
   surface: BRAND.surface,
   surfaceElevated: BRAND.surfaceElevated,
@@ -20,11 +19,16 @@ export const FtColors = {
   accent: BRAND.accent,
   accentText: BRAND.accentText,
   accentMuted: BRAND.accentMuted,
-  /** Texto sobre botones con acento */
   onAccent: BRAND.onAccent,
   success: BRAND.success,
   warning: BRAND.warning,
   danger: BRAND.danger,
 } as const;
 
-export { SemanticSurfaces as FtSurfaces };
+export { SemanticSurfaces as AcSurfaces };
+
+/** @deprecated Usa `AcColors`. */
+export const FtColors = AcColors;
+
+/** @deprecated Usa `AcSurfaces`. */
+export const FtSurfaces = SemanticSurfaces;

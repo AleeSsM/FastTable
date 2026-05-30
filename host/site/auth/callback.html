@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FastTable · Verificando acceso</title>
+    <title>A la Carta · Verificando acceso</title>
     <link rel="icon" href="/assets/favicon.png" type="image/png" />
     <link rel="stylesheet" href="auth.css" />
     <script src="/config.js"></script>
   </head>
   <body>
     <div class="card center">
-      <img src="/assets/logo-icon.png" alt="FastTable" class="auth-brand" width="48" height="48" />
+      <img src="/assets/logo-icon.png" alt="A la Carta" class="auth-brand" width="48" height="48" />
       <div class="spinner" aria-hidden="true"></div>
       <h1>Completando acceso…</h1>
       <p id="status">Procesando el enlace del correo.</p>
@@ -20,7 +20,7 @@
       (async function () {
         const status = document.getElementById("status");
         try {
-          const type = await FastTableAuth.handleAuthCallback();
+          const type = await AlaCartaAuth.handleAuthCallback();
           if (type === "recovery") {
             window.location.replace("/auth/reset-password.html");
             return;
@@ -36,7 +36,7 @@
             '<div class="links">' +
             '<a class="btn" href="/">Ir al inicio</a>' +
             '<a href="' +
-            FastTableAuth.appUrl("/forgot-password") +
+            AlaCartaAuth.appUrl("/forgot-password") +
             '">Recuperar contraseña en la app</a>' +
             "</div>";
         }

@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 
 import { StatCard, WebCard, WebCardHead, WebHeader, WebRow, WebScroll, webStyles } from '@/components/web/ui';
-import { FtColors, FtSurfaces } from '@/constants/fasttable';
+import { AcColors, AcSurfaces } from '@/constants/alacarta';
 import { useAuth } from '@/contexts/auth-context';
 import { REALTIME_KITCHEN, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { mapCocinaRpcError } from '@/lib/cocina-errors';
@@ -152,7 +152,7 @@ export default function KitchenWebScreen() {
   if (authLoading) {
     return (
       <View style={styles.boot}>
-        <ActivityIndicator color={FtColors.accent} size="large" />
+        <ActivityIndicator color={AcColors.accent} size="large" />
       </View>
     );
   }
@@ -167,14 +167,14 @@ export default function KitchenWebScreen() {
 
   const statsRow = (
     <WebRow>
-      <StatCard icon="flame-outline" tone={FtColors.warning} value={pedidos.length} label="Pedidos pendientes" />
+      <StatCard icon="flame-outline" tone={AcColors.warning} value={pedidos.length} label="Pedidos pendientes" />
       <StatCard
         icon="close-circle-outline"
-        tone={FtColors.danger}
+        tone={AcColors.danger}
         value={items.filter((it) => !it.disponible).length}
         label="Platos no disponibles"
       />
-      <StatCard icon="restaurant-outline" tone={FtColors.success} value={items.length} label="Platos en la carta" />
+      <StatCard icon="restaurant-outline" tone={AcColors.success} value={items.length} label="Platos en la carta" />
     </WebRow>
   );
 
@@ -196,11 +196,11 @@ export default function KitchenWebScreen() {
         ))}
       </View>
       {loading && !refreshing ? (
-        <ActivityIndicator color={FtColors.accent} style={{ marginVertical: 24 }} />
+        <ActivityIndicator color={AcColors.accent} style={{ marginVertical: 24 }} />
       ) : filteredPedidos.length === 0 ? (
         <WebCard>
           <View style={styles.emptyBox}>
-            <Ionicons name="checkmark-done-circle-outline" size={42} color={FtColors.success} />
+            <Ionicons name="checkmark-done-circle-outline" size={42} color={AcColors.success} />
             <Text style={styles.emptyTitle}>Todo al día</Text>
             <Text style={styles.emptyText}>No hay pedidos pendientes por preparar.</Text>
           </View>
@@ -239,10 +239,10 @@ export default function KitchenWebScreen() {
                   onPress={() => onListo(p.id)}
                   disabled={busyId === p.id}>
                   {busyId === p.id ? (
-                    <ActivityIndicator color={FtColors.onAccent} />
+                    <ActivityIndicator color={AcColors.onAccent} />
                   ) : (
                     <>
-                      <Ionicons name="checkmark-circle" size={18} color={FtColors.onAccent} />
+                      <Ionicons name="checkmark-circle" size={18} color={AcColors.onAccent} />
                       <Text style={styles.btnListoText}>Listo</Text>
                     </>
                   )}
@@ -274,8 +274,8 @@ export default function KitchenWebScreen() {
               value={it.disponible}
               onValueChange={(v) => onToggleDisponible(it, v)}
               disabled={toggleBusy === it.id}
-              trackColor={{ false: FtColors.border, true: FtSurfaces.successSwitch }}
-              thumbColor={it.disponible ? FtColors.success : FtColors.textMuted}
+              trackColor={{ false: AcColors.border, true: AcSurfaces.successSwitch }}
+              thumbColor={it.disponible ? AcColors.success : AcColors.textMuted}
             />
           </View>
         ))}
@@ -287,7 +287,7 @@ export default function KitchenWebScreen() {
     <WebScroll
       maxWidth={1480}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={FtColors.accent} />
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={AcColors.accent} />
       }>
       <WebHeader
         eyebrow="Cocina"
@@ -316,7 +316,7 @@ export default function KitchenWebScreen() {
           ) : (
             <WebCard>
               <View style={styles.emptyBox}>
-                <Ionicons name="checkmark-done-circle-outline" size={42} color={FtColors.success} />
+                <Ionicons name="checkmark-done-circle-outline" size={42} color={AcColors.success} />
                 <Text style={styles.emptyTitle}>Todo al día</Text>
               </View>
             </WebCard>
@@ -343,19 +343,19 @@ export default function KitchenWebScreen() {
 }
 
 const styles = StyleSheet.create({
-  boot: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: FtColors.background },
+  boot: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: AcColors.background },
   filterRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
   filterChip: {
     paddingVertical: 8,
     paddingHorizontal: 14,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: FtColors.border,
-    backgroundColor: FtColors.surface,
+    borderColor: AcColors.border,
+    backgroundColor: AcColors.surface,
   },
-  filterChipOn: { borderColor: FtColors.accent, backgroundColor: FtColors.surfaceElevated },
-  filterChipText: { fontSize: 13, color: FtColors.textMuted, fontWeight: '600' },
-  filterChipTextOn: { color: FtColors.accentText, fontWeight: '700' },
+  filterChipOn: { borderColor: AcColors.accent, backgroundColor: AcColors.surfaceElevated },
+  filterChipText: { fontSize: 13, color: AcColors.textMuted, fontWeight: '600' },
+  filterChipTextOn: { color: AcColors.accentText, fontWeight: '700' },
   board: { flexDirection: 'row', flexWrap: 'wrap', gap: 14 },
   ticket: {
     flexGrow: 1,
@@ -364,37 +364,37 @@ const styles = StyleSheet.create({
     maxWidth: 320,
     padding: 16,
     borderRadius: 16,
-    backgroundColor: FtColors.surfaceElevated,
+    backgroundColor: AcColors.surfaceElevated,
     borderWidth: 1,
-    borderColor: FtColors.borderSubtle,
+    borderColor: AcColors.borderSubtle,
   },
   ticketTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   ticketMesa: {
     fontSize: 12,
     fontWeight: '800',
-    color: FtColors.accentMuted,
+    color: AcColors.accentMuted,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
   },
-  ticketTime: { fontSize: 12, color: FtColors.textMuted },
-  ticketPlato: { fontSize: 19, fontWeight: '800', color: FtColors.text, marginTop: 8 },
+  ticketTime: { fontSize: 12, color: AcColors.textMuted },
+  ticketPlato: { fontSize: 19, fontWeight: '800', color: AcColors.text, marginTop: 8 },
   slaRow: { marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 6 },
   slaDot: { width: 9, height: 9, borderRadius: 999 },
-  slaOk: { backgroundColor: FtColors.success },
-  slaWarn: { backgroundColor: FtColors.warning },
-  slaLate: { backgroundColor: FtColors.danger },
-  slaText: { fontSize: 12, color: FtColors.textMuted },
+  slaOk: { backgroundColor: AcColors.success },
+  slaWarn: { backgroundColor: AcColors.warning },
+  slaLate: { backgroundColor: AcColors.danger },
+  slaText: { fontSize: 12, color: AcColors.textMuted },
   notaBox: {
     marginTop: 12,
     padding: 10,
     borderRadius: 12,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderWidth: 1,
-    borderColor: FtColors.borderSubtle,
+    borderColor: AcColors.borderSubtle,
   },
-  notaLabel: { fontSize: 10, fontWeight: '700', color: FtColors.textFaint, marginBottom: 3, textTransform: 'uppercase' },
-  notaText: { fontSize: 13, color: FtColors.text, lineHeight: 19 },
-  sinNota: { fontSize: 12, color: FtColors.textFaint, marginTop: 10, fontStyle: 'italic' },
+  notaLabel: { fontSize: 10, fontWeight: '700', color: AcColors.textFaint, marginBottom: 3, textTransform: 'uppercase' },
+  notaText: { fontSize: 13, color: AcColors.text, lineHeight: 19 },
+  sinNota: { fontSize: 12, color: AcColors.textFaint, marginTop: 10, fontStyle: 'italic' },
   btnListo: {
     marginTop: 14,
     flexDirection: 'row',
@@ -403,14 +403,14 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingVertical: 12,
     borderRadius: 12,
-    backgroundColor: FtColors.accent,
+    backgroundColor: AcColors.accent,
   },
-  btnListoText: { color: FtColors.onAccent, fontWeight: '800', fontSize: 15 },
+  btnListoText: { color: AcColors.onAccent, fontWeight: '800', fontSize: 15 },
   btnDisabled: { opacity: 0.6 },
   emptyBox: { alignItems: 'center', paddingVertical: 36, gap: 8 },
-  emptyTitle: { fontSize: 18, fontWeight: '800', color: FtColors.text },
-  emptyText: { fontSize: 14, color: FtColors.textMuted },
-  panelHint: { fontSize: 12, color: FtColors.textMuted, marginTop: -8, marginBottom: 12, lineHeight: 18 },
+  emptyTitle: { fontSize: 18, fontWeight: '800', color: AcColors.text },
+  emptyText: { fontSize: 14, color: AcColors.textMuted },
+  panelHint: { fontSize: 12, color: AcColors.textMuted, marginTop: -8, marginBottom: 12, lineHeight: 18 },
   dispList: { gap: 0 },
   dispRow: {
     flexDirection: 'row',
@@ -418,8 +418,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 11,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: FtColors.border,
+    borderBottomColor: AcColors.border,
   },
-  dispName: { fontSize: 14, fontWeight: '600', color: FtColors.text },
-  dispCat: { fontSize: 12, color: FtColors.textMuted, marginTop: 2 },
+  dispName: { fontSize: 14, fontWeight: '600', color: AcColors.text },
+  dispCat: { fontSize: 12, color: AcColors.textMuted, marginTop: 2 },
 });

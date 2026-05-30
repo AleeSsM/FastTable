@@ -18,7 +18,7 @@ import { useFocusEffect } from 'expo-router';
 import { AuthBoot } from '@/components/auth-boot';
 
 import { adminCardShadow, adminStyles } from '@/constants/worker-admin-styles';
-import { FtColors } from '@/constants/fasttable';
+import { AcColors } from '@/constants/alacarta';
 import { REALTIME_ADMIN, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import {
   etiquetaCampoCantidad,
@@ -242,19 +242,19 @@ export default function AdminIngredientesScreen() {
       <ScrollView
         style={adminStyles.scroll}
         contentContainerStyle={adminStyles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={FtColors.accent} />}>
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={AcColors.accent} />}>
         <View style={adminStyles.searchWrap}>
-          <Ionicons name="search" size={18} color={FtColors.textMuted} style={adminStyles.searchIcon} />
+          <Ionicons name="search" size={18} color={AcColors.textMuted} style={adminStyles.searchIcon} />
           <TextInput
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Buscar ingrediente…"
-            placeholderTextColor={FtColors.textMuted}
+            placeholderTextColor={AcColors.textMuted}
             style={adminStyles.searchInput}
           />
           {searchQuery.length > 0 ? (
             <Pressable onPress={() => setSearchQuery('')} style={adminStyles.searchClear}>
-              <Ionicons name="close-circle" size={20} color={FtColors.textMuted} />
+              <Ionicons name="close-circle" size={20} color={AcColors.textMuted} />
             </Pressable>
           ) : null}
         </View>
@@ -276,7 +276,7 @@ export default function AdminIngredientesScreen() {
               <Ionicons
                 name={CATEGORIA_ICONS[c]}
                 size={14}
-                color={categoriaFilter === c ? FtColors.accent : FtColors.textMuted}
+                color={categoriaFilter === c ? AcColors.accent : AcColors.textMuted}
               />
               <Text style={[adminStyles.filterChipText, categoriaFilter === c && adminStyles.filterChipTextOn]}>
                 {c}
@@ -286,10 +286,10 @@ export default function AdminIngredientesScreen() {
         </ScrollView>
 
         {loading ? (
-          <ActivityIndicator color={FtColors.accent} style={adminStyles.loader} />
+          <ActivityIndicator color={AcColors.accent} style={adminStyles.loader} />
         ) : filtered.length === 0 ? (
           <View style={adminStyles.emptyCard}>
-            <Ionicons name="leaf-outline" size={32} color={FtColors.textMuted} />
+            <Ionicons name="leaf-outline" size={32} color={AcColors.textMuted} />
             <Text style={adminStyles.emptyTitle}>Sin ingredientes</Text>
             <Text style={adminStyles.emptySub}>Registra insumos para usarlos al crear platillos.</Text>
           </View>
@@ -304,22 +304,22 @@ export default function AdminIngredientesScreen() {
                   : ''}
               </Text>
               <View style={adminStyles.tagRow}>
-                <View style={[adminStyles.estadoTag, { backgroundColor: FtColors.surface }]}>
-                  <Text style={[adminStyles.estadoTagText, { color: FtColors.accentMuted }]}>{r.categoria}</Text>
+                <View style={[adminStyles.estadoTag, { backgroundColor: AcColors.surface }]}>
+                  <Text style={[adminStyles.estadoTagText, { color: AcColors.accentMuted }]}>{r.categoria}</Text>
                 </View>
-                <View style={[adminStyles.estadoTag, { backgroundColor: FtColors.surface }]}>
-                  <Text style={[adminStyles.estadoTagText, { color: FtColors.textMuted }]}>{r.unidad_medida}</Text>
+                <View style={[adminStyles.estadoTag, { backgroundColor: AcColors.surface }]}>
+                  <Text style={[adminStyles.estadoTagText, { color: AcColors.textMuted }]}>{r.unidad_medida}</Text>
                 </View>
               </View>
               <View style={adminStyles.cardActions}>
                 <Pressable style={adminStyles.btnIcon} onPress={() => openEdit(r)}>
-                  <Ionicons name="create-outline" size={18} color={FtColors.accent} />
+                  <Ionicons name="create-outline" size={18} color={AcColors.accent} />
                   <Text style={adminStyles.btnIconText}>Editar</Text>
                 </Pressable>
                 <Pressable
                   style={[adminStyles.btnIcon, adminStyles.btnIconDanger]}
                   onPress={() => confirmDelete(r)}>
-                  <Ionicons name="trash-outline" size={18} color={FtColors.danger} />
+                  <Ionicons name="trash-outline" size={18} color={AcColors.danger} />
                   <Text style={[adminStyles.btnIconText, adminStyles.btnIconTextDanger]}>Eliminar</Text>
                 </Pressable>
               </View>
@@ -329,7 +329,7 @@ export default function AdminIngredientesScreen() {
       </ScrollView>
 
       <Pressable style={adminStyles.fab} onPress={openCreate} accessibilityLabel="Nuevo ingrediente">
-        <Ionicons name="add" size={28} color={FtColors.onAccent} />
+        <Ionicons name="add" size={28} color={AcColors.onAccent} />
       </Pressable>
 
       <Modal visible={modalOpen} animationType="slide" transparent onRequestClose={() => !busy && setModalOpen(false)}>
@@ -343,7 +343,7 @@ export default function AdminIngredientesScreen() {
                 value={nombre}
                 onChangeText={setNombre}
                 placeholder="Carne, pan, queso…"
-                placeholderTextColor={FtColors.textMuted}
+                placeholderTextColor={AcColors.textMuted}
                 style={adminStyles.input}
               />
               <Text style={adminStyles.modalLabel}>Unidad de medida</Text>
@@ -378,7 +378,7 @@ export default function AdminIngredientesScreen() {
                 onChangeText={setStockStr}
                 keyboardType={tecladoCantidadInventario(unidad)}
                 placeholder={placeholderCantidadInventario(unidad, true)}
-                placeholderTextColor={FtColors.textMuted}
+                placeholderTextColor={AcColors.textMuted}
                 style={adminStyles.input}
               />
               <Text style={adminStyles.modalLabel}>Stock mínimo (opcional)</Text>
@@ -387,7 +387,7 @@ export default function AdminIngredientesScreen() {
                 onChangeText={setMinStr}
                 keyboardType={tecladoCantidadInventario(unidad)}
                 placeholder={placeholderCantidadInventario(unidad, false)}
-                placeholderTextColor={FtColors.textMuted}
+                placeholderTextColor={AcColors.textMuted}
                 style={adminStyles.input}
               />
               <Pressable style={[adminStyles.modalOk, busy && adminStyles.modalOkOff]} onPress={save} disabled={busy}>

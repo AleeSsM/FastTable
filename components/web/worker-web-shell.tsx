@@ -3,7 +3,7 @@ import { useGlobalSearchParams, usePathname, useRouter, type Href } from 'expo-r
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Avatar } from '@/components/avatar';
-import { FtColors } from '@/constants/fasttable';
+import { AcColors } from '@/constants/alacarta';
 import { useAuth } from '@/contexts/auth-context';
 import { useSafeSignOut } from '@/hooks/use-safe-sign-out';
 import { badgeCountForItem, useWorkerNavBadges } from '@/hooks/use-worker-nav-badges';
@@ -36,7 +36,7 @@ export function WorkerWebShell({ children }: { children: React.ReactNode }) {
   if (loading) {
     return (
       <View style={styles.boot}>
-        <ActivityIndicator color={FtColors.accent} size="large" />
+        <ActivityIndicator color={AcColors.accent} size="large" />
       </View>
     );
   }
@@ -56,10 +56,10 @@ export function WorkerWebShell({ children }: { children: React.ReactNode }) {
       <View style={styles.sidebar}>
         <View style={styles.brandRow}>
           <View style={styles.brandMark}>
-            <Ionicons name="restaurant" size={20} color={FtColors.onAccent} />
+            <Ionicons name="restaurant" size={20} color={AcColors.onAccent} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.brandName}>FastTable</Text>
+            <Text style={styles.brandName}>A la Carta</Text>
             <Text style={styles.brandTag}>Consola de personal</Text>
           </View>
         </View>
@@ -81,7 +81,7 @@ export function WorkerWebShell({ children }: { children: React.ReactNode }) {
                 <Ionicons
                   name={item.icon}
                   size={20}
-                  color={active ? FtColors.onAccent : FtColors.textMuted}
+                  color={active ? AcColors.onAccent : AcColors.textMuted}
                 />
                 <Text style={[styles.navText, active && styles.navTextActive]}>{item.label}</Text>
                 {count > 0 ? (
@@ -116,7 +116,7 @@ export function WorkerWebShell({ children }: { children: React.ReactNode }) {
               styles.signOutBtn,
               hovered && styles.signOutBtnHover,
             ]}>
-            <Ionicons name="log-out-outline" size={20} color={FtColors.danger} />
+            <Ionicons name="log-out-outline" size={20} color={AcColors.danger} />
           </Pressable>
         </View>
       </View>
@@ -127,19 +127,19 @@ export function WorkerWebShell({ children }: { children: React.ReactNode }) {
 }
 
 const styles = StyleSheet.create({
-  boot: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: FtColors.background },
-  bare: { flex: 1, backgroundColor: FtColors.background },
+  boot: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: AcColors.background },
+  bare: { flex: 1, backgroundColor: AcColors.background },
   root: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: FtColors.background,
+    backgroundColor: AcColors.background,
     minHeight: '100%',
   },
   sidebar: {
     width: SIDEBAR_WIDTH,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderRightWidth: 1,
-    borderRightColor: FtColors.border,
+    borderRightColor: AcColors.border,
     paddingVertical: 22,
     paddingHorizontal: 16,
   },
@@ -148,12 +148,12 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 11,
-    backgroundColor: FtColors.accent,
+    backgroundColor: AcColors.accent,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  brandName: { fontSize: 17, fontWeight: '800', color: FtColors.text, letterSpacing: 0.2 },
-  brandTag: { fontSize: 11, color: FtColors.textMuted, marginTop: 1 },
+  brandName: { fontSize: 17, fontWeight: '800', color: AcColors.text, letterSpacing: 0.2 },
+  brandTag: { fontSize: 11, color: AcColors.textMuted, marginTop: 1 },
   nav: { gap: 4, flex: 1 },
   navItem: {
     flexDirection: 'row',
@@ -163,10 +163,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 11,
   },
-  navItemHover: { backgroundColor: FtColors.surfaceElevated },
-  navItemActive: { backgroundColor: FtColors.accent },
-  navText: { flex: 1, fontSize: 14, fontWeight: '600', color: FtColors.textMuted },
-  navTextActive: { color: FtColors.onAccent, fontWeight: '700' },
+  navItemHover: { backgroundColor: AcColors.surfaceElevated },
+  navItemActive: { backgroundColor: AcColors.accent },
+  navText: { flex: 1, fontSize: 14, fontWeight: '600', color: AcColors.textMuted },
+  navTextActive: { color: AcColors.onAccent, fontWeight: '700' },
   badge: {
     minWidth: 22,
     height: 22,
@@ -175,11 +175,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  badgeAlert: { backgroundColor: FtColors.warning },
-  badgeMuted: { backgroundColor: FtColors.surfaceElevated, borderWidth: 1, borderColor: FtColors.border },
+  badgeAlert: { backgroundColor: AcColors.warning },
+  badgeMuted: { backgroundColor: AcColors.surfaceElevated, borderWidth: 1, borderColor: AcColors.border },
   badgeText: { fontSize: 12, fontWeight: '800' },
-  badgeTextAlert: { color: FtColors.background },
-  badgeTextMuted: { color: FtColors.textMuted },
+  badgeTextAlert: { color: AcColors.background },
+  badgeTextMuted: { color: AcColors.textMuted },
   userBox: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     paddingTop: 14,
     marginTop: 10,
     borderTopWidth: 1,
-    borderTopColor: FtColors.border,
+    borderTopColor: AcColors.border,
   },
   userInfo: {
     flex: 1,
@@ -197,10 +197,10 @@ const styles = StyleSheet.create({
     padding: 6,
     borderRadius: 11,
   },
-  userInfoHover: { backgroundColor: FtColors.surfaceElevated },
-  userName: { fontSize: 13, fontWeight: '700', color: FtColors.text },
-  userRole: { fontSize: 11, color: FtColors.textMuted, marginTop: 1 },
+  userInfoHover: { backgroundColor: AcColors.surfaceElevated },
+  userName: { fontSize: 13, fontWeight: '700', color: AcColors.text },
+  userRole: { fontSize: 11, color: AcColors.textMuted, marginTop: 1 },
   signOutBtn: { padding: 8, borderRadius: 9 },
-  signOutBtnHover: { backgroundColor: FtColors.surfaceElevated },
+  signOutBtnHover: { backgroundColor: AcColors.surfaceElevated },
   content: { flex: 1, minHeight: '100%' },
 });

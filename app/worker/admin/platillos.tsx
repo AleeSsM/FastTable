@@ -19,7 +19,7 @@ import { useFocusEffect } from 'expo-router';
 import { AuthBoot } from '@/components/auth-boot';
 
 import { adminCardShadow, adminStyles } from '@/constants/worker-admin-styles';
-import { FtColors, FtSurfaces } from '@/constants/fasttable';
+import { AcColors, AcSurfaces } from '@/constants/alacarta';
 import { REALTIME_ADMIN, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { centavosToPrecioInput, parsePrecioPesosToCentavos } from '@/lib/admin-price';
 import { formatPriceFromCents, formatCantidadInventario, parseCantidadInventario, etiquetaCampoCantidad, tecladoCantidadInventario, placeholderCantidadInventario } from '@/lib/format';
@@ -353,23 +353,23 @@ export default function AdminPlatillosScreen() {
       <ScrollView
         style={adminStyles.scroll}
         contentContainerStyle={adminStyles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={FtColors.accent} />}>
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={AcColors.accent} />}>
         <View style={adminStyles.searchWrap}>
-          <Ionicons name="search" size={18} color={FtColors.textMuted} style={adminStyles.searchIcon} />
+          <Ionicons name="search" size={18} color={AcColors.textMuted} style={adminStyles.searchIcon} />
           <TextInput
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Buscar platillo o categoría…"
-            placeholderTextColor={FtColors.textMuted}
+            placeholderTextColor={AcColors.textMuted}
             style={adminStyles.searchInput}
           />
         </View>
 
         {loading ? (
-          <ActivityIndicator color={FtColors.accent} style={adminStyles.loader} />
+          <ActivityIndicator color={AcColors.accent} style={adminStyles.loader} />
         ) : filtered.length === 0 ? (
           <View style={adminStyles.emptyCard}>
-            <Ionicons name="fast-food-outline" size={32} color={FtColors.textMuted} />
+            <Ionicons name="fast-food-outline" size={32} color={AcColors.textMuted} />
             <Text style={adminStyles.emptyTitle}>Sin platillos</Text>
             <Text style={adminStyles.emptySub}>Crea platillos y asigna ingredientes de tu catálogo.</Text>
           </View>
@@ -381,7 +381,7 @@ export default function AdminPlatillosScreen() {
                   <Image source={{ uri: p.imagen_url }} style={adminStyles.dishThumb} resizeMode="cover" />
                 ) : (
                   <View style={[adminStyles.dishThumb, { alignItems: 'center', justifyContent: 'center' }]}>
-                    <Ionicons name="image-outline" size={24} color={FtColors.textMuted} />
+                    <Ionicons name="image-outline" size={24} color={AcColors.textMuted} />
                   </View>
                 )}
                 <View style={{ flex: 1 }}>
@@ -391,13 +391,13 @@ export default function AdminPlatillosScreen() {
                   </Text>
                   <View style={adminStyles.tagRow}>
                     {!p.disponible ? (
-                      <View style={[adminStyles.estadoTag, { backgroundColor: FtSurfaces.dangerSoft }]}>
-                        <Text style={[adminStyles.estadoTagText, { color: FtColors.danger }]}>No disponible</Text>
+                      <View style={[adminStyles.estadoTag, { backgroundColor: AcSurfaces.dangerSoft }]}>
+                        <Text style={[adminStyles.estadoTagText, { color: AcColors.danger }]}>No disponible</Text>
                       </View>
                     ) : null}
                     {p.sin_stock ? (
-                      <View style={[adminStyles.estadoTag, { backgroundColor: FtSurfaces.warningSoft }]}>
-                        <Text style={[adminStyles.estadoTagText, { color: FtColors.warning }]}>Sin stock</Text>
+                      <View style={[adminStyles.estadoTag, { backgroundColor: AcSurfaces.warningSoft }]}>
+                        <Text style={[adminStyles.estadoTagText, { color: AcColors.warning }]}>Sin stock</Text>
                       </View>
                     ) : null}
                   </View>
@@ -405,13 +405,13 @@ export default function AdminPlatillosScreen() {
               </View>
               <View style={adminStyles.cardActions}>
                 <Pressable style={adminStyles.btnIcon} onPress={() => void openEdit(p)}>
-                  <Ionicons name="create-outline" size={18} color={FtColors.accent} />
+                  <Ionicons name="create-outline" size={18} color={AcColors.accent} />
                   <Text style={adminStyles.btnIconText}>Editar</Text>
                 </Pressable>
                 <Pressable
                   style={[adminStyles.btnIcon, adminStyles.btnIconDanger]}
                   onPress={() => confirmDelete(p)}>
-                  <Ionicons name="trash-outline" size={18} color={FtColors.danger} />
+                  <Ionicons name="trash-outline" size={18} color={AcColors.danger} />
                   <Text style={[adminStyles.btnIconText, adminStyles.btnIconTextDanger]}>Eliminar</Text>
                 </Pressable>
               </View>
@@ -421,7 +421,7 @@ export default function AdminPlatillosScreen() {
       </ScrollView>
 
       <Pressable style={adminStyles.fab} onPress={openCreate} accessibilityLabel="Nuevo platillo">
-        <Ionicons name="add" size={28} color={FtColors.onAccent} />
+        <Ionicons name="add" size={28} color={AcColors.onAccent} />
       </Pressable>
 
       <Modal visible={modalOpen} animationType="slide" transparent onRequestClose={() => !busy && setModalOpen(false)}>
@@ -437,7 +437,7 @@ export default function AdminPlatillosScreen() {
                 onChangeText={setNombre}
                 style={adminStyles.input}
                 placeholder="Hamburguesa clásica"
-                placeholderTextColor={FtColors.textMuted}
+                placeholderTextColor={AcColors.textMuted}
               />
 
               <Text style={adminStyles.modalLabel}>Precio (MXN)</Text>
@@ -446,7 +446,7 @@ export default function AdminPlatillosScreen() {
                 onChangeText={setPrecioStr}
                 keyboardType="decimal-pad"
                 placeholder="89.00"
-                placeholderTextColor={FtColors.textMuted}
+                placeholderTextColor={AcColors.textMuted}
                 style={adminStyles.input}
               />
 
@@ -470,7 +470,7 @@ export default function AdminPlatillosScreen() {
                 onChangeText={setDescripcion}
                 style={[adminStyles.input, adminStyles.inputMultiline]}
                 multiline
-                placeholderTextColor={FtColors.textMuted}
+                placeholderTextColor={AcColors.textMuted}
               />
 
               <Text style={adminStyles.modalLabel}>URL de imagen (opcional)</Text>
@@ -479,7 +479,7 @@ export default function AdminPlatillosScreen() {
                 onChangeText={setImagenUrl}
                 style={adminStyles.input}
                 placeholder="https://…"
-                placeholderTextColor={FtColors.textMuted}
+                placeholderTextColor={AcColors.textMuted}
                 autoCapitalize="none"
               />
 
@@ -488,8 +488,8 @@ export default function AdminPlatillosScreen() {
                 <Switch
                   value={disponible}
                   onValueChange={setDisponible}
-                  trackColor={{ false: FtColors.border, true: FtColors.accentMuted }}
-                  thumbColor={FtColors.text}
+                  trackColor={{ false: AcColors.border, true: AcColors.accentMuted }}
+                  thumbColor={AcColors.text}
                 />
               </View>
 
@@ -510,11 +510,11 @@ export default function AdminPlatillosScreen() {
                     onChangeText={(t) => updateLineQty(line.key, t)}
                     keyboardType={tecladoCantidadInventario(line.unidad_medida)}
                     placeholder={placeholderCantidadInventario(line.unidad_medida, false)}
-                    placeholderTextColor={FtColors.textMuted}
+                    placeholderTextColor={AcColors.textMuted}
                     style={[adminStyles.input, adminStyles.recipeQty, { marginTop: 0 }]}
                   />
                   <Pressable onPress={() => removeLine(line.key)} style={adminStyles.recipeRemove}>
-                    <Ionicons name="close-circle" size={22} color={FtColors.danger} />
+                    <Ionicons name="close-circle" size={22} color={AcColors.danger} />
                   </Pressable>
                 </View>
               ))}
@@ -530,7 +530,7 @@ export default function AdminPlatillosScreen() {
                     setPickerSearch('');
                     setPickerOpen(true);
                   }}>
-                  <Ionicons name="add-circle-outline" size={20} color={FtColors.accent} />
+                  <Ionicons name="add-circle-outline" size={20} color={AcColors.accent} />
                   <Text style={adminStyles.addIngBtnText}>Agregar ingrediente</Text>
                 </Pressable>
               )}
@@ -567,7 +567,7 @@ export default function AdminPlatillosScreen() {
               value={pickerSearch}
               onChangeText={setPickerSearch}
               placeholder="Buscar…"
-              placeholderTextColor={FtColors.textMuted}
+              placeholderTextColor={AcColors.textMuted}
               style={[adminStyles.input, { marginTop: 10 }]}
             />
             <ScrollView style={{ maxHeight: 360, marginTop: 8 }}>
@@ -580,7 +580,7 @@ export default function AdminPlatillosScreen() {
                       <Text style={adminStyles.pickerRowText}>{ing.nombre}</Text>
                       <Text style={adminStyles.pickerRowSub}>{ing.unidad_medida}</Text>
                     </View>
-                    <Ionicons name="add" size={22} color={FtColors.accent} />
+                    <Ionicons name="add" size={22} color={AcColors.accent} />
                   </Pressable>
                 ))
               )}

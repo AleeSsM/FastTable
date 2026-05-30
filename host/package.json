@@ -1,7 +1,7 @@
 {
-  "name": "fasttable-host",
+  "name": "alacarta-host",
   "private": true,
-  "description": "Sitio público FastTable: landing, APK, auth y app web",
+  "description": "Sitio público A la Carta: landing, APK, auth y app web",
   "scripts": {
     "build": "node scripts/build.mjs",
     "preview": "npx --yes serve dist -l 3333"

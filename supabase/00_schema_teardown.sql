@@ -1,6 +1,6 @@
 -- =============================================================================
--- FastTable — Teardown del esquema public (Supabase SQL Editor)
--- Elimina tablas, funciones y tipos de FastTable. No borra auth.users.
+-- A la Carta — Teardown del esquema public (Supabase SQL Editor)
+-- Elimina tablas, funciones y tipos de A la Carta. No borra auth.users.
 -- Ejecutar antes de 01_schema_bootstrap.sql cuando quieras reinstalar desde cero.
 -- =============================================================================
 

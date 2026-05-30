@@ -4,7 +4,7 @@ import { ActivityIndicator, Pressable, RefreshControl, StyleSheet, Text, View } 
 
 import { Avatar } from '@/components/avatar';
 import { StatCard, WebCard, WebCardHead, WebHeader, WebRow, WebScroll, webStyles } from '@/components/web/ui';
-import { FtColors, FtSurfaces } from '@/constants/fasttable';
+import { AcColors, AcSurfaces } from '@/constants/alacarta';
 import { useAuth } from '@/contexts/auth-context';
 import { mesaEtiqueta, mesaEtiquetaFromJoin } from '@/lib/mesa-label';
 import {
@@ -46,7 +46,7 @@ export default function WorkerDashboardWebScreen() {
   if (authLoading) {
     return (
       <View style={styles.boot}>
-        <ActivityIndicator color={FtColors.accent} size="large" />
+        <ActivityIndicator color={AcColors.accent} size="large" />
       </View>
     );
   }
@@ -137,13 +137,13 @@ export default function WorkerDashboardWebScreen() {
             style={[styles.mesaBtn, styles.mesaBtnFill]}
             disabled={busy}
             onPress={() => d.onToggleMesaWalkIn(m)}>
-            {busy ? <ActivityIndicator color={FtColors.onAccent} size="small" /> : <Text style={styles.mesaBtnFillText}>Ocupar</Text>}
+            {busy ? <ActivityIndicator color={AcColors.onAccent} size="small" /> : <Text style={styles.mesaBtnFillText}>Ocupar</Text>}
           </Pressable>
         ) : other ? (
           <Text style={styles.mesaState}>Otro mesero</Text>
         ) : (
           <Pressable style={styles.mesaBtn} disabled={busy} onPress={() => d.onToggleMesaWalkIn(m)}>
-            {busy ? <ActivityIndicator color={FtColors.accent} size="small" /> : <Text style={styles.mesaBtnText}>Liberar</Text>}
+            {busy ? <ActivityIndicator color={AcColors.accent} size="small" /> : <Text style={styles.mesaBtnText}>Liberar</Text>}
           </Pressable>
         )}
       </View>
@@ -151,21 +151,21 @@ export default function WorkerDashboardWebScreen() {
   };
 
   const hostSummary = [
-    { icon: 'grid-outline' as const, label: 'Mesas libres', value: d.available ?? 0, tone: FtColors.success },
-    { icon: 'people-outline' as const, label: 'En fila', value: d.waiting ?? 0, tone: FtColors.warning },
-    { icon: 'calendar-outline' as const, label: 'Reservas a atender', value: d.attendOrdered.length, tone: FtColors.accent },
-    { icon: 'time-outline' as const, label: 'Próximas reservas', value: d.upcoming.length, tone: FtColors.text },
+    { icon: 'grid-outline' as const, label: 'Mesas libres', value: d.available ?? 0, tone: AcColors.success },
+    { icon: 'people-outline' as const, label: 'En fila', value: d.waiting ?? 0, tone: AcColors.warning },
+    { icon: 'calendar-outline' as const, label: 'Reservas a atender', value: d.attendOrdered.length, tone: AcColors.accent },
+    { icon: 'time-outline' as const, label: 'Próximas reservas', value: d.upcoming.length, tone: AcColors.text },
   ];
   const waiterSummary = [
-    { icon: 'bookmark-outline' as const, label: 'Mis mesas', value: d.myMesas.length, tone: FtColors.accent },
-    { icon: 'chatbubble-ellipses-outline' as const, label: 'Solicitudes', value: d.openReqCount ?? 0, tone: FtColors.warning },
-    { icon: 'grid-outline' as const, label: 'Mesas libres', value: d.available ?? 0, tone: FtColors.success },
+    { icon: 'bookmark-outline' as const, label: 'Mis mesas', value: d.myMesas.length, tone: AcColors.accent },
+    { icon: 'chatbubble-ellipses-outline' as const, label: 'Solicitudes', value: d.openReqCount ?? 0, tone: AcColors.warning },
+    { icon: 'grid-outline' as const, label: 'Mesas libres', value: d.available ?? 0, tone: AcColors.success },
   ];
 
   const sec = parseNavSection(staffMember.rol, params.sec, '/worker');
 
   const loader = d.loading && !d.refreshing ? (
-    <ActivityIndicator color={FtColors.accent} style={{ marginVertical: 16 }} />
+    <ActivityIndicator color={AcColors.accent} style={{ marginVertical: 16 }} />
   ) : null;
 
   const mesaMiaCard = (m: (typeof d.myMesas)[number]) => {
@@ -179,7 +179,7 @@ export default function WorkerDashboardWebScreen() {
             <Avatar uri={cli?.foto} name={displayName} size={48} />
           ) : (
             <View style={styles.walkinAvatar}>
-              <Ionicons name="walk-outline" size={24} color={FtColors.textMuted} />
+              <Ionicons name="walk-outline" size={24} color={AcColors.textMuted} />
             </View>
           )}
           <View style={{ flex: 1 }}>
@@ -208,7 +208,7 @@ export default function WorkerDashboardWebScreen() {
               onPress={() => void d.confirmarTerminarServicio(m)}
               disabled={d.terminarBusyId === m.id}>
               {d.terminarBusyId === m.id ? (
-                <ActivityIndicator color={FtColors.onAccent} />
+                <ActivityIndicator color={AcColors.onAccent} />
               ) : (
                 <Text style={styles.btnPrimaryText}>Terminar servicio</Text>
               )}
@@ -234,7 +234,7 @@ export default function WorkerDashboardWebScreen() {
 
   const solicitudesCard = (
     <WebCard>
-      <WebCardHead icon="chatbubble-ellipses-outline" color={FtColors.warning} title="Solicitudes de servicio" />
+      <WebCardHead icon="chatbubble-ellipses-outline" color={AcColors.warning} title="Solicitudes de servicio" />
       {d.solicitudes.length === 0 ? (
         <Text style={styles.empty}>No hay solicitudes abiertas.</Text>
       ) : (
@@ -253,7 +253,7 @@ export default function WorkerDashboardWebScreen() {
 
   const mesasLibresCard = (
     <WebCard>
-      <WebCardHead icon="apps-outline" color={FtColors.success} title="Mesas libres" />
+      <WebCardHead icon="apps-outline" color={AcColors.success} title="Mesas libres" />
       <Text style={styles.cardHint}>Ocupa una mesa para un walk-in o libérala cuando termine el servicio.</Text>
       {d.allMesas.length === 0 ? (
         <Text style={styles.empty}>No hay mesas registradas.</Text>
@@ -265,7 +265,7 @@ export default function WorkerDashboardWebScreen() {
 
   const hostFilaCard = (
     <WebCard>
-      <WebCardHead icon="people-outline" color={FtColors.success} title="Fila de espera" />
+      <WebCardHead icon="people-outline" color={AcColors.success} title="Fila de espera" />
       <View style={styles.loadCard}>
         <Text style={styles.loadTitle}>Carga de meseros</Text>
         {d.meseroLoads.length === 0 ? (
@@ -349,7 +349,7 @@ export default function WorkerDashboardWebScreen() {
       </WebCard>
       <View style={{ height: 16 }} />
       <WebCard>
-        <WebCardHead icon="time-outline" color={FtColors.textMuted} title="Próximas reservas" />
+        <WebCardHead icon="time-outline" color={AcColors.textMuted} title="Próximas reservas" />
         {d.upcoming.length === 0 ? (
           <Text style={styles.empty}>No hay reservas próximas.</Text>
         ) : (
@@ -368,7 +368,7 @@ export default function WorkerDashboardWebScreen() {
         )}
         <Pressable style={styles.linkRow} onPress={() => router.push('/worker/reservations' as Href)}>
           <Text style={styles.linkText}>Vista detallada de reservas</Text>
-          <Ionicons name="chevron-forward" size={18} color={FtColors.accentMuted} />
+          <Ionicons name="chevron-forward" size={18} color={AcColors.accentMuted} />
         </Pressable>
       </WebCard>
     </>
@@ -437,7 +437,7 @@ export default function WorkerDashboardWebScreen() {
   return (
     <WebScroll
       maxWidth={1480}
-      refreshControl={<RefreshControl refreshing={d.refreshing} onRefresh={d.onRefresh} tintColor={FtColors.accent} />}>
+      refreshControl={<RefreshControl refreshing={d.refreshing} onRefresh={d.onRefresh} tintColor={AcColors.accent} />}>
       <WebHeader
         eyebrow={roleLabel(staffMember.rol)}
         title={`Hola, ${staffMember.nombre_visible}`}
@@ -527,33 +527,33 @@ export default function WorkerDashboardWebScreen() {
 }
 
 const styles = StyleSheet.create({
-  boot: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: FtColors.background },
-  empty: { fontSize: 14, color: FtColors.textMuted, marginVertical: 6 },
-  cardHint: { fontSize: 12, color: FtColors.textMuted, marginTop: -8, marginBottom: 12, lineHeight: 18 },
+  boot: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: AcColors.background },
+  empty: { fontSize: 14, color: AcColors.textMuted, marginVertical: 6 },
+  cardHint: { fontSize: 12, color: AcColors.textMuted, marginTop: -8, marginBottom: 12, lineHeight: 18 },
   subCard: {
     padding: 14,
     borderRadius: 14,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderWidth: 1,
-    borderColor: FtColors.borderSubtle,
+    borderColor: AcColors.borderSubtle,
     marginBottom: 12,
   },
   rowHead: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   upcomingRow: {
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: FtColors.borderSubtle,
+    borderBottomColor: AcColors.borderSubtle,
   },
-  turnTag: { fontSize: 11, color: FtColors.accentMuted, textTransform: 'uppercase', letterSpacing: 1, fontWeight: '700' },
-  itemName: { fontSize: 15, fontWeight: '800', color: FtColors.text, marginTop: 2 },
-  itemMeta: { fontSize: 13, color: FtColors.textMuted, marginTop: 3, lineHeight: 18 },
-  note: { fontSize: 13, color: FtColors.textMuted, marginTop: 10, lineHeight: 19 },
-  warn: { fontSize: 13, color: FtColors.warning, marginTop: 10 },
-  hintSmall: { fontSize: 12, color: FtColors.textMuted, lineHeight: 17, marginTop: 8 },
+  turnTag: { fontSize: 11, color: AcColors.accentMuted, textTransform: 'uppercase', letterSpacing: 1, fontWeight: '700' },
+  itemName: { fontSize: 15, fontWeight: '800', color: AcColors.text, marginTop: 2 },
+  itemMeta: { fontSize: 13, color: AcColors.textMuted, marginTop: 3, lineHeight: 18 },
+  note: { fontSize: 13, color: AcColors.textMuted, marginTop: 10, lineHeight: 19 },
+  warn: { fontSize: 13, color: AcColors.warning, marginTop: 10 },
+  hintSmall: { fontSize: 12, color: AcColors.textMuted, lineHeight: 17, marginTop: 8 },
   fieldLabel: {
     fontSize: 12,
     fontWeight: '700',
-    color: FtColors.textFaint,
+    color: AcColors.textFaint,
     marginTop: 14,
     marginBottom: 8,
     textTransform: 'uppercase',
@@ -565,50 +565,50 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: FtColors.border,
-    backgroundColor: FtColors.surfaceElevated,
+    borderColor: AcColors.border,
+    backgroundColor: AcColors.surfaceElevated,
   },
-  chipOn: { borderColor: FtColors.accent, backgroundColor: FtSurfaces.accentChip },
-  chipText: { fontSize: 13, fontWeight: '700', color: FtColors.textMuted },
-  chipTextOn: { color: FtColors.text },
+  chipOn: { borderColor: AcColors.accent, backgroundColor: AcSurfaces.accentChip },
+  chipText: { fontSize: 13, fontWeight: '700', color: AcColors.textMuted },
+  chipTextOn: { color: AcColors.text },
   loadCard: {
     padding: 14,
     borderRadius: 12,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderWidth: 1,
-    borderColor: FtColors.borderSubtle,
+    borderColor: AcColors.borderSubtle,
     marginBottom: 14,
   },
-  loadTitle: { fontSize: 13, fontWeight: '800', color: FtColors.text, marginBottom: 8 },
+  loadTitle: { fontSize: 13, fontWeight: '800', color: AcColors.text, marginBottom: 8 },
   loadRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 6 },
-  loadName: { fontSize: 14, color: FtColors.text, fontWeight: '600' },
-  loadCount: { fontSize: 13, color: FtColors.textMuted, fontWeight: '700' },
+  loadName: { fontSize: 14, color: AcColors.text, fontWeight: '600' },
+  loadCount: { fontSize: 13, color: AcColors.textMuted, fontWeight: '700' },
   pill: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999 },
-  pillInfo: { backgroundColor: FtSurfaces.accentPill },
-  pillWarn: { backgroundColor: FtSurfaces.warningBanner },
-  pillOk: { backgroundColor: FtSurfaces.successBadge },
+  pillInfo: { backgroundColor: AcSurfaces.accentPill },
+  pillWarn: { backgroundColor: AcSurfaces.warningBanner },
+  pillOk: { backgroundColor: AcSurfaces.successBadge },
   pillText: { fontSize: 11, fontWeight: '800' },
-  pillTextInfo: { color: FtColors.accentText },
-  pillTextWarn: { color: FtColors.warning },
-  pillTextOk: { color: FtColors.success },
+  pillTextInfo: { color: AcColors.accentText },
+  pillTextWarn: { color: AcColors.warning },
+  pillTextOk: { color: AcColors.success },
   btnRow: { flexDirection: 'row', gap: 10, marginTop: 12 },
-  btnPrimary: { marginTop: 12, paddingVertical: 12, borderRadius: 12, backgroundColor: FtColors.accent, alignItems: 'center' },
-  btnPrimaryText: { color: FtColors.onAccent, fontWeight: '800', fontSize: 14 },
-  btnOutline: { paddingVertical: 11, borderRadius: 12, borderWidth: 1, borderColor: FtColors.accent, alignItems: 'center' },
-  btnOutlineText: { color: FtColors.accentText, fontWeight: '800', fontSize: 14 },
-  btnDanger: { paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: FtColors.danger, alignItems: 'center' },
-  btnDangerText: { color: FtColors.danger, fontWeight: '800', fontSize: 14 },
+  btnPrimary: { marginTop: 12, paddingVertical: 12, borderRadius: 12, backgroundColor: AcColors.accent, alignItems: 'center' },
+  btnPrimaryText: { color: AcColors.onAccent, fontWeight: '800', fontSize: 14 },
+  btnOutline: { paddingVertical: 11, borderRadius: 12, borderWidth: 1, borderColor: AcColors.accent, alignItems: 'center' },
+  btnOutlineText: { color: AcColors.accentText, fontWeight: '800', fontSize: 14 },
+  btnDanger: { paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: AcColors.danger, alignItems: 'center' },
+  btnDangerText: { color: AcColors.danger, fontWeight: '800', fontSize: 14 },
   btnDisabled: { opacity: 0.6 },
-  mesaCodeLg: { fontSize: 20, fontWeight: '800', color: FtColors.text, flex: 1 },
+  mesaCodeLg: { fontSize: 20, fontWeight: '800', color: AcColors.text, flex: 1 },
   walkinAvatar: {
     width: 48,
     height: 48,
     borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: FtColors.surfaceElevated,
+    backgroundColor: AcColors.surfaceElevated,
     borderWidth: 1,
-    borderColor: FtColors.border,
+    borderColor: AcColors.border,
   },
   clienteRow: {
     flexDirection: 'row',
@@ -618,11 +618,11 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     paddingTop: 10,
     borderTopWidth: 1,
-    borderTopColor: FtColors.border,
+    borderTopColor: AcColors.border,
   },
   clienteMeta: { flex: 1 },
-  clienteNombre: { fontSize: 14, fontWeight: '700', color: FtColors.text },
-  clienteSub: { fontSize: 12, color: FtColors.textMuted, marginTop: 1 },
+  clienteNombre: { fontSize: 14, fontWeight: '700', color: AcColors.text },
+  clienteSub: { fontSize: 12, color: AcColors.textMuted, marginTop: 1 },
   mesaGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   mesaTile: {
     flexGrow: 1,
@@ -631,26 +631,26 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 8,
     borderRadius: 12,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderWidth: 1,
-    borderColor: FtColors.borderSubtle,
+    borderColor: AcColors.borderSubtle,
     alignItems: 'center',
     gap: 10,
   },
-  mesaCode: { fontSize: 16, fontWeight: '800', color: FtColors.text },
-  mesaState: { fontSize: 11, color: FtColors.textMuted, fontWeight: '600', textAlign: 'center' },
+  mesaCode: { fontSize: 16, fontWeight: '800', color: AcColors.text },
+  mesaState: { fontSize: 11, color: AcColors.textMuted, fontWeight: '600', textAlign: 'center' },
   mesaBtn: {
     paddingVertical: 7,
     paddingHorizontal: 14,
     borderRadius: 9,
     borderWidth: 1,
-    borderColor: FtColors.accent,
+    borderColor: AcColors.accent,
     alignItems: 'center',
     alignSelf: 'stretch',
   },
-  mesaBtnText: { fontSize: 13, fontWeight: '700', color: FtColors.accentText },
-  mesaBtnFill: { backgroundColor: FtColors.accent, borderColor: FtColors.accent },
-  mesaBtnFillText: { fontSize: 13, fontWeight: '800', color: FtColors.onAccent },
+  mesaBtnText: { fontSize: 13, fontWeight: '700', color: AcColors.accentText },
+  mesaBtnFill: { backgroundColor: AcColors.accent, borderColor: AcColors.accent },
+  mesaBtnFillText: { fontSize: 13, fontWeight: '800', color: AcColors.onAccent },
   linkRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -658,9 +658,9 @@ const styles = StyleSheet.create({
     paddingTop: 14,
     marginTop: 6,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: FtColors.border,
+    borderTopColor: AcColors.border,
   },
-  linkText: { fontSize: 14, fontWeight: '700', color: FtColors.accentText },
+  linkText: { fontSize: 14, fontWeight: '700', color: AcColors.accentText },
   equipoGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 14 },
   equipoCard: {
     flexGrow: 1,
@@ -668,19 +668,19 @@ const styles = StyleSheet.create({
     minWidth: 280,
     padding: 16,
     borderRadius: 14,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderWidth: 1,
-    borderColor: FtColors.borderSubtle,
+    borderColor: AcColors.borderSubtle,
   },
   meseroTagsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
   meseroTag: {
     paddingHorizontal: 12,
     paddingVertical: 7,
     borderRadius: 10,
-    backgroundColor: FtColors.surfaceElevated,
+    backgroundColor: AcColors.surfaceElevated,
     borderWidth: 1,
-    borderColor: FtColors.border,
+    borderColor: AcColors.border,
   },
-  meseroTagText: { fontSize: 14, fontWeight: '800', color: FtColors.text },
+  meseroTagText: { fontSize: 14, fontWeight: '800', color: AcColors.text },
 });
 

@@ -1,4 +1,4 @@
-# FastTable en producción (Vercel)
+# A la Carta en producción (Vercel)
 
 Sitio publicado:
 
@@ -21,7 +21,7 @@ Tras cambiar variables → **Redeploy** en Vercel.
 - **Site URL:** `https://fast-table.vercel.app`
 - **Redirect URLs:**
   - `https://fast-table.vercel.app/auth/callback`
-  - `fasttable://auth/callback`
+  - `alacarta://auth/callback`
 
 ## Si el enlace del correo abre solo la landing
 

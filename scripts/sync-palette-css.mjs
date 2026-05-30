@@ -49,7 +49,7 @@ const tokens = {
 };
 
 const css = `/* ============================================================================
-   FastTable — Tokens de marca (GENERADO)
+   A la Carta — Tokens de marca (GENERADO)
    👉 No edites a mano. Cambia constants/palette.ts y ejecuta:
       npm run sync:palette
    ============================================================================ */

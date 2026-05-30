@@ -13,7 +13,7 @@ import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 
 import { Avatar } from '@/components/avatar';
 import { useAuth } from '@/contexts/auth-context';
-import { FtColors, FtSurfaces } from '@/constants/fasttable';
+import { AcColors, AcSurfaces } from '@/constants/alacarta';
 import {
   canShowNoShow,
   mapReservaRows,
@@ -142,7 +142,7 @@ export default function WorkerReservationsScreen() {
   if (authLoading) {
     return (
       <View style={styles.boot}>
-        <ActivityIndicator color={FtColors.accent} />
+        <ActivityIndicator color={AcColors.accent} />
       </View>
     );
   }
@@ -163,15 +163,15 @@ export default function WorkerReservationsScreen() {
         <RefreshControl
           refreshing={refreshing}
           onRefresh={onRefresh}
-          tintColor={FtColors.accent}
-          colors={[FtColors.accent]}
+          tintColor={AcColors.accent}
+          colors={[AcColors.accent]}
         />
       }>
       <Pressable style={styles.back} onPress={() => router.back()}>
         <Text style={styles.backText}>← Volver al panel</Text>
       </Pressable>
 
-      {loading && !refreshing ? <ActivityIndicator color={FtColors.accent} style={styles.loader} /> : null}
+      {loading && !refreshing ? <ActivityIndicator color={AcColors.accent} style={styles.loader} /> : null}
 
       <Text style={styles.h1}>Reservas a atender</Text>
       <Text style={styles.sub}>
@@ -259,33 +259,33 @@ export default function WorkerReservationsScreen() {
 
 const styles = StyleSheet.create({
   guestRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 8 },
-  boot: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: FtColors.background },
-  scroll: { flex: 1, backgroundColor: FtColors.background },
+  boot: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: AcColors.background },
+  scroll: { flex: 1, backgroundColor: AcColors.background },
   content: { padding: 18, paddingBottom: 44 },
   back: { marginBottom: 12 },
-  backText: { fontSize: 15, color: FtColors.accentText },
+  backText: { fontSize: 15, color: AcColors.accentText },
   loader: { marginBottom: 16 },
-  h1: { fontSize: 19, fontWeight: '800', color: FtColors.text, marginBottom: 6 },
-  sub: { fontSize: 13, color: FtColors.textMuted, lineHeight: 20, marginBottom: 12 },
+  h1: { fontSize: 19, fontWeight: '800', color: AcColors.text, marginBottom: 6 },
+  sub: { fontSize: 13, color: AcColors.textMuted, lineHeight: 20, marginBottom: 12 },
   mt: { marginTop: 20 },
-  empty: { fontSize: 14, color: FtColors.textMuted, marginBottom: 12 },
+  empty: { fontSize: 14, color: AcColors.textMuted, marginBottom: 12 },
   card: {
     padding: 16,
     borderRadius: 14,
-    backgroundColor: FtColors.surfaceElevated,
+    backgroundColor: AcColors.surfaceElevated,
     borderWidth: 1,
-    borderColor: FtColors.border,
+    borderColor: AcColors.border,
     marginBottom: 12,
   },
   cardMuted: {
     padding: 14,
     borderRadius: 14,
-    backgroundColor: FtColors.surfaceElevated,
+    backgroundColor: AcColors.surfaceElevated,
     borderWidth: 1,
-    borderColor: FtColors.borderSubtle,
+    borderColor: AcColors.borderSubtle,
     marginBottom: 10,
   },
-  cardTitle: { fontSize: 16, fontWeight: '800', color: FtColors.text, marginBottom: 8 },
+  cardTitle: { fontSize: 16, fontWeight: '800', color: AcColors.text, marginBottom: 8 },
   badge: {
     alignSelf: 'flex-start',
     paddingVertical: 4,
@@ -295,29 +295,29 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 8,
   },
-  badgeInfo: { color: FtColors.accentText, backgroundColor: FtSurfaces.accentChip },
-  badgeWarn: { color: FtColors.warning, backgroundColor: FtSurfaces.warningBadge },
-  line: { fontSize: 14, color: FtColors.textMuted, marginBottom: 4 },
-  warn: { fontSize: 13, color: FtColors.warning, marginTop: 8 },
+  badgeInfo: { color: AcColors.accentText, backgroundColor: AcSurfaces.accentChip },
+  badgeWarn: { color: AcColors.warning, backgroundColor: AcSurfaces.warningBadge },
+  line: { fontSize: 14, color: AcColors.textMuted, marginBottom: 4 },
+  warn: { fontSize: 13, color: AcColors.warning, marginTop: 8 },
   quickActions: { flexDirection: 'row', gap: 10, marginTop: 12 },
   btnOk: {
     flex: 1,
     paddingVertical: 12,
     borderRadius: 12,
-    backgroundColor: FtColors.success,
+    backgroundColor: AcColors.success,
     alignItems: 'center',
   },
-  btnOkText: { color: FtColors.onAccent, fontWeight: '800', fontSize: 14 },
+  btnOkText: { color: AcColors.onAccent, fontWeight: '800', fontSize: 14 },
   btnNo: {
     flex: 1,
     paddingVertical: 12,
     borderRadius: 12,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderWidth: 1,
-    borderColor: FtColors.border,
+    borderColor: AcColors.border,
     alignItems: 'center',
   },
   btnNoDisabled: { opacity: 0.45 },
-  btnNoText: { color: FtColors.text, fontWeight: '700', fontSize: 14 },
-  hintSmall: { fontSize: 11, color: FtColors.textMuted, marginTop: 10, lineHeight: 16 },
+  btnNoText: { color: AcColors.text, fontWeight: '700', fontSize: 14 },
+  hintSmall: { fontSize: 11, color: AcColors.textMuted, marginTop: 10, lineHeight: 16 },
 });

@@ -18,7 +18,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 
 import { useAuth } from '@/contexts/auth-context';
-import { FtColors, FtSurfaces } from '@/constants/fasttable';
+import { AcColors, AcSurfaces } from '@/constants/alacarta';
 import { REALTIME_INVENTARIO, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import {
   cantidadParaEdicion,
@@ -345,7 +345,7 @@ export default function InventarioScreen() {
   if (authLoading) {
     return (
       <View style={styles.boot}>
-        <ActivityIndicator color={FtColors.accent} size="large" />
+        <ActivityIndicator color={AcColors.accent} size="large" />
       </View>
     );
   }
@@ -369,11 +369,11 @@ export default function InventarioScreen() {
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={FtColors.accent} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={AcColors.accent} />
         }>
         <View style={styles.hero}>
           <Pressable style={styles.backRow} onPress={() => router.back()} hitSlop={12}>
-            <Ionicons name="chevron-back" size={22} color={FtColors.accent} />
+            <Ionicons name="chevron-back" size={22} color={AcColors.accent} />
             <Text style={styles.backText}>Gerencia</Text>
           </Pressable>
           <Text style={styles.heroEyebrow}>Solo gerente</Text>
@@ -383,7 +383,7 @@ export default function InventarioScreen() {
           </Text>
         </View>
 
-        {loading && !refreshing ? <ActivityIndicator color={FtColors.accent} style={styles.loader} /> : null}
+        {loading && !refreshing ? <ActivityIndicator color={AcColors.accent} style={styles.loader} /> : null}
 
         {!schemaError && rows.length > 0 ? (
           <View style={styles.kpiRow}>
@@ -405,12 +405,12 @@ export default function InventarioScreen() {
         {!schemaError ? (
           <>
             <View style={styles.searchWrap}>
-              <Ionicons name="search-outline" size={20} color={FtColors.textFaint} style={styles.searchIcon} />
+              <Ionicons name="search-outline" size={20} color={AcColors.textFaint} style={styles.searchIcon} />
               <TextInput
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 placeholder="Buscar producto, unidad o categoría…"
-                placeholderTextColor={FtColors.textFaint}
+                placeholderTextColor={AcColors.textFaint}
                 style={styles.searchInput}
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -418,7 +418,7 @@ export default function InventarioScreen() {
               />
               {searchQuery.length > 0 ? (
                 <Pressable onPress={() => setSearchQuery('')} hitSlop={8} style={styles.searchClear}>
-                  <Ionicons name="close-circle" size={20} color={FtColors.textMuted} />
+                  <Ionicons name="close-circle" size={20} color={AcColors.textMuted} />
                 </Pressable>
               ) : null}
             </View>
@@ -442,7 +442,7 @@ export default function InventarioScreen() {
                   <Ionicons
                     name={CATEGORIA_ICONS[cat]}
                     size={14}
-                    color={categoriaFilter === cat ? FtColors.accent : FtColors.textMuted}
+                    color={categoriaFilter === cat ? AcColors.accent : AcColors.textMuted}
                   />
                   <Text style={[styles.filterChipText, categoriaFilter === cat && styles.filterChipTextOn]}>
                     {cat}
@@ -465,7 +465,7 @@ export default function InventarioScreen() {
 
         {!schemaError && rows.length > 0 && filteredRows.length === 0 && !loading ? (
           <View style={[styles.emptyCard, cardShadow]}>
-            <Ionicons name="filter-outline" size={28} color={FtColors.textFaint} />
+            <Ionicons name="filter-outline" size={28} color={AcColors.textFaint} />
             <Text style={styles.emptyTitle}>Sin resultados</Text>
             <Text style={styles.emptySub}>Prueba otra búsqueda o cambia la categoría.</Text>
           </View>
@@ -479,7 +479,7 @@ export default function InventarioScreen() {
                 <View key={r.id} style={[styles.productCard, cardShadow]}>
                   <View style={styles.productHead}>
                     <View style={styles.productIconWrap}>
-                      <Ionicons name={CATEGORIA_ICONS[cat]} size={22} color={FtColors.accent} />
+                      <Ionicons name={CATEGORIA_ICONS[cat]} size={22} color={AcColors.accent} />
                     </View>
                     <View style={styles.productMeta}>
                       <Text style={styles.ingName} numberOfLines={2}>
@@ -519,11 +519,11 @@ export default function InventarioScreen() {
 
                   <View style={styles.rowBtns}>
                     <Pressable style={styles.btnSecondary} onPress={() => openEntrada(r)}>
-                      <Ionicons name="add-circle-outline" size={18} color={FtColors.text} />
+                      <Ionicons name="add-circle-outline" size={18} color={AcColors.text} />
                       <Text style={styles.btnSecondaryText}>Entrada</Text>
                     </Pressable>
                     <Pressable style={styles.btnPrimary} onPress={() => openAjuste(r)}>
-                      <Ionicons name="create-outline" size={18} color={FtColors.onAccent} />
+                      <Ionicons name="create-outline" size={18} color={AcColors.onAccent} />
                       <Text style={styles.btnPrimaryText}>Ajustar</Text>
                     </Pressable>
                   </View>
@@ -535,7 +535,7 @@ export default function InventarioScreen() {
         {!schemaError && movs.length > 0 ? (
           <View style={[styles.card, cardShadow, styles.movsCard]}>
             <View style={styles.sectionHead}>
-              <Ionicons name="time-outline" size={20} color={FtColors.accentMuted} />
+              <Ionicons name="time-outline" size={20} color={AcColors.accentMuted} />
               <Text style={styles.cardTitle}>Últimos movimientos</Text>
             </View>
             {movs.map((m, idx) => (
@@ -574,7 +574,7 @@ export default function InventarioScreen() {
           onChangeText={setCantStr}
           keyboardType={sel ? tecladoCantidadInventario(sel.unidad_medida) : 'decimal-pad'}
           placeholder={sel ? placeholderCantidadInventario(sel.unidad_medida, false) : '0'}
-          placeholderTextColor={FtColors.textMuted}
+          placeholderTextColor={AcColors.textMuted}
           style={styles.input}
         />
         <Text style={styles.modalLabel}>Nota (opcional)</Text>
@@ -582,7 +582,7 @@ export default function InventarioScreen() {
           value={nota}
           onChangeText={setNota}
           placeholder="Proveedor, lote…"
-          placeholderTextColor={FtColors.textMuted}
+          placeholderTextColor={AcColors.textMuted}
           style={styles.input}
         />
         <Pressable style={[styles.modalOk, busy && styles.modalOkOff]} onPress={submitEntrada} disabled={busy}>
@@ -605,7 +605,7 @@ export default function InventarioScreen() {
           onChangeText={setCantStr}
           keyboardType={sel ? tecladoCantidadInventario(sel.unidad_medida) : 'decimal-pad'}
           placeholder={sel ? placeholderCantidadInventario(sel.unidad_medida, true) : '0'}
-          placeholderTextColor={FtColors.textMuted}
+          placeholderTextColor={AcColors.textMuted}
           style={styles.input}
         />
         <Text style={styles.modalLabel}>Nota (opcional)</Text>
@@ -613,7 +613,7 @@ export default function InventarioScreen() {
           value={nota}
           onChangeText={setNota}
           placeholder="Conteo físico…"
-          placeholderTextColor={FtColors.textMuted}
+          placeholderTextColor={AcColors.textMuted}
           style={styles.input}
         />
         <Pressable style={[styles.modalOk, busy && styles.modalOkOff]} onPress={submitAjuste} disabled={busy}>
@@ -628,44 +628,44 @@ export default function InventarioScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: FtColors.background },
-  boot: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: FtColors.background },
+  safe: { flex: 1, backgroundColor: AcColors.background },
+  boot: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: AcColors.background },
   scroll: { flex: 1 },
   content: { paddingHorizontal: 18, paddingBottom: 40 },
   loader: { marginVertical: 16 },
   hero: { marginBottom: 16 },
   backRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 10 },
-  backText: { fontSize: 15, fontWeight: '600', color: FtColors.accentText },
+  backText: { fontSize: 15, fontWeight: '600', color: AcColors.accentText },
   heroEyebrow: {
     fontSize: 11,
     fontWeight: '700',
-    color: FtColors.accentMuted,
+    color: AcColors.accentMuted,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
   },
-  heroTitle: { fontSize: 26, fontWeight: '800', color: FtColors.text, marginTop: 4 },
-  heroSub: { fontSize: 14, color: FtColors.textMuted, marginTop: 8, lineHeight: 20 },
+  heroTitle: { fontSize: 26, fontWeight: '800', color: AcColors.text, marginTop: 4 },
+  heroSub: { fontSize: 14, color: AcColors.textMuted, marginTop: 8, lineHeight: 20 },
   kpiRow: { flexDirection: 'row', gap: 10, marginBottom: 16 },
   kpiCard: {
     flex: 1,
     paddingVertical: 14,
     paddingHorizontal: 10,
     borderRadius: 14,
-    backgroundColor: FtColors.surfaceElevated,
+    backgroundColor: AcColors.surfaceElevated,
     borderWidth: 1,
-    borderColor: FtColors.borderSubtle,
+    borderColor: AcColors.borderSubtle,
     alignItems: 'center',
   },
-  kpiValue: { fontSize: 22, fontWeight: '800', color: FtColors.text },
-  kpiValueWarn: { color: FtColors.warning },
-  kpiLabel: { fontSize: 11, color: FtColors.textMuted, marginTop: 4, fontWeight: '600' },
+  kpiValue: { fontSize: 22, fontWeight: '800', color: AcColors.text },
+  kpiValueWarn: { color: AcColors.warning },
+  kpiLabel: { fontSize: 11, color: AcColors.textMuted, marginTop: 4, fontWeight: '600' },
   searchWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: FtColors.border,
+    borderColor: AcColors.border,
     paddingHorizontal: 12,
     marginBottom: 12,
   },
@@ -674,7 +674,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 13,
     fontSize: 15,
-    color: FtColors.text,
+    color: AcColors.text,
   },
   searchClear: { padding: 4 },
   filterRow: { gap: 8, marginBottom: 16, paddingRight: 4 },
@@ -686,32 +686,32 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: FtColors.border,
-    backgroundColor: FtColors.surface,
+    borderColor: AcColors.border,
+    backgroundColor: AcColors.surface,
   },
-  filterChipOn: { borderColor: FtColors.accent, backgroundColor: FtColors.surfaceElevated },
-  filterChipText: { fontSize: 12, color: FtColors.textMuted, fontWeight: '600' },
-  filterChipTextOn: { color: FtColors.accentText, fontWeight: '700' },
-  muted: { color: FtColors.textMuted, marginBottom: 12, fontSize: 14 },
-  errText: { color: FtColors.danger, fontSize: 14, lineHeight: 20 },
+  filterChipOn: { borderColor: AcColors.accent, backgroundColor: AcColors.surfaceElevated },
+  filterChipText: { fontSize: 12, color: AcColors.textMuted, fontWeight: '600' },
+  filterChipTextOn: { color: AcColors.accentText, fontWeight: '700' },
+  muted: { color: AcColors.textMuted, marginBottom: 12, fontSize: 14 },
+  errText: { color: AcColors.danger, fontSize: 14, lineHeight: 20 },
   emptyCard: {
     padding: 24,
     borderRadius: 16,
-    backgroundColor: FtColors.surfaceElevated,
+    backgroundColor: AcColors.surfaceElevated,
     borderWidth: 1,
-    borderColor: FtColors.border,
+    borderColor: AcColors.border,
     marginBottom: 14,
     alignItems: 'center',
     gap: 8,
   },
-  emptyTitle: { fontSize: 16, fontWeight: '700', color: FtColors.text },
-  emptySub: { fontSize: 13, color: FtColors.textMuted, textAlign: 'center' },
+  emptyTitle: { fontSize: 16, fontWeight: '700', color: AcColors.text },
+  emptySub: { fontSize: 13, color: AcColors.textMuted, textAlign: 'center' },
   productCard: {
     padding: 16,
     borderRadius: 18,
-    backgroundColor: FtColors.surfaceElevated,
+    backgroundColor: AcColors.surfaceElevated,
     borderWidth: 1,
-    borderColor: FtColors.borderSubtle,
+    borderColor: AcColors.borderSubtle,
     marginBottom: 12,
   },
   productHead: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
@@ -719,43 +719,43 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 12,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderWidth: 1,
-    borderColor: FtColors.border,
+    borderColor: AcColors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   productMeta: { flex: 1 },
-  ingName: { fontSize: 17, fontWeight: '800', color: FtColors.text, lineHeight: 22 },
+  ingName: { fontSize: 17, fontWeight: '800', color: AcColors.text, lineHeight: 22 },
   tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 8 },
   catTag: {
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderWidth: 1,
-    borderColor: FtColors.borderSubtle,
+    borderColor: AcColors.borderSubtle,
   },
-  catTagText: { fontSize: 11, fontWeight: '600', color: FtColors.accentMuted },
+  catTagText: { fontSize: 11, fontWeight: '600', color: AcColors.accentMuted },
   stockTag: {
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
-    backgroundColor: FtSurfaces.warningSoft,
+    backgroundColor: AcSurfaces.warningSoft,
   },
-  stockTagCritical: { backgroundColor: FtSurfaces.dangerSoft },
-  stockTagText: { fontSize: 11, fontWeight: '700', color: FtColors.warning },
-  stockTagTextCritical: { color: FtColors.danger },
+  stockTagCritical: { backgroundColor: AcSurfaces.dangerSoft },
+  stockTagText: { fontSize: 11, fontWeight: '700', color: AcColors.warning },
+  stockTagTextCritical: { color: AcColors.danger },
   stockBlock: {
     marginTop: 14,
     padding: 12,
     borderRadius: 12,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderWidth: 1,
-    borderColor: FtColors.borderSubtle,
+    borderColor: AcColors.borderSubtle,
   },
-  stockValue: { fontSize: 22, fontWeight: '800', color: FtColors.text },
-  stockMin: { fontSize: 12, color: FtColors.textFaint, marginTop: 4 },
+  stockValue: { fontSize: 22, fontWeight: '800', color: AcColors.text },
+  stockMin: { fontSize: 12, color: AcColors.textFaint, marginTop: 4 },
   rowBtns: { flexDirection: 'row', gap: 10, marginTop: 14 },
   btnSecondary: {
     flex: 1,
@@ -766,10 +766,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: FtColors.border,
-    backgroundColor: FtColors.surface,
+    borderColor: AcColors.border,
+    backgroundColor: AcColors.surface,
   },
-  btnSecondaryText: { fontWeight: '700', color: FtColors.text, fontSize: 14 },
+  btnSecondaryText: { fontWeight: '700', color: AcColors.text, fontSize: 14 },
   btnPrimary: {
     flex: 1,
     flexDirection: 'row',
@@ -778,79 +778,79 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingVertical: 12,
     borderRadius: 12,
-    backgroundColor: FtColors.accent,
+    backgroundColor: AcColors.accent,
   },
-  btnPrimaryText: { fontWeight: '700', color: FtColors.onAccent, fontSize: 14 },
+  btnPrimaryText: { fontWeight: '700', color: AcColors.onAccent, fontSize: 14 },
   card: {
     padding: 16,
     borderRadius: 16,
-    backgroundColor: FtColors.surfaceElevated,
+    backgroundColor: AcColors.surfaceElevated,
     borderWidth: 1,
-    borderColor: FtColors.border,
+    borderColor: AcColors.border,
     marginBottom: 14,
   },
   movsCard: { marginTop: 8 },
   sectionHead: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 },
-  cardTitle: { fontSize: 16, fontWeight: '800', color: FtColors.text },
-  movRow: { marginBottom: 12, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: FtColors.borderSubtle },
+  cardTitle: { fontSize: 16, fontWeight: '800', color: AcColors.text },
+  movRow: { marginBottom: 12, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: AcColors.borderSubtle },
   movRowLast: { marginBottom: 0, paddingBottom: 0, borderBottomWidth: 0 },
   movTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
-  movLine: { fontSize: 14, color: FtColors.text, fontWeight: '700', flex: 1 },
+  movLine: { fontSize: 14, color: AcColors.text, fontWeight: '700', flex: 1 },
   movTipoBadge: {
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderWidth: 1,
-    borderColor: FtColors.borderSubtle,
+    borderColor: AcColors.borderSubtle,
   },
-  movTipoText: { fontSize: 10, fontWeight: '700', color: FtColors.textMuted, textTransform: 'uppercase' },
-  movDelta: { fontSize: 15, fontWeight: '800', color: FtColors.accentText, marginTop: 6 },
-  movNote: { fontSize: 12, color: FtColors.textMuted, marginTop: 4 },
-  movDate: { fontSize: 11, color: FtColors.textFaint, marginTop: 4 },
+  movTipoText: { fontSize: 10, fontWeight: '700', color: AcColors.textMuted, textTransform: 'uppercase' },
+  movDelta: { fontSize: 15, fontWeight: '800', color: AcColors.accentText, marginTop: 6 },
+  movNote: { fontSize: 12, color: AcColors.textMuted, marginTop: 4 },
+  movDate: { fontSize: 11, color: AcColors.textFaint, marginTop: 4 },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: FtSurfaces.overlay,
+    backgroundColor: AcSurfaces.overlay,
     justifyContent: 'center',
     padding: 24,
   },
   modalBox: {
-    backgroundColor: FtColors.surfaceElevated,
+    backgroundColor: AcColors.surfaceElevated,
     borderRadius: 20,
     padding: 20,
     borderWidth: 1,
-    borderColor: FtColors.border,
+    borderColor: AcColors.border,
   },
   modalBoxAboveBackdrop: { zIndex: 1 },
   modalHandle: {
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: FtColors.border,
+    backgroundColor: AcColors.border,
     alignSelf: 'center',
     marginBottom: 14,
   },
-  modalTitle: { fontSize: 18, fontWeight: '800', color: FtColors.text },
-  modalSub: { fontSize: 14, color: FtColors.textMuted, marginTop: 6 },
-  modalLabel: { fontSize: 12, color: FtColors.textFaint, marginTop: 14, marginBottom: 6, textTransform: 'uppercase' },
+  modalTitle: { fontSize: 18, fontWeight: '800', color: AcColors.text },
+  modalSub: { fontSize: 14, color: AcColors.textMuted, marginTop: 6 },
+  modalLabel: { fontSize: 12, color: AcColors.textFaint, marginTop: 14, marginBottom: 6, textTransform: 'uppercase' },
   input: {
     borderWidth: 1,
-    borderColor: FtColors.border,
+    borderColor: AcColors.border,
     borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    color: FtColors.text,
+    color: AcColors.text,
     fontSize: 16,
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
   },
   modalOk: {
     marginTop: 18,
-    backgroundColor: FtColors.accent,
+    backgroundColor: AcColors.accent,
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',
   },
   modalOkOff: { opacity: 0.6 },
-  modalOkText: { fontWeight: '800', color: FtColors.onAccent },
-  modalCancel: { textAlign: 'center', marginTop: 14, color: FtColors.accentText, fontWeight: '600' },
+  modalOkText: { fontWeight: '800', color: AcColors.onAccent },
+  modalCancel: { textAlign: 'center', marginTop: 14, color: AcColors.accentText, fontWeight: '600' },
 });

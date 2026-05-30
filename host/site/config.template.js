@@ -1,5 +1,5 @@
 /** Plantilla: en build se genera /config.js con tus claves de .env */
-window.FASTTABLE_CONFIG = {
+window.ALACARTA_CONFIG = {
   supabaseUrl: "",
   supabaseAnonKey: "",
   appBase: "/app",

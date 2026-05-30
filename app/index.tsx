@@ -38,7 +38,7 @@ export default function WelcomeScreen() {
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
         <Text style={styles.eyebrow}>Bienvenido</Text>
-        <Text style={styles.brand}>FastTable</Text>
+        <Text style={styles.brand}>A la Carta</Text>
         <View style={styles.brandRule} />
         <Text style={styles.tagline}>Reserva mesa, fila y servicio en un solo lugar.</Text>
 

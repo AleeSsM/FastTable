@@ -1,17 +1,17 @@
-# FastTable — Carpeta `host/` (todo lo que subes a internet)
+# A la Carta — Carpeta `host/` (todo lo que subes a internet)
 
 Aquí vive **un solo sitio web** con todo lo público:
 
 | Ruta en tu dominio | Qué es |
 |--------------------|--------|
 | `/` | Landing (presentación + descarga) |
-| `/apk/fasttable.apk` | Instalable Android (tú subes el archivo) |
+| `/apk/alacarta.apk` | Instalable Android (tú subes el archivo) |
 | `/auth/callback` | Enlace del correo (confirmar cuenta / recuperar) |
 | `/auth/reset-password` | Pantalla para poner contraseña nueva |
 | `/auth/confirmado` | Mensaje tras confirmar el correo |
 | `/app/` | App web completa (comensal + **personal**: mesero, cocina, gerente…) |
 
-La app móvil nativa sigue siendo aparte (APK/EAS); los correos en el teléfono usan `fasttable://auth/callback` (ya configurado en el código de la app).
+La app móvil nativa sigue siendo aparte (APK/EAS); los correos en el teléfono usan `alacarta://auth/callback` (ya configurado en el código de la app).
 
 ---
 
@@ -27,7 +27,7 @@ host/
 │   ├── styles.css
 │   ├── script.js
 │   ├── auth/              ← verificación y contraseña
-│   ├── apk/               ← pon fasttable.apk aquí
+│   ├── apk/               ← pon alacarta.apk aquí
 │   └── config.template.js
 └── dist/                  ← GENERADO (no editar; se sube al host)
 ```
@@ -38,7 +38,7 @@ La carpeta **`host/site/`** es la landing que se publica en Vercel.
 
 ## Antes de desplegar (una vez)
 
-### 1. Archivo `.env` en la raíz del proyecto (FastTable/.env)
+### 1. Archivo `.env` en la raíz del proyecto
 
 ```env
 EXPO_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
@@ -47,7 +47,7 @@ EXPO_PUBLIC_APP_URL=https://tu-proyecto.vercel.app
 ```
 
 `EXPO_PUBLIC_APP_URL` = la URL **final** de tu sitio (sin `/` al final).  
-Cuando tengas dominio propio, cámbiala (ej. `https://fasttable.ipn.mx`).
+Cuando tengas dominio propio, cámbiala (ej. `https://alacarta.ipn.mx`).
 
 ### 2. Supabase → Authentication → URL configuration
 
@@ -55,21 +55,21 @@ Cuando tengas dominio propio, cámbiala (ej. `https://fasttable.ipn.mx`).
 |--------|--------|
 | **Site URL** | `https://tu-proyecto.vercel.app` (igual que `EXPO_PUBLIC_APP_URL`) |
 | **Redirect URLs** | `https://tu-proyecto.vercel.app/auth/callback` |
-| | `fasttable://auth/callback` |
+| | `alacarta://auth/callback` |
 
 Guarda. Los correos viejos no valen: pide **enlace nuevo** después de esto.
 
 ### 3. APK Android
 
 1. Genera el APK (EAS Build o tu pipeline).
-2. Cópialo como: `host/site/apk/fasttable.apk`
+2. Cópialo como: `host/site/apk/alacarta.apk`
 3. Vuelve a ejecutar el build del host (abajo).
 
 ---
 
 ## Generar el sitio en tu PC
 
-Desde la **raíz** del repo (`FastTable/`):
+Desde la **raíz** del repo:
 
 ```bash
 npm run build:host
@@ -93,7 +93,7 @@ Abre `http://localhost:3333` (landing), `http://localhost:3333/app/` (app web), 
 ### Opción A — Proyecto con carpeta `host` (recomendada)
 
 1. Sube el repo a **GitHub**.
-2. [vercel.com](https://vercel.com) → **Add New Project** → importa FastTable.
+2. [vercel.com](https://vercel.com) → **Add New Project** → importa el repositorio.
 3. Configuración:
    - **Root Directory:** `host`
    - Framework: Other (Vercel lee `host/vercel.json`)
@@ -111,7 +111,7 @@ Variables de entorno: igual que arriba, en el proyecto de Vercel.
 
 ### Después del primer deploy
 
-1. Copia la URL que te dio Vercel (ej. `https://fasttable-xyz.vercel.app`).
+1. Copia la URL que te dio Vercel (ej. `https://fast-table.vercel.app`).
 2. Ponla en `EXPO_PUBLIC_APP_URL` (Vercel env + tu `.env`).
 3. Actualiza **Supabase** Site URL y Redirect con esa URL.
 4. **Redeploy** en Vercel.
@@ -131,10 +131,33 @@ Variables de entorno: igual que arriba, en el proyecto de Vercel.
 
 ## App móvil (APK instalado)
 
-1. Build: `eas build --platform android` (desde la raíz del repo).
-2. Descarga el APK y colócalo en `host/site/apk/fasttable.apk`.
+### Setup (una vez)
+
+```bash
+npm install
+npx eas login
+npx eas init
+```
+
+Configura en [expo.dev](https://expo.dev) → proyecto → **Environment variables** (perfil `preview`):
+
+- `EXPO_PUBLIC_SUPABASE_URL`
+- `EXPO_PUBLIC_SUPABASE_ANON_KEY`
+- `EXPO_PUBLIC_APP_URL` → `https://fast-table.vercel.app`
+
+Package Android fijo: `com.alacarta.app` (en `app.json`).
+
+### Generar APK
+
+```bash
+npm run build:apk
+```
+
+1. Descarga el APK desde el dashboard de Expo.
+2. Colócalo en `host/site/apk/alacarta.apk`.
 3. `npm run build:host` + redeploy.
-4. En Supabase debe seguir `fasttable://auth/callback` en Redirect URLs.
+
+Para Play Store (AAB): `npm run build:android:production`.
 
 Los usuarios que abren el correo **en el teléfono con la app instalada** usan el deep link; los que abren en **PC** usan `https://…/auth/callback`.
 
@@ -145,7 +168,7 @@ Los usuarios que abren el correo **en el teléfono con la app instalada** usan e
 - [ ] `.env` con Supabase + `EXPO_PUBLIC_APP_URL`
 - [ ] Supabase: Site URL + 2 Redirect URLs
 - [ ] `npm run build:host` sin errores
-- [ ] `fasttable.apk` en `host/site/apk/`
+- [ ] `alacarta.apk` en `host/site/apk/`
 - [ ] Deploy en Vercel (u otro)
 - [ ] Redeploy tras fijar la URL final en env y Supabase
 - [ ] Probar: landing → descarga APK → `/app/` login personal → correo recuperación
@@ -158,7 +181,7 @@ Los usuarios que abren el correo **en el teléfono con la app instalada** usan e
 → Falta la redirect URL en Supabase o `EXPO_PUBLIC_APP_URL` no coincide con el dominio real.
 
 **APK no descarga**  
-→ No hay archivo en `host/site/apk/fasttable.apk` o no hiciste build + deploy después de copiarlo.
+→ No hay archivo en `host/site/apk/alacarta.apk` o no hiciste build + deploy después de copiarlo.
 
 **`/app/` en blanco**  
 → Casi siempre: el build web no incrustó `EXPO_PUBLIC_SUPABASE_*` (revisa que existan en Vercel **antes** del deploy y redeploy). El código usa referencias estáticas en `constants/env.ts` para que Metro las embeba.  

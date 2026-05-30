@@ -1,8 +1,8 @@
 -- =============================================================================
--- FastTable — Bootstrap completo del esquema (Supabase SQL Editor)
+-- A la Carta — Bootstrap completo del esquema (Supabase SQL Editor)
 -- Incluye: tipos, tablas, inventario/recetas, RLS, RPC, seed (menú, mesas, almacén),
 -- reservas por día, sesión comensal por visita, Realtime.
--- 1) Opcional: ejecutar antes 00_schema_teardown.sql si ya existía FastTable.
+-- 1) Opcional: ejecutar antes 00_schema_teardown.sql si ya existía A la Carta.
 -- 2) Pegar TODO este archivo y Run (no Explain). Transacción BEGIN…COMMIT.
 -- 3) Crear usuarios demo en Auth; enlazar personal (ver supabase/README.md).
 -- RLS: dejar activado; el SQL Editor corre con privilegios de administración del proyecto.
@@ -2513,7 +2513,7 @@ EXCEPTION
 END $$;
 
 INSERT INTO public.recetas (id_item_menu, notas)
-SELECT im.id, 'Receta FastTable'
+SELECT im.id, 'Receta A la Carta'
 FROM public.items_menu im
 WHERE NOT EXISTS (SELECT 1 FROM public.recetas r WHERE r.id_item_menu = im.id);
 

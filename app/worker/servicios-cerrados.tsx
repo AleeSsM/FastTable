@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Redirect, useFocusEffect } from 'expo-router';
 
 import { useAuth } from '@/contexts/auth-context';
-import { FtColors } from '@/constants/fasttable';
+import { AcColors } from '@/constants/alacarta';
 import { formatPriceFromCents } from '@/lib/format';
 import { mesaEtiquetaFromJoin } from '@/lib/mesa-label';
 import { supabase } from '@/lib/supabase';
@@ -100,7 +100,7 @@ export default function ServiciosCerradosScreen() {
   if (authLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={FtColors.accent} />
+        <ActivityIndicator color={AcColors.accent} />
       </View>
     );
   }
@@ -122,14 +122,14 @@ export default function ServiciosCerradosScreen() {
               setRefreshing(true);
               void load().finally(() => setRefreshing(false));
             }}
-            tintColor={FtColors.accent}
+            tintColor={AcColors.accent}
           />
         }>
         <Text style={styles.sub}>
           Recibos de servicios terminados: qué se pidió y el total cobrado al cerrar la mesa.
         </Text>
         {loading ? (
-          <ActivityIndicator color={FtColors.accent} style={{ marginTop: 24 }} />
+          <ActivityIndicator color={AcColors.accent} style={{ marginTop: 24 }} />
         ) : lista.length === 0 ? (
           <Text style={styles.empty}>Aún no hay servicios cerrados registrados.</Text>
         ) : (
@@ -162,14 +162,14 @@ export default function ServiciosCerradosScreen() {
         <SafeAreaView style={styles.modalSafe}>
           <View style={styles.modalHead}>
             <Pressable onPress={() => setDetalleId(null)} hitSlop={12}>
-              <Ionicons name="close" size={28} color={FtColors.text} />
+              <Ionicons name="close" size={28} color={AcColors.text} />
             </Pressable>
             <Text style={styles.modalTitle}>
               Recibo — {servicioSel ? mesaEtiquetaFromJoin(servicioSel.mesas) : ''}
             </Text>
           </View>
           {detalleBusy ? (
-            <ActivityIndicator color={FtColors.accent} style={{ marginTop: 24 }} />
+            <ActivityIndicator color={AcColors.accent} style={{ marginTop: 24 }} />
           ) : (
             <ScrollView contentContainerStyle={styles.modalScroll}>
               {lineas.map((ln) => {
@@ -199,33 +199,33 @@ export default function ServiciosCerradosScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: FtColors.background },
+  safe: { flex: 1, backgroundColor: AcColors.background },
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   scroll: { padding: 16, paddingBottom: 32 },
-  sub: { fontSize: 14, color: FtColors.textMuted, marginBottom: 16, lineHeight: 20 },
-  empty: { fontSize: 15, color: FtColors.textMuted, fontStyle: 'italic', marginTop: 12 },
-  card: { backgroundColor: FtColors.surface, borderRadius: 12, padding: 14, marginBottom: 10 },
+  sub: { fontSize: 14, color: AcColors.textMuted, marginBottom: 16, lineHeight: 20 },
+  empty: { fontSize: 15, color: AcColors.textMuted, fontStyle: 'italic', marginTop: 12 },
+  card: { backgroundColor: AcColors.surface, borderRadius: 12, padding: 14, marginBottom: 10 },
   cardTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  mesa: { fontSize: 17, fontWeight: '700', color: FtColors.text },
-  total: { fontSize: 17, fontWeight: '800', color: FtColors.accentText },
-  fecha: { fontSize: 13, color: FtColors.textMuted, marginTop: 6 },
-  invitado: { fontSize: 13, color: FtColors.text, marginTop: 4 },
-  ver: { fontSize: 13, color: FtColors.accentText, marginTop: 8, fontWeight: '600' },
-  modalSafe: { flex: 1, backgroundColor: FtColors.background },
+  mesa: { fontSize: 17, fontWeight: '700', color: AcColors.text },
+  total: { fontSize: 17, fontWeight: '800', color: AcColors.accentText },
+  fecha: { fontSize: 13, color: AcColors.textMuted, marginTop: 6 },
+  invitado: { fontSize: 13, color: AcColors.text, marginTop: 4 },
+  ver: { fontSize: 13, color: AcColors.accentText, marginTop: 8, fontWeight: '600' },
+  modalSafe: { flex: 1, backgroundColor: AcColors.background },
   modalHead: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 12 },
-  modalTitle: { fontSize: 18, fontWeight: '700', color: FtColors.text, flex: 1 },
+  modalTitle: { fontSize: 18, fontWeight: '700', color: AcColors.text, flex: 1 },
   modalScroll: { padding: 16, paddingBottom: 32 },
   linea: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
-  lineaNombre: { flex: 1, fontSize: 15, color: FtColors.text },
-  lineaSub: { fontSize: 15, fontWeight: '600', color: FtColors.accentText },
+  lineaNombre: { flex: 1, fontSize: 15, color: AcColors.text },
+  lineaSub: { fontSize: 15, fontWeight: '600', color: AcColors.accentText },
   totalRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 16,
     paddingTop: 14,
     borderTopWidth: 1,
-    borderTopColor: FtColors.border,
+    borderTopColor: AcColors.border,
   },
-  totalLbl: { fontSize: 16, fontWeight: '700', color: FtColors.text },
-  totalVal: { fontSize: 20, fontWeight: '800', color: FtColors.accentText },
+  totalLbl: { fontSize: 16, fontWeight: '700', color: AcColors.text },
+  totalVal: { fontSize: 20, fontWeight: '800', color: AcColors.accentText },
 });

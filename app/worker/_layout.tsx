@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { WorkerAuthGate } from '@/components/worker-auth-gate';
-import { FtColors } from '@/constants/fasttable';
+import { AcColors } from '@/constants/alacarta';
 
 export default function WorkerLayout() {
   return (
@@ -11,12 +11,12 @@ export default function WorkerLayout() {
     <WorkerAuthGate>
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: FtColors.surfaceElevated },
-        headerTintColor: FtColors.accentText,
-        headerTitleStyle: { fontWeight: '700', color: FtColors.text },
+        headerStyle: { backgroundColor: AcColors.surfaceElevated },
+        headerTintColor: AcColors.accentText,
+        headerTitleStyle: { fontWeight: '700', color: AcColors.text },
         headerShadowVisible: false,
         contentStyle: {
-          backgroundColor: FtColors.background,
+          backgroundColor: AcColors.background,
           ...(Platform.OS === 'web'
             ? { maxWidth: 1100, width: '100%', alignSelf: 'center' as const }
             : null),

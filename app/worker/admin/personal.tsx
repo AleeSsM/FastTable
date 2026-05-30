@@ -19,7 +19,7 @@ import { AuthBoot } from '@/components/auth-boot';
 import { Avatar } from '@/components/avatar';
 import { adminCardShadow, adminStyles } from '@/constants/worker-admin-styles';
 import { BRAND } from '@/constants/palette';
-import { FtColors } from '@/constants/fasttable';
+import { AcColors } from '@/constants/alacarta';
 import { useAuth } from '@/contexts/auth-context';
 import { REALTIME_ADMIN, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { confirmDialog, notify } from '@/lib/confirm';
@@ -202,9 +202,9 @@ export default function AdminPersonalScreen() {
       <ScrollView
         style={adminStyles.scroll}
         contentContainerStyle={adminStyles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={FtColors.accent} />}>
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={AcColors.accent} />}>
         <View style={styles.note}>
-          <Ionicons name="information-circle-outline" size={18} color={FtColors.accent} />
+          <Ionicons name="information-circle-outline" size={18} color={AcColors.accent} />
           <Text style={styles.noteText}>
             Para dar de alta, la persona debe registrarse antes en la app con su correo. Aquí la vinculas al equipo y le
             asignas un rol.
@@ -212,26 +212,26 @@ export default function AdminPersonalScreen() {
         </View>
 
         <View style={adminStyles.searchWrap}>
-          <Ionicons name="search" size={18} color={FtColors.textMuted} style={adminStyles.searchIcon} />
+          <Ionicons name="search" size={18} color={AcColors.textMuted} style={adminStyles.searchIcon} />
           <TextInput
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Buscar por nombre, correo o rol…"
-            placeholderTextColor={FtColors.textMuted}
+            placeholderTextColor={AcColors.textMuted}
             style={adminStyles.searchInput}
           />
           {searchQuery.length > 0 ? (
             <Pressable onPress={() => setSearchQuery('')} style={adminStyles.searchClear}>
-              <Ionicons name="close-circle" size={20} color={FtColors.textMuted} />
+              <Ionicons name="close-circle" size={20} color={AcColors.textMuted} />
             </Pressable>
           ) : null}
         </View>
 
         {loading ? (
-          <ActivityIndicator color={FtColors.accent} style={adminStyles.loader} />
+          <ActivityIndicator color={AcColors.accent} style={adminStyles.loader} />
         ) : filtered.length === 0 ? (
           <View style={adminStyles.emptyCard}>
-            <Ionicons name="people-outline" size={32} color={FtColors.textMuted} />
+            <Ionicons name="people-outline" size={32} color={AcColors.textMuted} />
             <Text style={adminStyles.emptyTitle}>Sin personal</Text>
             <Text style={adminStyles.emptySub}>Da de alta al primer miembro con el botón +.</Text>
           </View>
@@ -260,12 +260,12 @@ export default function AdminPersonalScreen() {
                   <View
                     style={[
                       adminStyles.estadoTag,
-                      { backgroundColor: m.activo ? `${FtColors.success}22` : `${FtColors.danger}22` },
+                      { backgroundColor: m.activo ? `${AcColors.success}22` : `${AcColors.danger}22` },
                     ]}>
                     <Text
                       style={[
                         adminStyles.estadoTagText,
-                        { color: m.activo ? FtColors.success : FtColors.danger },
+                        { color: m.activo ? AcColors.success : AcColors.danger },
                       ]}>
                       {m.activo ? 'Activo' : 'Inactivo'}
                     </Text>
@@ -277,21 +277,21 @@ export default function AdminPersonalScreen() {
                 ) : (
                   <View style={adminStyles.cardActions}>
                     <Pressable style={adminStyles.btnIcon} onPress={() => openEdit(m)}>
-                      <Ionicons name="create-outline" size={18} color={FtColors.accent} />
+                      <Ionicons name="create-outline" size={18} color={AcColors.accent} />
                       <Text style={adminStyles.btnIconText}>Editar</Text>
                     </Pressable>
                     <Pressable style={adminStyles.btnIcon} onPress={() => onToggleActivo(m)}>
                       <Ionicons
                         name={m.activo ? 'pause-circle-outline' : 'play-circle-outline'}
                         size={18}
-                        color={FtColors.accent}
+                        color={AcColors.accent}
                       />
                       <Text style={adminStyles.btnIconText}>{m.activo ? 'Desactivar' : 'Activar'}</Text>
                     </Pressable>
                     <Pressable
                       style={[adminStyles.btnIcon, adminStyles.btnIconDanger]}
                       onPress={() => confirmDelete(m)}>
-                      <Ionicons name="trash-outline" size={18} color={FtColors.danger} />
+                      <Ionicons name="trash-outline" size={18} color={AcColors.danger} />
                       <Text style={[adminStyles.btnIconText, adminStyles.btnIconTextDanger]}>Quitar</Text>
                     </Pressable>
                   </View>
@@ -303,7 +303,7 @@ export default function AdminPersonalScreen() {
       </ScrollView>
 
       <Pressable style={adminStyles.fab} onPress={openCreate} accessibilityLabel="Dar de alta empleado">
-        <Ionicons name="add" size={28} color={FtColors.onAccent} />
+        <Ionicons name="add" size={28} color={AcColors.onAccent} />
       </Pressable>
 
       <Modal visible={modalOpen} animationType="slide" transparent onRequestClose={() => !busy && setModalOpen(false)}>
@@ -319,7 +319,7 @@ export default function AdminPersonalScreen() {
                 onChangeText={setEmail}
                 editable={!editing}
                 placeholder="persona@correo.com"
-                placeholderTextColor={FtColors.textMuted}
+                placeholderTextColor={AcColors.textMuted}
                 style={[adminStyles.input, !!editing && styles.inputDisabled]}
                 autoCapitalize="none"
                 keyboardType="email-address"
@@ -330,7 +330,7 @@ export default function AdminPersonalScreen() {
                 value={nombre}
                 onChangeText={setNombre}
                 placeholder="Nombre del empleado"
-                placeholderTextColor={FtColors.textMuted}
+                placeholderTextColor={AcColors.textMuted}
                 style={adminStyles.input}
               />
 
@@ -339,7 +339,7 @@ export default function AdminPersonalScreen() {
                 value={codigo}
                 onChangeText={setCodigo}
                 placeholder="EMP-001"
-                placeholderTextColor={FtColors.textMuted}
+                placeholderTextColor={AcColors.textMuted}
                 style={adminStyles.input}
                 autoCapitalize="characters"
               />
@@ -398,24 +398,24 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: FtColors.border,
-    backgroundColor: FtColors.surface,
+    borderColor: AcColors.border,
+    backgroundColor: AcColors.surface,
     marginBottom: 12,
   },
-  noteText: { flex: 1, fontSize: 12.5, lineHeight: 18, color: FtColors.textMuted },
+  noteText: { flex: 1, fontSize: 12.5, lineHeight: 18, color: AcColors.textMuted },
   row: { flexDirection: 'row', gap: 12, alignItems: 'center' },
   rowMeta: { flex: 1 },
   nameLine: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   selfBadge: {
     fontSize: 11,
     fontWeight: '700',
-    color: FtColors.accentText,
-    backgroundColor: `${FtColors.accent}22`,
+    color: AcColors.accentText,
+    backgroundColor: `${AcColors.accent}22`,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 999,
     overflow: 'hidden',
   },
-  selfHint: { fontSize: 12.5, color: FtColors.textMuted, marginTop: 10, fontStyle: 'italic' },
+  selfHint: { fontSize: 12.5, color: AcColors.textMuted, marginTop: 10, fontStyle: 'italic' },
   inputDisabled: { opacity: 0.6 },
 });

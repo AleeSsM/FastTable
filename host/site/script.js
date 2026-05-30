@@ -1,24 +1,17 @@
 /**
- * FastTable — landing (solo frontend).
- *
- * CONFIGURA AQUÍ los enlaces de descarga cuando los tengas.
- * Deja la cadena vacía ("") para que el botón muestre el aviso de "próximamente".
+ * A la Carta — landing (solo frontend).
  */
 const DOWNLOAD_LINKS = {
-  // Ej.: "https://play.google.com/store/apps/details?id=com.fasttable.app"
   play: "",
-  // Tras el build/host, el APK vive en /apk/fasttable.apk en tu dominio
-  apk: "/apk/fasttable.apk",
+  apk: "/apk/alacarta.apk",
 };
 
 (function () {
   "use strict";
 
-  // Año dinámico en el footer
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-  // Sombra/borde de la nav al hacer scroll
   const nav = document.getElementById("nav");
   const onScroll = () => {
     if (!nav) return;
@@ -27,7 +20,6 @@ const DOWNLOAD_LINKS = {
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
 
-  // Menú móvil
   const burger = document.getElementById("burger");
   if (burger && nav) {
     burger.addEventListener("click", () => {
@@ -44,7 +36,6 @@ const DOWNLOAD_LINKS = {
     });
   }
 
-  // Botones de descarga (placeholder hasta tener los enlaces reales)
   const note = document.getElementById("download-note");
   let noteTimer = null;
 
@@ -56,7 +47,7 @@ const DOWNLOAD_LINKS = {
     noteTimer = setTimeout(() => {
       note.classList.remove("is-flash");
       note.textContent =
-        "* Coloca fasttable.apk en host/site/apk/, ejecuta npm run build:host y despliega.";
+        "* Coloca alacarta.apk en host/site/apk/, ejecuta npm run build:host y despliega.";
     }, 3200);
   };
 
@@ -84,10 +75,9 @@ const DOWNLOAD_LINKS = {
   setupStoreButton(
     "apk-btn",
     "apk",
-    "Sube fasttable.apk a host/site/apk/ y vuelve a desplegar el sitio."
+    "Sube alacarta.apk a host/site/apk/ y vuelve a desplegar el sitio."
   );
 
-  // Animaciones de aparición al hacer scroll
   const revealTargets = document.querySelectorAll(
     ".feature, .role, .step, .download__card, .section__head"
   );

@@ -6,7 +6,7 @@
   "use strict";
 
   function getConfig() {
-    const c = global.FASTTABLE_CONFIG;
+    const c = global.ALACARTA_CONFIG;
     if (!c?.supabaseUrl || !c?.supabaseAnonKey) {
       throw new Error(
         "Falta configuración. Genera el sitio con «npm run build:host» y variables en .env.",
@@ -94,7 +94,7 @@
     return params.type;
   }
 
-  global.FastTableAuth = {
+  global.AlaCartaAuth = {
     getConfig,
     parseAuthParams,
     createClient,

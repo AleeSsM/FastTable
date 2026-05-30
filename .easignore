@@ -1,0 +1,7 @@
+host/dist/
+dist/
+.expo/
+node_modules/
+.git/
+*.md
+!README.md

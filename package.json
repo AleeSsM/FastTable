@@ -1,5 +1,5 @@
 {
-  "name": "fasttable",
+  "name": "alacarta",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
@@ -11,6 +11,9 @@
     "build:host": "node host/scripts/build.mjs",
     "lint": "expo lint",
     "sync:palette": "node scripts/sync-palette-css.mjs",
+    "eas": "eas",
+    "build:apk": "eas build --platform android --profile preview --non-interactive",
+    "build:android:production": "eas build --platform android --profile production --non-interactive",
     "staff:console": "node scripts/ft-staff-console.mjs"
   },
   "dependencies": {
@@ -48,6 +51,7 @@
   },
   "devDependencies": {
     "@types/react": "~19.1.0",
+    "eas-cli": "^16.0.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
     "typescript": "~5.9.2"

@@ -18,7 +18,7 @@ import { Redirect, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuth } from '@/contexts/auth-context';
-import { FtColors, FtSurfaces } from '@/constants/fasttable';
+import { AcColors, AcSurfaces } from '@/constants/alacarta';
 import { REALTIME_WORKER_DASHBOARD, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { fetchCuentaMesaServicio, mapMesaPedidoRpcError } from '@/lib/cuenta-mesa';
 import { mapCocinaRpcError } from '@/lib/cocina-errors';
@@ -145,7 +145,7 @@ export default function MesaPedidosScreen() {
   if (authLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={FtColors.accent} />
+        <ActivityIndicator color={AcColors.accent} />
       </View>
     );
   }
@@ -169,14 +169,14 @@ export default function MesaPedidosScreen() {
     <SafeAreaView style={styles.safe} edges={['bottom']}>
       <ScrollView
         contentContainerStyle={styles.scroll}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} tintColor={FtColors.accent} />}>
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} tintColor={AcColors.accent} />}>
         <Text style={styles.title}>{mesaLabel}</Text>
         <Text style={styles.sub}>Agrega platos a la cuenta de este servicio. El comensal verá los mismos ítems.</Text>
 
         <View style={[styles.cuentaCard, cardShadow]}>
           <Text style={styles.cuentaTitle}>Cuenta del servicio</Text>
           {loading && !cuenta ? (
-            <ActivityIndicator color={FtColors.accent} style={{ marginVertical: 12 }} />
+            <ActivityIndicator color={AcColors.accent} style={{ marginVertical: 12 }} />
           ) : cuenta && cuenta.lines.length > 0 ? (
             <>
               {cuenta.lines.map((ln) => (
@@ -203,7 +203,7 @@ export default function MesaPedidosScreen() {
         </View>
 
         {loading ? (
-          <ActivityIndicator color={FtColors.accent} style={{ marginTop: 24 }} />
+          <ActivityIndicator color={AcColors.accent} style={{ marginTop: 24 }} />
         ) : (
           sections.map((cat) => (
             <View key={cat.id} style={styles.section}>
@@ -232,7 +232,7 @@ export default function MesaPedidosScreen() {
                       {etiqueta ? <Text style={styles.itemBadge}>{etiqueta}</Text> : null}
                     </View>
                     {!noPedible ? (
-                      <Ionicons name="add-circle" size={28} color={FtColors.accent} />
+                      <Ionicons name="add-circle" size={28} color={AcColors.accent} />
                     ) : null}
                   </Pressable>
                 );
@@ -248,17 +248,17 @@ export default function MesaPedidosScreen() {
             <Text style={styles.modalTitle}>{modalItem?.nombre}</Text>
             <View style={styles.qtyRow}>
               <Pressable style={styles.qtyBtn} onPress={() => setQty((q) => Math.max(1, q - 1))}>
-                <Ionicons name="remove" size={22} color={FtColors.text} />
+                <Ionicons name="remove" size={22} color={AcColors.text} />
               </Pressable>
               <Text style={styles.qtyVal}>{qty}</Text>
               <Pressable style={styles.qtyBtn} onPress={() => setQty((q) => Math.min(99, q + 1))}>
-                <Ionicons name="add" size={22} color={FtColors.text} />
+                <Ionicons name="add" size={22} color={AcColors.text} />
               </Pressable>
             </View>
             <TextInput
               style={styles.notaInput}
               placeholder="Nota para cocina (opcional)"
-              placeholderTextColor={FtColors.textMuted}
+              placeholderTextColor={AcColors.textMuted}
               value={nota}
               onChangeText={setNota}
               multiline
@@ -268,7 +268,7 @@ export default function MesaPedidosScreen() {
               disabled={sending}
               onPress={() => void enviarPedido()}>
               {sending ? (
-                <ActivityIndicator color={FtColors.onAccent} />
+                <ActivityIndicator color={AcColors.onAccent} />
               ) : (
                 <Text style={styles.btnSolidText}>Enviar a cocina</Text>
               )}
@@ -284,27 +284,27 @@ export default function MesaPedidosScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: FtColors.background },
-  centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: FtColors.background },
+  safe: { flex: 1, backgroundColor: AcColors.background },
+  centered: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: AcColors.background },
   scroll: { padding: 16, paddingBottom: 32 },
-  title: { fontSize: 22, fontWeight: '800', color: FtColors.text },
-  sub: { fontSize: 14, color: FtColors.textMuted, marginTop: 6, marginBottom: 16, lineHeight: 20 },
-  cuentaCard: { backgroundColor: FtColors.surface, borderRadius: 12, padding: 14, marginBottom: 20 },
-  cuentaTitle: { fontSize: 16, fontWeight: '700', color: FtColors.text, marginBottom: 10 },
+  title: { fontSize: 22, fontWeight: '800', color: AcColors.text },
+  sub: { fontSize: 14, color: AcColors.textMuted, marginTop: 6, marginBottom: 16, lineHeight: 20 },
+  cuentaCard: { backgroundColor: AcColors.surface, borderRadius: 12, padding: 14, marginBottom: 20 },
+  cuentaTitle: { fontSize: 16, fontWeight: '700', color: AcColors.text, marginBottom: 10 },
   cuentaRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 8, gap: 8 },
-  cuentaLine: { fontSize: 14, color: FtColors.text },
-  cuentaTag: { fontSize: 11, color: FtColors.textMuted, marginTop: 2 },
-  cuentaSub: { fontSize: 14, fontWeight: '600', color: FtColors.accentText },
-  cuentaTotalRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: FtColors.border },
-  cuentaTotalLabel: { fontSize: 15, fontWeight: '700', color: FtColors.text },
-  cuentaTotal: { fontSize: 18, fontWeight: '800', color: FtColors.accentText },
-  cuentaEmpty: { fontSize: 14, color: FtColors.textMuted, fontStyle: 'italic' },
+  cuentaLine: { fontSize: 14, color: AcColors.text },
+  cuentaTag: { fontSize: 11, color: AcColors.textMuted, marginTop: 2 },
+  cuentaSub: { fontSize: 14, fontWeight: '600', color: AcColors.accentText },
+  cuentaTotalRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: AcColors.border },
+  cuentaTotalLabel: { fontSize: 15, fontWeight: '700', color: AcColors.text },
+  cuentaTotal: { fontSize: 18, fontWeight: '800', color: AcColors.accentText },
+  cuentaEmpty: { fontSize: 14, color: AcColors.textMuted, fontStyle: 'italic' },
   section: { marginBottom: 20 },
-  catName: { fontSize: 17, fontWeight: '700', color: FtColors.text, marginBottom: 10 },
+  catName: { fontSize: 17, fontWeight: '700', color: AcColors.text, marginBottom: 10 },
   itemCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: FtColors.surface,
+    backgroundColor: AcColors.surface,
     borderRadius: 10,
     padding: 10,
     marginBottom: 8,
@@ -313,35 +313,35 @@ const styles = StyleSheet.create({
   itemDisabled: { opacity: 0.55 },
   itemImg: { width: 56, height: 56, borderRadius: 8 },
   itemBody: { flex: 1 },
-  itemName: { fontSize: 15, fontWeight: '600', color: FtColors.text },
-  itemPrice: { fontSize: 13, color: FtColors.accentText, marginTop: 2 },
-  itemBadge: { fontSize: 11, color: FtColors.textMuted, marginTop: 2 },
-  modalBackdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: FtSurfaces.overlay },
-  modalSheet: { backgroundColor: FtColors.surfaceElevated, borderTopLeftRadius: 16, borderTopRightRadius: 16, padding: 20 },
-  modalTitle: { fontSize: 18, fontWeight: '700', color: FtColors.text, marginBottom: 16 },
+  itemName: { fontSize: 15, fontWeight: '600', color: AcColors.text },
+  itemPrice: { fontSize: 13, color: AcColors.accentText, marginTop: 2 },
+  itemBadge: { fontSize: 11, color: AcColors.textMuted, marginTop: 2 },
+  modalBackdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: AcSurfaces.overlay },
+  modalSheet: { backgroundColor: AcColors.surfaceElevated, borderTopLeftRadius: 16, borderTopRightRadius: 16, padding: 20 },
+  modalTitle: { fontSize: 18, fontWeight: '700', color: AcColors.text, marginBottom: 16 },
   qtyRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 20, marginBottom: 16 },
   qtyBtn: { padding: 8 },
-  qtyVal: { fontSize: 22, fontWeight: '700', color: FtColors.text, minWidth: 40, textAlign: 'center' },
+  qtyVal: { fontSize: 22, fontWeight: '700', color: AcColors.text, minWidth: 40, textAlign: 'center' },
   notaInput: {
     borderWidth: 1,
-    borderColor: FtColors.border,
+    borderColor: AcColors.border,
     borderRadius: 8,
     padding: 12,
-    color: FtColors.text,
+    color: AcColors.text,
     minHeight: 72,
     marginBottom: 14,
     textAlignVertical: 'top',
   },
   btnSolid: {
-    backgroundColor: FtColors.accent,
+    backgroundColor: AcColors.accent,
     borderRadius: 10,
     paddingVertical: 14,
     alignItems: 'center',
   },
-  btnSolidText: { color: FtColors.onAccent, fontWeight: '700', fontSize: 16 },
+  btnSolidText: { color: AcColors.onAccent, fontWeight: '700', fontSize: 16 },
   btnDisabled: { opacity: 0.6 },
   btnGhost: { marginTop: 10, alignItems: 'center', padding: 10 },
-  btnGhostText: { color: FtColors.textMuted, fontSize: 15 },
-  err: { color: FtColors.text, padding: 16 },
-  link: { color: FtColors.accentText, padding: 16, fontWeight: '600' },
+  btnGhostText: { color: AcColors.textMuted, fontSize: 15 },
+  err: { color: AcColors.text, padding: 16 },
+  link: { color: AcColors.accentText, padding: 16, fontWeight: '600' },
 });
