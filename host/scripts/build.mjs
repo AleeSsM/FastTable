@@ -97,6 +97,16 @@ function main() {
   const appOut = path.join(OUT, "app");
   copyRecursive(expoDist, appOut);
 
+  const appIndex = path.join(appOut, "index.html");
+  if (fs.existsSync(appIndex)) {
+    let html = fs.readFileSync(appIndex, "utf8");
+    const tag = '<script src="/auth/auth-forward.js"></script>';
+    if (!html.includes("auth-forward.js")) {
+      html = html.replace(/<head[^>]*>/i, (m) => `${m}\n    ${tag}`);
+      fs.writeFileSync(appIndex, html, "utf8");
+    }
+  }
+
   console.log("");
   console.log("✔ Sitio listo en host/dist");
   console.log("  · /           → landing");

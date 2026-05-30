@@ -18,6 +18,7 @@ import { useFocusEffect } from 'expo-router';
 import { useAuth } from '@/contexts/auth-context';
 import { FtColors } from '@/constants/fasttable';
 import { formatPriceFromCents } from '@/lib/format';
+import { mesaEtiquetaFromJoin } from '@/lib/mesa-label';
 import { supabase } from '@/lib/supabase';
 
 type ServicioCerrado = {
@@ -38,12 +39,6 @@ const cardShadow =
   Platform.OS === 'ios'
     ? { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15, shadowRadius: 6 }
     : { elevation: 3 };
-
-function mesaCodigo(m: ServicioCerrado['mesas']): string {
-  if (m == null) return '—';
-  const z = Array.isArray(m) ? m[0] : m;
-  return z?.codigo ?? '—';
-}
 
 function itemNombre(raw: LineaRecibo['items_menu']): string {
   if (raw == null) return '—';
@@ -142,7 +137,7 @@ export default function ServiciosCerradosScreen() {
           lista.map((s) => (
             <Pressable key={s.id} style={[styles.card, cardShadow]} onPress={() => void abrirDetalle(s.id)}>
               <View style={styles.cardTop}>
-                <Text style={styles.mesa}>Mesa {mesaCodigo(s.mesas)}</Text>
+                <Text style={styles.mesa}>{mesaEtiquetaFromJoin(s.mesas)}</Text>
                 <Text style={styles.total}>{formatPriceFromCents(s.total_centavos)}</Text>
               </View>
               <Text style={styles.fecha}>
@@ -171,7 +166,7 @@ export default function ServiciosCerradosScreen() {
               <Ionicons name="close" size={28} color={FtColors.text} />
             </Pressable>
             <Text style={styles.modalTitle}>
-              Recibo — Mesa {servicioSel ? mesaCodigo(servicioSel.mesas) : ''}
+              Recibo — {servicioSel ? mesaEtiquetaFromJoin(servicioSel.mesas) : ''}
             </Text>
           </View>
           {detalleBusy ? (

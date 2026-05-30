@@ -20,6 +20,7 @@ import { adminCardShadow, adminStyles, estadoMesaStyle } from '@/constants/worke
 import { FtColors } from '@/constants/fasttable';
 import { REALTIME_ADMIN, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { mapAdminSupabaseError } from '@/lib/admin-errors';
+import { mesaEtiqueta } from '@/lib/mesa-label';
 import { useGerenteGuardNavigation } from '@/hooks/use-gerente-guard-navigation';
 import { supabase } from '@/lib/supabase';
 
@@ -162,7 +163,7 @@ export default function AdminMesasScreen() {
       );
       return;
     }
-    Alert.alert('Eliminar mesa', `¿Eliminar la mesa ${m.codigo}? Esta acción no se puede deshacer.`, [
+    Alert.alert('Eliminar mesa', `¿Eliminar ${mesaEtiqueta(m.codigo)}? Esta acción no se puede deshacer.`, [
       { text: 'Cancelar', style: 'cancel' },
       {
         text: 'Eliminar',
@@ -218,7 +219,7 @@ export default function AdminMesasScreen() {
             const st = estadoMesaStyle(m.estado);
             return (
               <View key={m.id} style={[adminStyles.card, adminCardShadow]}>
-                <Text style={adminStyles.cardTitle}>{m.codigo}</Text>
+                <Text style={adminStyles.cardTitle}>{mesaEtiqueta(m.codigo)}</Text>
                 <Text style={adminStyles.cardSub}>
                   Capacidad: {m.capacidad} personas
                   {m.descripcion_publica ? ` · ${m.descripcion_publica}` : ''}
@@ -260,7 +261,7 @@ export default function AdminMesasScreen() {
               <TextInput
                 value={codigo}
                 onChangeText={setCodigo}
-                placeholder="M-01"
+                placeholder="1"
                 placeholderTextColor={FtColors.textMuted}
                 style={adminStyles.input}
                 autoCapitalize="characters"

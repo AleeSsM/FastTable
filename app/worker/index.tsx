@@ -18,10 +18,10 @@ import { Avatar } from '@/components/avatar';
 import { FtColors } from '@/constants/fasttable';
 import { useAuth } from '@/contexts/auth-context';
 import { useSafeSignOut } from '@/hooks/use-safe-sign-out';
+import { mesaEtiqueta, mesaEtiquetaFromJoin } from '@/lib/mesa-label';
 import {
   fmtFecha,
   formatGuestName,
-  solicitudCodigo,
   useWorkerDashboard,
   type MesaToggle,
   type WaitlistEntry,
@@ -103,7 +103,7 @@ export default function WorkerDashboardScreen() {
 
         <Text style={styles.fieldLabel}>Mesa disponible</Text>
         {renderChoiceChips(
-          freeMesas.map((m) => ({ key: m.id, label: m.codigo })),
+          freeMesas.map((m) => ({ key: m.id, label: mesaEtiqueta(m.codigo) })),
           d.selectedMesaByEntry[entry.id],
           (key) => d.setSelectedMesaByEntry((p) => ({ ...p, [entry.id]: key })),
           'Sin mesas libres.',
@@ -158,7 +158,7 @@ export default function WorkerDashboardScreen() {
         <Text style={styles.empty}>Nada pendiente por atender ahora.</Text>
       ) : (
         d.attendOrdered.map((r) => {
-          const code = r.mesas?.codigo ?? '—';
+          const code = r.mesas?.codigo;
           const guest = d.names[r.id_usuario]?.trim() || 'Cliente';
           const other = r.mesas?.id_personal_atendiendo != null && r.mesas.id_personal_atendiendo !== staffMember.id;
           const showNoShow = d.canShowNoShow(r, new Date());
@@ -168,7 +168,7 @@ export default function WorkerDashboardScreen() {
               <View style={styles.rowHead}>
                 <Avatar uri={d.fotos[r.id_usuario]} name={guest} size={44} />
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.cardName}>Mesa {code} · {guest}</Text>
+                  <Text style={styles.cardName}>{mesaEtiqueta(code)} · {guest}</Text>
                   <Text style={styles.cardMeta}>
                     {fmtFecha(r.fecha_hora_reserva)} · {r.personas_grupo} pers.
                   </Text>
@@ -224,7 +224,7 @@ export default function WorkerDashboardScreen() {
             <View key={r.id} style={[styles.cardSoft, styles.rowHead]}>
               <Avatar uri={d.fotos[r.id_usuario]} name={guest} size={38} />
               <View style={{ flex: 1 }}>
-                <Text style={styles.cardName}>{r.mesas?.codigo ?? '—'} · {guest}</Text>
+                <Text style={styles.cardName}>{mesaEtiqueta(r.mesas?.codigo)} · {guest}</Text>
                 <Text style={styles.cardMeta}>
                   {fmtFecha(r.fecha_hora_reserva)} · {r.personas_grupo} pers.
                 </Text>
@@ -246,7 +246,7 @@ export default function WorkerDashboardScreen() {
     const other = m.id_personal_atendiendo != null && m.id_personal_atendiendo !== staffMember.id;
     return (
       <View key={m.id} style={styles.mesaTile}>
-        <Text style={styles.mesaCode}>{m.codigo}</Text>
+        <Text style={styles.mesaCode}>{mesaEtiqueta(m.codigo)}</Text>
         {m.estado === 'reservada' ? (
           <Text style={styles.mesaState}>Reservada</Text>
         ) : m.estado === 'libre' ? (
@@ -292,7 +292,7 @@ export default function WorkerDashboardScreen() {
         d.myMesas.map((m) => (
           <View key={m.id} style={[styles.card, cardShadow]}>
             <View style={styles.rowHead}>
-              <Text style={styles.mesaCodeLg}>{m.codigo}</Text>
+              <Text style={styles.mesaCodeLg}>{mesaEtiqueta(m.codigo)}</Text>
               <View style={[styles.pill, m.estado === 'reservada' ? styles.pillInfo : styles.pillOk]}>
                 <Text style={[styles.pillText, m.estado === 'reservada' ? styles.pillTextInfo : styles.pillTextOk]}>
                   {m.estado === 'reservada' ? 'Reservada' : 'Ocupada'}
@@ -373,7 +373,7 @@ export default function WorkerDashboardScreen() {
                 <View style={styles.mesaChipsWrap}>
                   {mesas.map((mesa) => (
                     <View key={mesa.id} style={styles.mesaChipTag}>
-                      <Text style={styles.mesaChipTagText}>{mesa.codigo}</Text>
+                      <Text style={styles.mesaChipTagText}>{mesaEtiqueta(mesa.codigo)}</Text>
                     </View>
                   ))}
                 </View>
@@ -408,7 +408,7 @@ export default function WorkerDashboardScreen() {
       ) : (
         d.solicitudes.map((s) => (
           <View key={s.id} style={[styles.card, cardShadow]}>
-            <Text style={styles.cardName}>Mesa {solicitudCodigo(s.mesas)}</Text>
+            <Text style={styles.cardName}>{mesaEtiquetaFromJoin(s.mesas)}</Text>
             <Text style={styles.cardMeta}>{s.mensaje?.trim() || '(Sin mensaje)'}</Text>
             <Pressable style={styles.btnPrimary} onPress={() => d.marcarSolicitudAtendida(s.id)}>
               <Text style={styles.btnPrimaryText}>Marcar como atendida</Text>

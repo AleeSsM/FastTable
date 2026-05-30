@@ -19,6 +19,7 @@ import { Comensal } from '@/constants/theme-comensal';
 import { useAuth } from '@/contexts/auth-context';
 import { REALTIME_TABLES_SCREEN, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { supabase } from '@/lib/supabase';
+import { mesaEtiqueta } from '@/lib/mesa-label';
 import { tableImageUrl } from '@/lib/table-image';
 
 type EstadoMesa = 'libre' | 'ocupada' | 'reservada';
@@ -257,7 +258,7 @@ export default function TablesScreen() {
               <View style={styles.cardAccent} />
               <View style={styles.cardInner}>
                 <View style={styles.cardTop}>
-                  <Text style={styles.tableId}>{t.codigo}</Text>
+                  <Text style={styles.tableId}>{mesaEtiqueta(t.codigo)}</Text>
                   <View
                     style={[
                       styles.badge,

@@ -24,5 +24,6 @@ Plantilla: `.env.example`. La *service role* solo en máquina local para scripts
 |---------|-----|
 | `00_schema_teardown.sql` | Borra objetos FastTable en `public` (no borra `auth.users`). |
 | `01_schema_bootstrap.sql` | Esquema completo: tablas, RLS, RPC, seed menú/mesas/inventario, Realtime. |
+| `02_mesa_codigos_limpios.sql` | Migración opcional: renombra códigos demo `M1`…`M4` → `1`…`4` en proyectos ya desplegados. |
 
 Despliegue web: [`host/README.md`](../host/README.md).

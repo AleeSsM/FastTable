@@ -16,6 +16,7 @@ import { ComensalGreetingLine } from '@/components/comensal-greeting-line';
 import { useAuth } from '@/contexts/auth-context';
 import { Comensal } from '@/constants/theme-comensal';
 import { REALTIME_QUEUE_TAB, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
+import { mesaEtiqueta } from '@/lib/mesa-label';
 import { supabase } from '@/lib/supabase';
 
 export default function QueueScreen() {
@@ -216,7 +217,7 @@ export default function QueueScreen() {
         <Text style={styles.big}>{position != null ? String(position) : '—'}</Text>
         <Text style={styles.meta}>
           {myStatus === 'sentado'
-            ? `Ya te sentaron${assignedMesaCode ? ` en la mesa ${assignedMesaCode}` : ''}.`
+            ? `Ya te sentaron${assignedMesaCode ? ` en ${mesaEtiqueta(assignedMesaCode)}` : ''}.`
             : myEntryId
               ? 'Estás en la fila.'
               : 'Aún no estás en la fila.'}

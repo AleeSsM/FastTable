@@ -19,6 +19,7 @@ import { Avatar } from '@/components/avatar';
 import { Comensal } from '@/constants/theme-comensal';
 import { useAuth } from '@/contexts/auth-context';
 import { formatPriceFromCents } from '@/lib/format';
+import { mesaEtiqueta } from '@/lib/mesa-label';
 import { supabase } from '@/lib/supabase';
 import { useNavigateToWelcomeOnceWhen } from '@/hooks/use-auth-navigation';
 
@@ -165,7 +166,7 @@ export default function MisCuentasScreen() {
             {lista.map((s) => (
               <Pressable key={s.id} style={[styles.card, cardShadow]} onPress={() => void abrirDetalle(s.id)}>
                 <View style={styles.cardTop}>
-                  <Text style={styles.mesa}>Mesa {s.mesa_codigo ?? '—'}</Text>
+                  <Text style={styles.mesa}>{mesaEtiqueta(s.mesa_codigo)}</Text>
                   <Text style={styles.total}>{formatPriceFromCents(s.total_centavos)}</Text>
                 </View>
                 <Text style={styles.fecha}>{fechaLarga(s.cerrado_en)}</Text>
@@ -188,7 +189,7 @@ export default function MisCuentasScreen() {
             <Pressable onPress={() => setDetalleId(null)} hitSlop={12}>
               <Ionicons name="close" size={28} color={Comensal.text} />
             </Pressable>
-            <Text style={styles.modalTitle}>Recibo — Mesa {cuentaSel?.mesa_codigo ?? ''}</Text>
+            <Text style={styles.modalTitle}>Recibo — {mesaEtiqueta(cuentaSel?.mesa_codigo)}</Text>
           </View>
           {cuentaSel ? <Text style={styles.modalFecha}>{fechaLarga(cuentaSel.cerrado_en)}</Text> : null}
           {cuentaSel?.mesero_nombre ? (

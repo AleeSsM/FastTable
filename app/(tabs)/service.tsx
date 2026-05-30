@@ -7,6 +7,7 @@ import { ComensalMeseroCard } from '@/components/comensal-mesero-card';
 import { useAuth } from '@/contexts/auth-context';
 import { Comensal } from '@/constants/theme-comensal';
 import { fetchMesaActivaComensal, type MesaActiva } from '@/lib/mesa-activa';
+import { mesaEtiqueta } from '@/lib/mesa-label';
 import { supabase } from '@/lib/supabase';
 
 export default function ServiceScreen() {
@@ -93,7 +94,7 @@ export default function ServiceScreen() {
         {loading ? (
           <ActivityIndicator color={Comensal.accent} />
         ) : mesaActiva ? (
-          <Text style={styles.fixedValue}>Mesa {mesaActiva.codigo}</Text>
+          <Text style={styles.fixedValue}>{mesaEtiqueta(mesaActiva.codigo)}</Text>
         ) : (
           <Text style={styles.metaWarning}>No tienes mesa activa en este momento.</Text>
         )}

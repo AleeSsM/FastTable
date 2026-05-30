@@ -23,6 +23,7 @@ import { REALTIME_MENU_COMENSAL, useSupabaseRealtimeRefresh } from '@/hooks/use-
 import { fetchLineasCuentaComensal } from '@/lib/cuenta-comensal';
 import { mapCocinaRpcErrorComensal } from '@/lib/cocina-errors';
 import { formatPriceFromCents } from '@/lib/format';
+import { mesaEtiqueta } from '@/lib/mesa-label';
 import {
   etiquetaDisponibilidadComensal,
   itemNoPedible,
@@ -191,7 +192,7 @@ export default function MenuScreen() {
         <View style={styles.mesaBanner}>
           <Ionicons name="restaurant" size={18} color={Comensal.success} />
           <Text style={styles.mesaBannerText}>
-            Mesa {mesaActiva.codigo} · puedes pedir a cocina
+            {mesaEtiqueta(mesaActiva.codigo)} · puedes pedir a cocina
           </Text>
         </View>
       ) : (

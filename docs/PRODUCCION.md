@@ -23,7 +23,13 @@ Tras cambiar variables → **Redeploy** en Vercel.
   - `https://fast-table.vercel.app/auth/callback`
   - `fasttable://auth/callback`
 
-## Build local del mismo sitio que Vercel
+## Si el enlace del correo abre solo la landing
+
+1. **Site URL** debe ser `https://fast-table.vercel.app` (no `localhost:3000`).
+2. **Redirect URLs** debe incluir `https://fast-table.vercel.app/auth/callback`.
+3. Tras cambiar URLs en Supabase, pide un **correo nuevo** (enlaces viejos siguen con la URL antigua).
+4. Redeploy en Vercel si cambiaste `EXPO_PUBLIC_APP_URL`.
+
 
 ```bash
 npm run build:host

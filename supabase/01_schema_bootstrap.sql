@@ -2286,7 +2286,7 @@ DELETE FROM public.items_menu WHERE id_categoria IN (
   SELECT id FROM public.categorias_menu WHERE nombre IN ('Entradas', 'Platos fuertes', 'Bebidas', 'Postres')
 );
 DELETE FROM public.categorias_menu WHERE nombre IN ('Entradas', 'Platos fuertes', 'Bebidas', 'Postres');
-DELETE FROM public.mesas WHERE codigo IN ('M1', 'M2', 'M3', 'M4');
+DELETE FROM public.mesas WHERE codigo IN ('M1', 'M2', 'M3', 'M4', '1', '2', '3', '4');
 DELETE FROM public.zonas WHERE nombre IN ('Salón principal', 'Terraza');
 
 INSERT INTO public.zonas (nombre, orden) VALUES
@@ -2294,37 +2294,37 @@ INSERT INTO public.zonas (nombre, orden) VALUES
   ('Terraza', 2);
 
 INSERT INTO public.mesas (codigo, id_zona, capacidad, estado, notas)
-SELECT 'M1', id, 4, 'libre', 'Ventana'
+SELECT '1', id, 4, 'libre', 'Ventana'
 FROM public.zonas WHERE nombre = 'Salón principal' LIMIT 1;
 
 INSERT INTO public.mesas (codigo, id_zona, capacidad, estado, notas)
-SELECT 'M2', id, 4, 'ocupada', NULL
+SELECT '2', id, 4, 'ocupada', NULL
 FROM public.zonas WHERE nombre = 'Salón principal' LIMIT 1;
 
 INSERT INTO public.mesas (codigo, id_zona, capacidad, estado, notas)
-SELECT 'M3', id, 4, 'reservada', NULL
+SELECT '3', id, 4, 'reservada', NULL
 FROM public.zonas WHERE nombre = 'Salón principal' LIMIT 1;
 
 INSERT INTO public.mesas (codigo, id_zona, capacidad, estado, notas)
-SELECT 'M4', id, 4, 'libre', 'Vista jardín'
+SELECT '4', id, 4, 'libre', 'Vista jardín'
 FROM public.zonas WHERE nombre = 'Terraza' LIMIT 1;
 
 UPDATE public.mesas SET
   descripcion_publica = 'Mesa junto a la ventana, ideal para grupos pequeños.',
   imagen_url = 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800'
-WHERE codigo = 'M1';
+WHERE codigo = '1';
 UPDATE public.mesas SET
   descripcion_publica = 'Mesa central en el salón.',
   imagen_url = 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=800'
-WHERE codigo = 'M2';
+WHERE codigo = '2';
 UPDATE public.mesas SET
   descripcion_publica = 'Mesa tranquila, buena para reuniones.',
   imagen_url = 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800'
-WHERE codigo = 'M3';
+WHERE codigo = '3';
 UPDATE public.mesas SET
   descripcion_publica = 'Terraza con vista al jardín.',
   imagen_url = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800'
-WHERE codigo = 'M4';
+WHERE codigo = '4';
 
 INSERT INTO public.categorias_menu (nombre, orden) VALUES
   ('Entradas', 1),

@@ -22,6 +22,7 @@ import {
   type ReservaStaffRow,
 } from '@/lib/worker-reservations-logic';
 import { REALTIME_WORKER_RESERVATIONS, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
+import { mesaEtiqueta } from '@/lib/mesa-label';
 import { supabase } from '@/lib/supabase';
 
 function fmt(d: string) {
@@ -183,7 +184,7 @@ export default function WorkerReservationsScreen() {
       ) : (
         attendOrdered.map((r) => {
           const t = r.mesas;
-          const code = t?.codigo ?? '—';
+          const code = t?.codigo;
           const guest = names[r.id_usuario]?.trim() || 'Cliente';
           const other = t?.id_personal_atendiendo != null && t.id_personal_atendiendo !== staffMember.id;
           const showNoShow = canShowNoShow(r, now);
@@ -194,7 +195,7 @@ export default function WorkerReservationsScreen() {
               <View style={styles.guestRow}>
                 <Avatar uri={fotos[r.id_usuario]} name={guest} size={42} />
                 <Text style={[styles.cardTitle, { flex: 1, marginBottom: 0 }]}>
-                  Mesa {code} · {guest}
+                  {mesaEtiqueta(code)} · {guest}
                 </Text>
               </View>
               <Text style={[styles.badge, isLate ? styles.badgeWarn : styles.badgeInfo]}>
@@ -242,7 +243,7 @@ export default function WorkerReservationsScreen() {
               <Avatar uri={fotos[r.id_usuario]} name={guest} size={40} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.cardTitle}>
-                  Mesa {t?.codigo ?? '—'} · {guest}
+                  {mesaEtiqueta(t?.codigo)} · {guest}
                 </Text>
                 <Text style={styles.line}>
                   {fmt(r.fecha_hora_reserva)} · {r.personas_grupo} pers.

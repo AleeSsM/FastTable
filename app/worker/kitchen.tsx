@@ -23,6 +23,7 @@ import { useSafeSignOut } from '@/hooks/use-safe-sign-out';
 import { FtColors } from '@/constants/fasttable';
 import { REALTIME_KITCHEN, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { mapCocinaRpcError } from '@/lib/cocina-errors';
+import { mesaEtiquetaFromJoin } from '@/lib/mesa-label';
 import { supabase } from '@/lib/supabase';
 
 type PedidoRow = {
@@ -45,12 +46,6 @@ function catNombre(c: ItemDisp['categorias_menu']): string | null {
   if (c == null) return null;
   const z = Array.isArray(c) ? c[0] : c;
   return z?.nombre ?? null;
-}
-
-function mesaCodigo(m: PedidoRow['mesas']): string {
-  if (m == null) return '—';
-  const z = Array.isArray(m) ? m[0] : m;
-  return z?.codigo ?? '—';
 }
 
 function itemNombre(i: PedidoRow['items_menu']): string {
@@ -255,7 +250,7 @@ export default function KitchenScreen() {
           ) : (
             filteredPedidos.map((p) => (
               <View key={p.id} style={[styles.pedidoCard, cardShadow]}>
-                <Text style={styles.pedidoMesa}>Mesa {mesaCodigo(p.mesas)}</Text>
+                <Text style={styles.pedidoMesa}>{mesaEtiquetaFromJoin(p.mesas)}</Text>
                 <Text style={styles.pedidoPlato}>
                   {p.cantidad}× {itemNombre(p.items_menu)}
                 </Text>

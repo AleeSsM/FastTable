@@ -24,6 +24,7 @@ import { REALTIME_WORKER_DASHBOARD, useSupabaseRealtimeRefresh } from '@/hooks/u
 import { fetchCuentaMesaServicio, mapMesaPedidoRpcError } from '@/lib/cuenta-mesa';
 import { mapCocinaRpcError } from '@/lib/cocina-errors';
 import { formatPriceFromCents } from '@/lib/format';
+import { mesaEtiqueta } from '@/lib/mesa-label';
 import {
   etiquetaDisponibilidadComensal,
   itemNoPedible,
@@ -62,7 +63,7 @@ export default function MesaPedidosScreen() {
   const [sending, setSending] = useState(false);
 
   const idMesa = typeof mesaId === 'string' ? mesaId : '';
-  const mesaCodigo = typeof codigo === 'string' && codigo ? codigo : 'Mesa';
+  const mesaLabel = mesaEtiqueta(typeof codigo === 'string' ? codigo : null);
 
   const load = useCallback(async () => {
     if (!idMesa) return;
@@ -97,9 +98,13 @@ export default function MesaPedidosScreen() {
     }, [load]),
   );
 
-  useSupabaseRealtimeRefresh(REALTIME_WORKER_DASHBOARD, () => {
-    void load();
-  });
+  useSupabaseRealtimeRefresh(
+    REALTIME_WORKER_DASHBOARD,
+    () => {
+      void load();
+    },
+    !!idMesa,
+  );
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -166,7 +171,7 @@ export default function MesaPedidosScreen() {
       <ScrollView
         contentContainerStyle={styles.scroll}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} tintColor={FtColors.accent} />}>
-        <Text style={styles.title}>Mesa {mesaCodigo}</Text>
+        <Text style={styles.title}>{mesaLabel}</Text>
         <Text style={styles.sub}>Agrega platos a la cuenta de este servicio. El comensal verá los mismos ítems.</Text>
 
         <View style={[styles.cuentaCard, cardShadow]}>

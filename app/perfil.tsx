@@ -20,6 +20,7 @@ import { BRAND, RADII } from '@/constants/palette';
 import { useAuth } from '@/contexts/auth-context';
 import { useNavigateToWelcomeOnceWhen } from '@/hooks/use-auth-navigation';
 import { pickAndUploadAvatar } from '@/lib/avatar';
+import { COMENSAL_MORE, navigateBackOrReplace } from '@/lib/navigate-back';
 import { notify } from '@/lib/confirm';
 import { supabase } from '@/lib/supabase';
 
@@ -79,8 +80,7 @@ export default function PerfilScreen() {
   }
 
   const goBack = () => {
-    if (router.canGoBack()) router.back();
-    else router.replace(isStaff ? '/worker' : '/');
+    navigateBackOrReplace(router, isStaff ? '/worker' : COMENSAL_MORE);
   };
 
   const onChangePhoto = async () => {
@@ -100,7 +100,6 @@ export default function PerfilScreen() {
       }
       setFotoUrl(url);
       notify('Foto de perfil', 'Tu foto se actualizó.');
-      goBack();
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       notify(
@@ -136,7 +135,6 @@ export default function PerfilScreen() {
         await refreshProfile();
       }
       notify('Perfil', 'Tus cambios se guardaron.');
-      goBack();
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       notify('Perfil', `No se pudo guardar: ${msg}`);

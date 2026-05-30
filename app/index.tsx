@@ -47,10 +47,10 @@ export default function WelcomeScreen() {
           <Text style={styles.cardBody}>
             Crea una cuenta con correo y contraseña, o entra si ya te registraste.
           </Text>
-          <Pressable style={styles.primaryBtn} onPress={() => router.push('/register')}>
+          <Pressable style={styles.primaryBtn} onPress={() => router.replace('/register')}>
             <Text style={styles.primaryBtnText}>Registrarme</Text>
           </Pressable>
-          <Pressable style={styles.secondaryBtn} onPress={() => router.push('/login')}>
+          <Pressable style={styles.secondaryBtn} onPress={() => router.replace('/login')}>
             <Text style={styles.secondaryBtnText}>Iniciar sesión</Text>
           </Pressable>
         </View>

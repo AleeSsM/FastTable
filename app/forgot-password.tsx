@@ -39,8 +39,10 @@ export default function ForgotPasswordScreen() {
       }
       Alert.alert(
         'Revisa tu correo',
-        'Si existe una cuenta con ese correo, te enviamos un enlace para elegir una nueva contraseña. ' +
-          'Abre el enlace en este dispositivo (misma app FastTable).',
+        Platform.OS === 'web'
+          ? 'Si existe una cuenta con ese correo, te enviamos un enlace. Ábrelo en este navegador; te llevará a elegir una contraseña nueva.'
+          : 'Si existe una cuenta con ese correo, te enviamos un enlace para elegir una nueva contraseña. ' +
+              'Si lo abres en el ordenador, usa el navegador (no hace falta la app instalada).',
         [{ text: 'Entendido', onPress: () => router.back() }],
       );
     } finally {

@@ -16,6 +16,7 @@ import { Image } from 'expo-image';
 import { DateTimeField } from '@/components/date-time-field';
 import { Comensal } from '@/constants/theme-comensal';
 import { tableImageUrl } from '@/lib/table-image';
+import { mesaEtiqueta } from '@/lib/mesa-label';
 
 type Props = {
   visible: boolean;
@@ -124,7 +125,7 @@ export function ReservationModal({
               contentFit="cover"
               transition={200}
             />
-            <Text style={styles.kicker}>Mesa {tableCode}</Text>
+            <Text style={styles.kicker}>{mesaEtiqueta(tableCode)}</Text>
             <Text style={styles.title}>Reserva</Text>
             {zoneName != null || capacity != null ? (
               <Text style={styles.metaLine}>

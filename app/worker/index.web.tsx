@@ -6,10 +6,10 @@ import { Avatar } from '@/components/avatar';
 import { StatCard, WebCard, WebCardHead, WebHeader, WebRow, WebScroll, webStyles } from '@/components/web/ui';
 import { FtColors } from '@/constants/fasttable';
 import { useAuth } from '@/contexts/auth-context';
+import { mesaEtiqueta, mesaEtiquetaFromJoin } from '@/lib/mesa-label';
 import {
   fmtFecha,
   formatGuestName,
-  solicitudCodigo,
   useWorkerDashboard,
   type MesaToggle,
   type WaitlistEntry,
@@ -100,7 +100,7 @@ export default function WorkerDashboardWebScreen() {
         {entry.nota ? <Text style={styles.note}>Nota: {entry.nota}</Text> : null}
         <Text style={styles.fieldLabel}>Mesa disponible</Text>
         {chips(
-          freeMesas.map((m) => ({ key: m.id, label: m.codigo })),
+          freeMesas.map((m) => ({ key: m.id, label: mesaEtiqueta(m.codigo) })),
           d.selectedMesaByEntry[entry.id],
           (k) => d.setSelectedMesaByEntry((p) => ({ ...p, [entry.id]: k })),
           'Sin mesas libres.',
@@ -129,7 +129,7 @@ export default function WorkerDashboardWebScreen() {
     const other = m.id_personal_atendiendo != null && m.id_personal_atendiendo !== staffMember.id;
     return (
       <View key={m.id} style={styles.mesaTile}>
-        <Text style={styles.mesaCode}>{m.codigo}</Text>
+        <Text style={styles.mesaCode}>{mesaEtiqueta(m.codigo)}</Text>
         {m.estado === 'reservada' ? (
           <Text style={styles.mesaState}>Reservada</Text>
         ) : m.estado === 'libre' ? (
@@ -186,7 +186,7 @@ export default function WorkerDashboardWebScreen() {
             <Text style={styles.itemName} numberOfLines={1}>
               {displayName}
             </Text>
-            <Text style={styles.itemMeta}>{tieneCuenta ? `Mesa ${m.codigo}` : `Mesa ${m.codigo} · sin cuenta`}</Text>
+            <Text style={styles.itemMeta}>{tieneCuenta ? mesaEtiqueta(m.codigo) : `${mesaEtiqueta(m.codigo)} · sin cuenta`}</Text>
           </View>
           <View style={[styles.pill, m.estado === 'reservada' ? styles.pillInfo : styles.pillOk]}>
             <Text style={[styles.pillText, m.estado === 'reservada' ? styles.pillTextInfo : styles.pillTextOk]}>
@@ -240,7 +240,7 @@ export default function WorkerDashboardWebScreen() {
       ) : (
         d.solicitudes.map((s) => (
           <View key={s.id} style={styles.subCard}>
-            <Text style={styles.itemName}>Mesa {solicitudCodigo(s.mesas)}</Text>
+            <Text style={styles.itemName}>{mesaEtiquetaFromJoin(s.mesas)}</Text>
             <Text style={styles.itemMeta}>{s.mensaje?.trim() || '(Sin mensaje)'}</Text>
             <Pressable style={styles.btnPrimary} onPress={() => d.marcarSolicitudAtendida(s.id)}>
               <Text style={styles.btnPrimaryText}>Marcar como atendida</Text>
@@ -295,7 +295,7 @@ export default function WorkerDashboardWebScreen() {
           <Text style={styles.empty}>Nada pendiente por atender ahora.</Text>
         ) : (
           d.attendOrdered.map((r) => {
-            const code = r.mesas?.codigo ?? '—';
+            const code = r.mesas?.codigo;
             const guest = d.names[r.id_usuario]?.trim() || 'Cliente';
             const other =
               r.mesas?.id_personal_atendiendo != null && r.mesas.id_personal_atendiendo !== staffMember.id;
@@ -306,7 +306,7 @@ export default function WorkerDashboardWebScreen() {
                 <View style={styles.rowHead}>
                   <Avatar uri={d.fotos[r.id_usuario]} name={guest} size={42} />
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.itemName}>Mesa {code} · {guest}</Text>
+                    <Text style={styles.itemName}>{mesaEtiqueta(code)} · {guest}</Text>
                     <Text style={styles.itemMeta}>{fmtFecha(r.fecha_hora_reserva)} · {r.personas_grupo} pers.</Text>
                   </View>
                   <View style={[styles.pill, isLate ? styles.pillWarn : styles.pillInfo]}>
@@ -359,7 +359,7 @@ export default function WorkerDashboardWebScreen() {
               <View key={r.id} style={[styles.rowHead, styles.upcomingRow]}>
                 <Avatar uri={d.fotos[r.id_usuario]} name={guest} size={38} />
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.itemName}>{r.mesas?.codigo ?? '—'} · {guest}</Text>
+                  <Text style={styles.itemName}>{mesaEtiqueta(r.mesas?.codigo)} · {guest}</Text>
                   <Text style={styles.itemMeta}>{fmtFecha(r.fecha_hora_reserva)} · {r.personas_grupo} pers.</Text>
                 </View>
               </View>
@@ -405,7 +405,7 @@ export default function WorkerDashboardWebScreen() {
                   <View style={styles.meseroTagsWrap}>
                     {mesas.map((mesa) => (
                       <View key={mesa.id} style={styles.meseroTag}>
-                        <Text style={styles.meseroTagText}>{mesa.codigo}</Text>
+                        <Text style={styles.meseroTagText}>{mesaEtiqueta(mesa.codigo)}</Text>
                       </View>
                     ))}
                   </View>

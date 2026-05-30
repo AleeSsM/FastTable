@@ -6,6 +6,7 @@ import { REALTIME_WORKER_DASHBOARD, useSupabaseRealtimeRefresh } from '@/hooks/u
 import { confirmDialog, notify } from '@/lib/confirm';
 import { fetchCuentaMesaServicio } from '@/lib/cuenta-mesa';
 import { formatPriceFromCents } from '@/lib/format';
+import { mesaCodigoDisplay, mesaEtiqueta } from '@/lib/mesa-label';
 import { supabase } from '@/lib/supabase';
 import {
   canShowNoShow,
@@ -55,7 +56,7 @@ export function fmtFecha(d: string): string {
 export function solicitudCodigo(m: SolicitudRow['mesas']): string {
   if (m == null) return '—';
   const z = Array.isArray(m) ? m[0] : m;
-  return z?.codigo ?? '—';
+  return mesaCodigoDisplay(z?.codigo);
 }
 
 export function formatGuestName(
@@ -422,7 +423,7 @@ export function useWorkerDashboard() {
         cuenta.total_centavos > 0 ? `\n\nTotal del servicio: ${formatPriceFromCents(cuenta.total_centavos)}` : '';
       const ok = await confirmDialog(
         'Terminar servicio',
-        `¿Seguro que deseas terminar el servicio de la mesa ${mesa.codigo}?${totalLine}`,
+        `¿Seguro que deseas terminar el servicio de ${mesaEtiqueta(mesa.codigo)}?${totalLine}`,
       );
       if (ok) await ejecutarTerminarServicio(mesa.id);
     },
