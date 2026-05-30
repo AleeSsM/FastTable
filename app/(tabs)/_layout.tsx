@@ -1,25 +1,24 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Redirect, Tabs } from 'expo-router';
-import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
+import { Tabs } from 'expo-router';
+import { Platform, StyleSheet } from 'react-native';
 
 import { AuthBoot } from '@/components/auth-boot';
 import { SoloPersonalWeb } from '@/components/solo-personal-web';
 import { useAuth } from '@/contexts/auth-context';
 import { Comensal } from '@/constants/theme-comensal';
+import { useReplaceWhen } from '@/hooks/use-auth-navigation';
 
 export default function GuestTabLayout() {
   const { session, staffMember, loading, signingOut } = useAuth();
 
-  if (loading || signingOut) {
+  const needsHome = !loading && !signingOut && !session;
+  const needsWorker = !loading && !signingOut && !!session && !!staffMember;
+
+  useReplaceWhen(needsHome, '/');
+  useReplaceWhen(needsWorker, '/worker');
+
+  if (loading || signingOut || needsHome || needsWorker) {
     return <AuthBoot />;
-  }
-
-  if (!session) {
-    return <Redirect href="/" />;
-  }
-
-  if (staffMember) {
-    return <Redirect href="/worker" />;
   }
 
   // La versión web es exclusiva para personal; los clientes usan la app móvil.

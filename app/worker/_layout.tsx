@@ -2,11 +2,13 @@ import { Stack } from 'expo-router';
 import { Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { WorkerAuthGate } from '@/components/worker-auth-gate';
 import { FtColors } from '@/constants/fasttable';
 
 export default function WorkerLayout() {
   return (
     <SafeAreaProvider>
+    <WorkerAuthGate>
     <Stack
       screenOptions={{
         headerStyle: { backgroundColor: FtColors.surfaceElevated },
@@ -29,6 +31,7 @@ export default function WorkerLayout() {
       <Stack.Screen name="servicios-cerrados" options={{ title: 'Recibos de servicio' }} />
       <Stack.Screen name="admin" options={{ headerShown: false }} />
     </Stack>
+    </WorkerAuthGate>
     </SafeAreaProvider>
   );
 }

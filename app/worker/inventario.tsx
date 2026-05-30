@@ -318,7 +318,7 @@ export default function InventarioScreen() {
   }
 
   if (!session) {
-    return <Redirect href="/" />;
+    return null;
   }
 
   if (!staffMember) {

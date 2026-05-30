@@ -8,23 +8,25 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Redirect, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 
 import { AuthBoot } from '@/components/auth-boot';
 import { useAuth } from '@/contexts/auth-context';
 import { Comensal } from '@/constants/theme-comensal';
+import { useReplaceWhen } from '@/hooks/use-auth-navigation';
 
 export default function WelcomeScreen() {
   const router = useRouter();
   const { session, user, staffMember, loading, signingOut } = useAuth();
 
-  if (loading || signingOut) {
-    return <AuthBoot />;
-  }
+  const goWorker = !loading && !signingOut && !!session && !!user && !!staffMember;
+  const goTabs = !loading && !signingOut && !!session && !!user && !staffMember;
 
-  if (session && user) {
-    if (staffMember) return <Redirect href="/worker" />;
-    return <Redirect href="/(tabs)" />;
+  useReplaceWhen(goWorker, '/worker');
+  useReplaceWhen(goTabs, '/(tabs)');
+
+  if (loading || signingOut || goWorker || goTabs) {
+    return <AuthBoot />;
   }
 
   return (

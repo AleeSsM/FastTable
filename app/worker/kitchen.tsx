@@ -180,7 +180,7 @@ export default function KitchenScreen() {
   }
 
   if (!session) {
-    return <Redirect href="/" />;
+    return null;
   }
 
   if (!staffMember) {

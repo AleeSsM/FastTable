@@ -48,10 +48,9 @@ export default function WorkerDashboardScreen() {
   const [hostTab, setHostTab] = useState<HostTab>('fila');
   const [waiterTab, setWaiterTab] = useState<WaiterTab>('mesas');
 
-  if (authLoading || signingOut) {
+  if (authLoading || signingOut || !session) {
     return <AuthBoot variant="worker" />;
   }
-  if (!session) return <Redirect href="/" />;
   if (!staffMember) return <Redirect href="/login" />;
   if (staffMember.rol === 'cocina') return <Redirect href="/worker/kitchen" />;
   if (Platform.OS === 'web' && staffMember.rol === 'gerente') return <Redirect href="/worker/gerente" />;

@@ -24,6 +24,10 @@ export function useSafeSignOut(options: Options = {}) {
         await afterSignOutUiSettled();
         await signOut();
 
+        await new Promise<void>((resolve) => {
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+        });
+
         if (typeof router.dismissAll === 'function') {
           router.dismissAll();
         }
@@ -31,7 +35,7 @@ export function useSafeSignOut(options: Options = {}) {
 
         await afterSignOutUiSettled();
       } finally {
-        finishSignOutNavigation();
+        requestAnimationFrame(() => finishSignOutNavigation());
       }
     });
   }, [signOut, finishSignOutNavigation, router, redirectTo, signingOut]);

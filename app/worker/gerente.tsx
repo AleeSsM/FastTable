@@ -290,7 +290,7 @@ export default function GerenteScreen() {
   }
 
   if (!session) {
-    return <Redirect href="/" />;
+    return null;
   }
 
   if (!staffMember) {
