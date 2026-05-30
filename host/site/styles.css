@@ -186,25 +186,30 @@ img {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 9px;
-  border-radius: 14px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   background: #f5f2eb;
   flex-shrink: 0;
+  overflow: hidden;
 }
 .brand__icon-wrap--sm {
-  padding: 7px;
-  border-radius: 12px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
 }
 .brand__logo {
   display: block;
-  width: 48px;
-  height: 48px;
+  width: 32px;
+  height: 32px;
   object-fit: contain;
+  transform: scale(1.5);
 }
 .brand__icon-wrap--sm .brand__logo,
 .brand__icon-wrap--sm img {
-  width: 42px;
-  height: 42px;
+  width: 28px;
+  height: 28px;
+  transform: scale(1.5);
 }
 .brand__mark {
   display: inline-flex;
