@@ -22,10 +22,11 @@ export function formatAuthErrorMessage(message: string): string {
       'termine en .supabase.co (no .com).'
     );
   }
-  if (m.includes('email rate limit') || m.includes('rate limit')) {
+  if (m.includes('email rate limit') || m.includes('rate limit exceeded')) {
     return (
-      'Demasiados intentos con este correo o desde esta red en poco tiempo. ' +
-      'Espera varios minutos, prueba otra red Wi‑Fi o datos móviles, o usa «Recuperar contraseña» si ya tienes cuenta.'
+      'Se alcanzó el límite horario de correos de autenticación del proyecto (registro, confirmación y recuperación comparten la misma cuota en Supabase). ' +
+      'Espera unos minutos o configura SMTP propio en Supabase → Authentication → SMTP. ' +
+      'Si ya tienes cuenta, usa «Iniciar sesión» o «Recuperar contraseña».'
     );
   }
   if (m.includes('user already registered') || m.includes('already been registered')) {

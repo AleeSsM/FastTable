@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -22,13 +22,16 @@ export default function ForgotPasswordScreen() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState(false);
+  const submitLock = useRef(false);
 
   const onSubmit = async () => {
+    if (submitLock.current || busy) return;
     const e = email.trim().toLowerCase();
     if (!e || !e.includes('@')) {
       Alert.alert('Correo', 'Introduce un correo válido.');
       return;
     }
+    submitLock.current = true;
     setBusy(true);
     try {
       const redirectTo = getAuthRedirectUrl();
@@ -46,6 +49,7 @@ export default function ForgotPasswordScreen() {
         [{ text: 'Entendido', onPress: () => router.back() }],
       );
     } finally {
+      submitLock.current = false;
       setBusy(false);
     }
   };

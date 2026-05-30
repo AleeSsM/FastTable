@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -23,6 +23,7 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
+  const submitLock = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -36,11 +37,13 @@ export default function LoginScreen() {
   }, []);
 
   const onSubmit = async () => {
+    if (submitLock.current || busy) return;
     const e = email.trim().toLowerCase();
     if (!e || !password) {
       Alert.alert('Faltan datos', 'Introduce correo y contraseña.');
       return;
     }
+    submitLock.current = true;
     setBusy(true);
     try {
       const { error } = await supabase.auth.signInWithPassword({ email: e, password });
@@ -54,6 +57,7 @@ export default function LoginScreen() {
       const msg = err instanceof Error ? err.message : String(err);
       Alert.alert('Sin conexión', formatAuthErrorMessage(msg));
     } finally {
+      submitLock.current = false;
       setBusy(false);
     }
   };

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -25,8 +25,10 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [busy, setBusy] = useState(false);
+  const submitLock = useRef(false);
 
   const onSubmit = async () => {
+    if (submitLock.current || busy) return;
     const n = name.trim();
     const e = email.trim().toLowerCase();
     if (!n || !e || !password) {
@@ -41,6 +43,7 @@ export default function RegisterScreen() {
       Alert.alert('Contraseña', 'Las contraseñas no coinciden.');
       return;
     }
+    submitLock.current = true;
     setBusy(true);
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -72,6 +75,7 @@ export default function RegisterScreen() {
         [{ text: 'Entendido', onPress: () => router.replace('/') }],
       );
     } finally {
+      submitLock.current = false;
       setBusy(false);
     }
   };
