@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
@@ -98,6 +98,39 @@ const cardShadow =
   Platform.OS === 'ios'
     ? { shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.2, shadowRadius: 8 }
     : { elevation: 4 };
+
+function InventarioModal({
+  visible,
+  busy,
+  onClose,
+  children,
+}: {
+  visible: boolean;
+  busy: boolean;
+  onClose: () => void;
+  children: ReactNode;
+}) {
+  if (Platform.OS === 'web') {
+    return (
+      <Modal visible={visible} animationType="fade" transparent onRequestClose={() => !busy && onClose()}>
+        <View style={styles.modalBackdrop}>
+          <Pressable style={StyleSheet.absoluteFillObject} onPress={() => !busy && onClose()} />
+          <View style={[styles.modalBox, styles.modalBoxAboveBackdrop]}>{children}</View>
+        </View>
+      </Modal>
+    );
+  }
+
+  return (
+    <Modal visible={visible} animationType="fade" transparent onRequestClose={() => !busy && onClose()}>
+      <Pressable style={styles.modalBackdrop} onPress={() => !busy && onClose()}>
+        <View style={styles.modalBox} onStartShouldSetResponder={() => true}>
+          {children}
+        </View>
+      </Pressable>
+    </Modal>
+  );
+}
 
 export default function InventarioScreen() {
   const router = useRouter();
@@ -529,75 +562,67 @@ export default function InventarioScreen() {
         ) : null}
       </ScrollView>
 
-      <Modal visible={entradaOpen} animationType="fade" transparent onRequestClose={() => setEntradaOpen(false)}>
-        <Pressable style={styles.modalBackdrop} onPress={() => !busy && setEntradaOpen(false)}>
-          <View style={styles.modalBox} onStartShouldSetResponder={() => true}>
-            <View style={styles.modalHandle} />
-            <Text style={styles.modalTitle}>Entrada de almacén</Text>
-            {sel ? <Text style={styles.modalSub}>{sel.nombre}</Text> : null}
-            <Text style={styles.modalLabel}>
-              Cantidad a sumar ({sel ? etiquetaCampoCantidad(sel.unidad_medida) : 'unidad'})
-            </Text>
-            <TextInput
-              value={cantStr}
-              onChangeText={setCantStr}
-              keyboardType={sel ? tecladoCantidadInventario(sel.unidad_medida) : 'decimal-pad'}
-              placeholder={sel ? placeholderCantidadInventario(sel.unidad_medida, false) : '0'}
-              placeholderTextColor={FtColors.textMuted}
-              style={styles.input}
-            />
-            <Text style={styles.modalLabel}>Nota (opcional)</Text>
-            <TextInput
-              value={nota}
-              onChangeText={setNota}
-              placeholder="Proveedor, lote…"
-              placeholderTextColor={FtColors.textMuted}
-              style={styles.input}
-            />
-            <Pressable style={[styles.modalOk, busy && styles.modalOkOff]} onPress={submitEntrada} disabled={busy}>
-              <Text style={styles.modalOkText}>{busy ? 'Guardando…' : 'Registrar entrada'}</Text>
-            </Pressable>
-            <Pressable disabled={busy} onPress={() => setEntradaOpen(false)}>
-              <Text style={styles.modalCancel}>Cancelar</Text>
-            </Pressable>
-          </View>
+      <InventarioModal visible={entradaOpen} busy={busy} onClose={() => setEntradaOpen(false)}>
+        <View style={styles.modalHandle} />
+        <Text style={styles.modalTitle}>Entrada de almacén</Text>
+        {sel ? <Text style={styles.modalSub}>{sel.nombre}</Text> : null}
+        <Text style={styles.modalLabel}>
+          Cantidad a sumar ({sel ? etiquetaCampoCantidad(sel.unidad_medida) : 'unidad'})
+        </Text>
+        <TextInput
+          value={cantStr}
+          onChangeText={setCantStr}
+          keyboardType={sel ? tecladoCantidadInventario(sel.unidad_medida) : 'decimal-pad'}
+          placeholder={sel ? placeholderCantidadInventario(sel.unidad_medida, false) : '0'}
+          placeholderTextColor={FtColors.textMuted}
+          style={styles.input}
+        />
+        <Text style={styles.modalLabel}>Nota (opcional)</Text>
+        <TextInput
+          value={nota}
+          onChangeText={setNota}
+          placeholder="Proveedor, lote…"
+          placeholderTextColor={FtColors.textMuted}
+          style={styles.input}
+        />
+        <Pressable style={[styles.modalOk, busy && styles.modalOkOff]} onPress={submitEntrada} disabled={busy}>
+          <Text style={styles.modalOkText}>{busy ? 'Guardando…' : 'Registrar entrada'}</Text>
         </Pressable>
-      </Modal>
+        <Pressable disabled={busy} onPress={() => setEntradaOpen(false)}>
+          <Text style={styles.modalCancel}>Cancelar</Text>
+        </Pressable>
+      </InventarioModal>
 
-      <Modal visible={ajusteOpen} animationType="fade" transparent onRequestClose={() => setAjusteOpen(false)}>
-        <Pressable style={styles.modalBackdrop} onPress={() => !busy && setAjusteOpen(false)}>
-          <View style={styles.modalBox} onStartShouldSetResponder={() => true}>
-            <View style={styles.modalHandle} />
-            <Text style={styles.modalTitle}>Ajuste de inventario</Text>
-            {sel ? <Text style={styles.modalSub}>{sel.nombre}</Text> : null}
-            <Text style={styles.modalLabel}>
-              Cantidad total en almacén ({sel ? etiquetaCampoCantidad(sel.unidad_medida) : 'unidad'})
-            </Text>
-            <TextInput
-              value={cantStr}
-              onChangeText={setCantStr}
-              keyboardType={sel ? tecladoCantidadInventario(sel.unidad_medida) : 'decimal-pad'}
-              placeholder={sel ? placeholderCantidadInventario(sel.unidad_medida, true) : '0'}
-              placeholderTextColor={FtColors.textMuted}
-              style={styles.input}
-            />
-            <Text style={styles.modalLabel}>Nota (opcional)</Text>
-            <TextInput
-              value={nota}
-              onChangeText={setNota}
-              placeholder="Conteo físico…"
-              placeholderTextColor={FtColors.textMuted}
-              style={styles.input}
-            />
-            <Pressable style={[styles.modalOk, busy && styles.modalOkOff]} onPress={submitAjuste} disabled={busy}>
-              <Text style={styles.modalOkText}>{busy ? 'Guardando…' : 'Guardar ajuste'}</Text>
-            </Pressable>
-            <Pressable disabled={busy} onPress={() => setAjusteOpen(false)}>
-              <Text style={styles.modalCancel}>Cancelar</Text>
-            </Pressable>
-          </View>
+      <InventarioModal visible={ajusteOpen} busy={busy} onClose={() => setAjusteOpen(false)}>
+        <View style={styles.modalHandle} />
+        <Text style={styles.modalTitle}>Ajuste de inventario</Text>
+        {sel ? <Text style={styles.modalSub}>{sel.nombre}</Text> : null}
+        <Text style={styles.modalLabel}>
+          Cantidad total en almacén ({sel ? etiquetaCampoCantidad(sel.unidad_medida) : 'unidad'})
+        </Text>
+        <TextInput
+          value={cantStr}
+          onChangeText={setCantStr}
+          keyboardType={sel ? tecladoCantidadInventario(sel.unidad_medida) : 'decimal-pad'}
+          placeholder={sel ? placeholderCantidadInventario(sel.unidad_medida, true) : '0'}
+          placeholderTextColor={FtColors.textMuted}
+          style={styles.input}
+        />
+        <Text style={styles.modalLabel}>Nota (opcional)</Text>
+        <TextInput
+          value={nota}
+          onChangeText={setNota}
+          placeholder="Conteo físico…"
+          placeholderTextColor={FtColors.textMuted}
+          style={styles.input}
+        />
+        <Pressable style={[styles.modalOk, busy && styles.modalOkOff]} onPress={submitAjuste} disabled={busy}>
+          <Text style={styles.modalOkText}>{busy ? 'Guardando…' : 'Guardar ajuste'}</Text>
         </Pressable>
-      </Modal>
+        <Pressable disabled={busy} onPress={() => setAjusteOpen(false)}>
+          <Text style={styles.modalCancel}>Cancelar</Text>
+        </Pressable>
+      </InventarioModal>
     </SafeAreaView>
   );
 }
@@ -796,6 +821,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: FtColors.border,
   },
+  modalBoxAboveBackdrop: { zIndex: 1 },
   modalHandle: {
     width: 40,
     height: 4,

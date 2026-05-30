@@ -495,10 +495,18 @@ export function useWorkerDashboard() {
             .maybeSingle();
           if (filaError) {
             notify('Asignación', mapStaffRpcError(filaError.message));
+            await supabase
+              .from('mesas')
+              .update({ estado: 'libre', id_personal_atendiendo: null })
+              .eq('id', mesaId);
             return;
           }
           if (!filaUpdated) {
             notify('Asignación', 'Ese comensal ya no está en espera.');
+            await supabase
+              .from('mesas')
+              .update({ estado: 'libre', id_personal_atendiendo: null })
+              .eq('id', mesaId);
             return;
           }
         }

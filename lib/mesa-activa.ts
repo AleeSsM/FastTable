@@ -44,25 +44,27 @@ export async function fetchMesaActivaComensal(userId: string): Promise<MesaActiv
     .limit(1)
     .maybeSingle();
 
-  if (error || !data) return null;
+  if (error) return null;
 
-  const m = data.mesas as { id: string; codigo: string } | { id: string; codigo: string }[] | null;
-  const mesa = Array.isArray(m) ? m[0] : m;
-  if (!mesa?.id) return null;
+  if (data) {
+    const m = data.mesas as { id: string; codigo: string } | { id: string; codigo: string }[] | null;
+    const mesa = Array.isArray(m) ? m[0] : m;
+    if (mesa?.id) {
+      const { data: row, error: e2 } = await supabase
+        .from('mesas')
+        .select('id, codigo, estado')
+        .eq('id', mesa.id)
+        .maybeSingle();
 
-  const { data: row, error: e2 } = await supabase
-    .from('mesas')
-    .select('id, codigo, estado')
-    .eq('id', mesa.id)
-    .maybeSingle();
-
-  if (!e2 && row && row.estado === 'ocupada') {
-    return {
-      id_mesa: row.id,
-      codigo: row.codigo,
-      id_reserva_mesa: data.id as string,
-      id_fila_espera: null,
-    };
+      if (!e2 && row && row.estado === 'ocupada') {
+        return {
+          id_mesa: row.id,
+          codigo: row.codigo,
+          id_reserva_mesa: data.id as string,
+          id_fila_espera: null,
+        };
+      }
+    }
   }
 
   const { data: fromQueue, error: qErr } = await supabase
