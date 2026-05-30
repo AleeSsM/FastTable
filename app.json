@@ -14,7 +14,6 @@
     },
     "android": {
       "package": "com.alacarta.app",
-      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#121b2e",
         "foregroundImage": "./assets/images/android-icon-foreground.png",

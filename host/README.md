@@ -149,9 +149,15 @@ Package Android fijo: `com.alacarta.app` (en `app.json`). El slug de Expo sigue 
 
 ### Generar APK
 
+**Primera vez:** EAS debe crear el keystore de Android (solo una vez). Ejecuta en terminal **sin** `--non-interactive` y acepta que Expo genere las credenciales:
+
 ```bash
 npm run build:apk
 ```
+
+Cuando te pregunte por el keystore, elige **Let Expo handle it** (recomendado). EAS lo guarda en la nube; no lo pierdas.
+
+Builds siguientes (o CI) pueden usar `npm run build:apk:ci`.
 
 1. Descarga el APK desde el dashboard de Expo.
 2. Colócalo en `host/site/apk/alacarta.apk`.

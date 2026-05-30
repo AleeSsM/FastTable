@@ -12,8 +12,10 @@
     "lint": "expo lint",
     "sync:palette": "node scripts/sync-palette-css.mjs",
     "eas": "eas",
-    "build:apk": "eas build --platform android --profile preview --non-interactive",
-    "build:android:production": "eas build --platform android --profile production --non-interactive",
+    "build:apk": "eas build --platform android --profile preview",
+    "build:apk:ci": "eas build --platform android --profile preview --non-interactive",
+    "build:android:production": "eas build --platform android --profile production",
+    "build:android:production:ci": "eas build --platform android --profile production --non-interactive",
     "staff:console": "node scripts/ft-staff-console.mjs"
   },
   "dependencies": {
