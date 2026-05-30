@@ -182,23 +182,29 @@ img {
   align-items: center;
   gap: 10px;
 }
+.brand__icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 12px;
+  background: #f5f2eb;
+  flex-shrink: 0;
+}
+.brand__icon-wrap--sm {
+  padding: 5px;
+  border-radius: 10px;
+}
 .brand__logo {
   display: block;
-  height: auto;
+  width: 32px;
+  height: 32px;
   object-fit: contain;
 }
-.brand__logo--wordmark {
-  width: auto;
-  max-height: 38px;
-  border-radius: 10px;
-  background: #f5f2eb;
-  padding: 4px 10px;
-}
-.brand__logo--icon {
-  display: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+.brand__icon-wrap--sm .brand__logo,
+.brand__icon-wrap--sm img {
+  width: 28px;
+  height: 28px;
 }
 .brand__mark {
   display: inline-flex;
@@ -235,20 +241,6 @@ img {
 }
 .nav__links a:hover::after {
   width: 100%;
-}
-.nav__links .nav__staff {
-  color: var(--accent);
-}
-.nav__cta--staff {
-  display: none;
-}
-@media (min-width: 900px) {
-  .nav__cta--staff {
-    display: inline-flex;
-  }
-  .nav__links .nav__staff {
-    display: none;
-  }
 }
 .nav__burger {
   display: none;
@@ -328,6 +320,11 @@ img {
   display: flex;
   gap: 14px;
   flex-wrap: wrap;
+}
+.hero__cta .btn--accent {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 15px;
 }
 .hero__stats {
   display: flex;
@@ -820,14 +817,18 @@ img {
   font-size: 14px;
   margin: 10px 0 0;
 }
-.footer__logo {
-  display: block;
-  width: auto;
-  max-height: 34px;
-  opacity: 0.95;
-  border-radius: 8px;
-  background: #f5f2eb;
-  padding: 4px 10px;
+.footer__brand-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.footer__staff {
+  display: flex;
+  justify-content: center;
+  padding: 0 24px 36px;
+  border-top: 1px solid var(--border-subtle);
+  margin-top: 8px;
+  padding-top: 28px;
 }
 .footer__cols {
   display: grid;
@@ -912,12 +913,6 @@ img {
 }
 
 @media (max-width: 640px) {
-  .brand__logo--wordmark {
-    display: none;
-  }
-  .brand__logo--icon {
-    display: block;
-  }
   .nav__links,
   .nav__cta {
     display: none;

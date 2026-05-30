@@ -9,7 +9,7 @@
     />
     <title>FastTable · Tu restaurante, en una sola app</title>
     <link rel="icon" href="/assets/favicon.png" type="image/png" />
-    <link rel="apple-touch-icon" href="/assets/logo-icon.png" />
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -27,21 +27,10 @@
     <header class="nav" id="nav">
       <div class="container nav__inner">
         <a href="#hero" class="brand" aria-label="FastTable inicio">
-          <img
-            src="/assets/logo-wordmark.png"
-            alt="FastTable"
-            class="brand__logo brand__logo--wordmark"
-            width="200"
-            height="40"
-          />
-          <img
-            src="/assets/logo-icon.png"
-            alt=""
-            class="brand__logo brand__logo--icon"
-            width="36"
-            height="36"
-            aria-hidden="true"
-          />
+          <span class="brand__icon-wrap">
+            <img src="/assets/logo-icon.png" alt="" class="brand__logo" width="32" height="32" />
+          </span>
+          <span class="brand__name">FastTable</span>
         </a>
 
         <nav class="nav__links" aria-label="Secciones">
@@ -49,10 +38,8 @@
           <a href="#roles">Roles</a>
           <a href="#how">Cómo funciona</a>
           <a href="#download">Descargar</a>
-          <a href="/app/" class="nav__staff">Personal (web)</a>
         </nav>
 
-        <a href="/app/" class="btn btn--ghost btn--sm nav__cta nav__cta--staff">Acceso personal</a>
         <a href="#download" class="btn btn--accent btn--sm nav__cta">Descargar</a>
 
         <button class="nav__burger" id="burger" aria-label="Abrir menú" aria-expanded="false">
@@ -80,7 +67,6 @@
             </p>
 
             <div class="hero__cta">
-              <a href="/app/" class="btn btn--ghost btn--lg">Portal personal (web)</a>
               <a href="#download" class="btn btn--accent btn--lg">
                 <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
                   <path
@@ -94,7 +80,6 @@
                 </svg>
                 Descargar gratis
               </a>
-              <a href="#how" class="btn btn--ghost btn--lg">Ver cómo funciona</a>
             </div>
 
             <div class="hero__stats">
@@ -404,13 +389,12 @@
     <footer class="footer">
       <div class="container footer__inner">
         <div class="footer__brand">
-          <img
-            src="/assets/logo-wordmark.png"
-            alt="FastTable"
-            class="footer__logo"
-            width="180"
-            height="36"
-          />
+          <div class="footer__brand-row">
+            <span class="brand__icon-wrap brand__icon-wrap--sm">
+              <img src="/assets/logo-icon.png" alt="" width="28" height="28" />
+            </span>
+            <span class="brand__name">FastTable</span>
+          </div>
           <p>Reservas · menú · cocina · sala · gerencia.</p>
         </div>
         <div class="footer__cols">
@@ -435,6 +419,9 @@
             <a href="https://github.com/AleeSsM/FastTable" target="_blank" rel="noopener">GitHub</a>
           </div>
         </div>
+      </div>
+      <div class="container footer__staff">
+        <a href="/app/" class="btn btn--ghost">Acceso personal (web)</a>
       </div>
       <div class="container footer__bottom">
         <span>© <span id="year"></span> FastTable. Proyecto IPN.</span>
