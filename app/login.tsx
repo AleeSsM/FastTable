@@ -141,5 +141,5 @@ const styles = StyleSheet.create({
   secondaryLink: { marginTop: 16, alignItems: 'center' },
   secondaryLinkText: { fontSize: 15, color: Comensal.textMuted, textDecorationLine: 'underline' },
   backLink: { marginTop: 20, alignItems: 'center' },
-  backLinkText: { fontSize: 15, color: Comensal.accent },
+  backLinkText: { fontSize: 15, color: Comensal.accentText },
 });

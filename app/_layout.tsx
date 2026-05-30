@@ -7,12 +7,12 @@ import { DeepLinkBridge } from '@/components/deep-link-bridge';
 import { AuthProvider } from '@/contexts/auth-context';
 import { Comensal } from '@/constants/theme-comensal';
 
-/** Navegación raíz: comensal e invitado (bronce / azul carbón). El stack `worker` redefine estilos propios. */
+/** Navegación raíz: comensal e invitado. El stack `worker` redefine estilos propios. */
 const RootNavigationTheme = {
   ...DarkTheme,
   colors: {
     ...DarkTheme.colors,
-    primary: Comensal.accent,
+    primary: Comensal.accentText,
     background: Comensal.background,
     card: Comensal.surfaceElevated,
     text: Comensal.text,
@@ -49,7 +49,7 @@ export default function RootLayout() {
               headerBackTitle: 'Atrás',
               headerStyle: { backgroundColor: Comensal.surface },
               headerTitleStyle: { color: Comensal.text, fontWeight: '700' },
-              headerTintColor: Comensal.accent,
+              headerTintColor: Comensal.accentText,
             }}
           />
           <Stack.Screen name="perfil" options={{ headerShown: false }} />

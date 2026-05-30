@@ -20,7 +20,7 @@ import * as Haptics from 'expo-haptics';
 import { AuthBoot } from '@/components/auth-boot';
 import { useAuth } from '@/contexts/auth-context';
 import { useSafeSignOut } from '@/hooks/use-safe-sign-out';
-import { FtColors } from '@/constants/fasttable';
+import { FtColors, FtSurfaces } from '@/constants/fasttable';
 import { REALTIME_KITCHEN, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { mapCocinaRpcError } from '@/lib/cocina-errors';
 import { mesaEtiquetaFromJoin } from '@/lib/mesa-label';
@@ -333,7 +333,7 @@ export default function KitchenScreen() {
                     value={it.disponible}
                     onValueChange={(v) => onToggleDisponible(it, v)}
                     disabled={toggleBusy === it.id}
-                    trackColor={{ false: FtColors.border, true: 'rgba(125,206,160,0.45)' }}
+                    trackColor={{ false: FtColors.border, true: FtSurfaces.successSwitch }}
                     thumbColor={it.disponible ? FtColors.success : FtColors.textMuted}
                   />
                 </View>
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
   kpiLabel: { fontSize: 12, color: FtColors.textMuted, marginTop: 4, fontWeight: '700' },
   hero: { marginBottom: 18 },
   backRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 12 },
-  backText: { fontSize: 15, color: FtColors.accent, fontWeight: '600' },
+  backText: { fontSize: 15, color: FtColors.accentText, fontWeight: '600' },
   heroEyebrow: { fontSize: 12, fontWeight: '600', color: FtColors.accentMuted, letterSpacing: 1.2, textTransform: 'uppercase' },
   heroTitle: { fontSize: 26, fontWeight: '800', color: FtColors.text, marginTop: 4 },
   heroSub: { fontSize: 14, color: FtColors.textMuted, marginTop: 6, lineHeight: 20 },
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
   },
   filterChipOn: { borderColor: FtColors.accent, backgroundColor: FtColors.surfaceElevated },
   filterChipText: { fontSize: 12, color: FtColors.textMuted, fontWeight: '600' },
-  filterChipTextOn: { color: FtColors.accent, fontWeight: '700' },
+  filterChipTextOn: { color: FtColors.accentText, fontWeight: '700' },
   empty: { fontSize: 14, color: FtColors.textMuted },
   pedidoCard: {
     padding: 16,
@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
   dispCat: { fontSize: 12, color: FtColors.textMuted, marginTop: 2 },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.72)',
+    backgroundColor: FtSurfaces.overlayStrong,
     justifyContent: 'flex-end',
   },
   modalSheet: {
@@ -492,7 +492,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 4,
   },
-  perfilLinkText: { flex: 1, fontSize: 15, color: FtColors.accent, fontWeight: '600' },
+  perfilLinkText: { flex: 1, fontSize: 15, color: FtColors.accentText, fontWeight: '600' },
   signOut: { paddingVertical: 16, alignItems: 'center' },
   signOutText: { fontSize: 15, color: FtColors.textFaint, textDecorationLine: 'underline' },
 });

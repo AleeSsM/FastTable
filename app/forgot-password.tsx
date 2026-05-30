@@ -129,5 +129,5 @@ const styles = StyleSheet.create({
   primaryBtnDisabled: { opacity: 0.7 },
   primaryBtnText: { color: Comensal.onAccent, fontSize: 16, fontWeight: '800', letterSpacing: 0.2 },
   backLink: { marginTop: 20, alignItems: 'center' },
-  backLinkText: { fontSize: 15, color: Comensal.accent },
+  backLinkText: { fontSize: 15, color: Comensal.accentText },
 });

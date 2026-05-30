@@ -1,43 +1,8 @@
 /* ============================================================================
-   FastTable landing — Tokens
-   👉 Para hacer "reskin", cambia SOLO el bloque BRAND de abajo.
-   Mantén el hex y su versión -rgb sincronizados (los -rgb se usan para
-   transparencias: glows, badges, banners).
+   FastTable landing — estilos (tokens en brand.css)
+   👉 Reskin: edita constants/palette.ts y ejecuta npm run sync:palette
    ============================================================================ */
-:root {
-  /* -------- BRAND (edita aquí) -------- */
-  --bg: #06080f;
-  --surface: #0f1524;
-  --surface-elevated: #161f34;
-  --text: #f4f7ff;
-  --text-muted: #a4afc4;
-  --text-faint: #6d7890;
-  --border: #2a3b61;
-  --border-subtle: #1b2944;
-  --accent: #7c8cff;
-  --accent-muted: #5f6ece;
-  --on-accent: #f5f7ff;
-  --success: #63c8a4;
-  --warning: #f0bd73;
-  --danger: #e47f9e;
-
-  /* Versiones RGB (deben coincidir con los hex de arriba) */
-  --accent-rgb: 124, 140, 255;
-  --accent-muted-rgb: 95, 110, 206;
-  --success-rgb: 99, 200, 164;
-  --warning-rgb: 240, 189, 115;
-  --surface-rgb: 15, 21, 36;
-  --shadow-rgb: 4, 7, 14;
-
-  /* -------- Derivados (no hace falta tocar) -------- */
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 22px;
-  --radius-pill: 999px;
-  --maxw: 1180px;
-  --shadow: 0 24px 60px -20px rgba(var(--shadow-rgb), 0.9);
-  --glow: rgba(var(--accent-rgb), 0.22);
-}
+@import url('./brand.css');
 
 /* ===================== Reset ===================== */
 *,
@@ -162,14 +127,14 @@ img {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(6, 8, 15, 0.6);
+  background: var(--nav-glass, rgba(var(--shadow-rgb), 0.6));
   backdrop-filter: blur(14px);
   border-bottom: 1px solid transparent;
   transition: border-color 0.3s ease, background 0.3s ease;
 }
 .nav.is-scrolled {
   border-bottom-color: var(--border-subtle);
-  background: rgba(6, 8, 15, 0.85);
+  background: rgba(var(--shadow-rgb), 0.85);
 }
 .nav__inner {
   display: flex;
@@ -189,7 +154,7 @@ img {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: #f5f2eb;
+  background: var(--logo-backdrop);
   flex-shrink: 0;
   overflow: hidden;
 }
@@ -310,7 +275,7 @@ img {
   font-weight: 900;
 }
 .grad-text {
-  background: linear-gradient(120deg, var(--accent), #b3bcff 60%, var(--accent-muted));
+  background: linear-gradient(120deg, var(--accent), var(--accent-muted));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -362,7 +327,7 @@ img {
   position: relative;
   width: 300px;
   height: 610px;
-  background: linear-gradient(160deg, #1a2238, #0c1120);
+  background: linear-gradient(160deg, var(--surface-elevated), var(--bg));
   border: 1px solid var(--border);
   border-radius: 44px;
   padding: 14px;
@@ -387,13 +352,13 @@ img {
   transform: translateX(-50%);
   width: 130px;
   height: 26px;
-  background: #05070d;
+  background: var(--bg);
   border-radius: 0 0 16px 16px;
   z-index: 3;
 }
 .phone__screen {
   height: 100%;
-  background: linear-gradient(180deg, #0a0f1c, #06080f);
+  background: linear-gradient(180deg, var(--surface), var(--bg));
   border-radius: 32px;
   padding: 40px 16px 18px;
   display: flex;
@@ -441,13 +406,13 @@ img {
   height: 40px;
   border-radius: 9px;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #7c8cff, #5f6ece);
+  background: linear-gradient(135deg, var(--accent), var(--accent-muted));
 }
 .thumb--b {
-  background: linear-gradient(135deg, #63c8a4, #3f9e88);
+  background: linear-gradient(135deg, var(--success), color-mix(in srgb, var(--success) 65%, var(--bg)));
 }
 .thumb--c {
-  background: linear-gradient(135deg, #f0bd73, #d99a52);
+  background: linear-gradient(135deg, var(--warning), color-mix(in srgb, var(--warning) 60%, var(--bg)));
 }
 .screen-row__body {
   flex: 1;
@@ -464,7 +429,7 @@ img {
 .price {
   font-size: 13px;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--accent-text);
 }
 .screen-total {
   display: flex;
@@ -550,7 +515,7 @@ img {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   margin-bottom: 14px;
 }
 .section__title {
@@ -616,7 +581,7 @@ img {
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   background: rgba(var(--accent-rgb), 0.12);
   border-radius: var(--radius-pill);
   padding: 5px 12px;
@@ -752,7 +717,7 @@ img {
   color: var(--text-faint);
 }
 .download__note.is-flash {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 
 /* QR */
@@ -776,7 +741,7 @@ img {
   height: 100%;
   border-radius: 8px;
   background-image: repeating-conic-gradient(
-    #06080f 0 25%,
+    var(--bg) 0 25%,
     transparent 0 50%
   );
   background-size: 18px 18px;
@@ -792,7 +757,7 @@ img {
   height: 44px;
   display: grid;
   place-items: center;
-  background: #f5f2eb;
+  background: var(--logo-backdrop);
   border-radius: 11px;
   border: 3px solid var(--text);
   overflow: hidden;
@@ -853,7 +818,7 @@ img {
   transition: color 0.2s ease;
 }
 .footer__cols a:hover {
-  color: var(--accent);
+  color: var(--accent-text);
 }
 .footer__bottom {
   display: flex;
@@ -934,7 +899,7 @@ img {
     flex-direction: column;
     gap: 4px;
     padding: 16px 24px 22px;
-    background: rgba(6, 8, 15, 0.97);
+    background: rgba(var(--shadow-rgb), 0.97);
     border-bottom: 1px solid var(--border-subtle);
   }
   .nav.is-menu-open .nav__links a {

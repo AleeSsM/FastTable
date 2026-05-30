@@ -18,7 +18,7 @@ import { Redirect, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useAuth } from '@/contexts/auth-context';
-import { FtColors } from '@/constants/fasttable';
+import { FtColors, FtSurfaces } from '@/constants/fasttable';
 import { REALTIME_WORKER_DASHBOARD, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { fetchCuentaMesaServicio, mapMesaPedidoRpcError } from '@/lib/cuenta-mesa';
 import { mapCocinaRpcError } from '@/lib/cocina-errors';
@@ -294,10 +294,10 @@ const styles = StyleSheet.create({
   cuentaRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 8, gap: 8 },
   cuentaLine: { fontSize: 14, color: FtColors.text },
   cuentaTag: { fontSize: 11, color: FtColors.textMuted, marginTop: 2 },
-  cuentaSub: { fontSize: 14, fontWeight: '600', color: FtColors.accent },
+  cuentaSub: { fontSize: 14, fontWeight: '600', color: FtColors.accentText },
   cuentaTotalRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: FtColors.border },
   cuentaTotalLabel: { fontSize: 15, fontWeight: '700', color: FtColors.text },
-  cuentaTotal: { fontSize: 18, fontWeight: '800', color: FtColors.accent },
+  cuentaTotal: { fontSize: 18, fontWeight: '800', color: FtColors.accentText },
   cuentaEmpty: { fontSize: 14, color: FtColors.textMuted, fontStyle: 'italic' },
   section: { marginBottom: 20 },
   catName: { fontSize: 17, fontWeight: '700', color: FtColors.text, marginBottom: 10 },
@@ -314,9 +314,9 @@ const styles = StyleSheet.create({
   itemImg: { width: 56, height: 56, borderRadius: 8 },
   itemBody: { flex: 1 },
   itemName: { fontSize: 15, fontWeight: '600', color: FtColors.text },
-  itemPrice: { fontSize: 13, color: FtColors.accent, marginTop: 2 },
+  itemPrice: { fontSize: 13, color: FtColors.accentText, marginTop: 2 },
   itemBadge: { fontSize: 11, color: FtColors.textMuted, marginTop: 2 },
-  modalBackdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.5)' },
+  modalBackdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: FtSurfaces.overlay },
   modalSheet: { backgroundColor: FtColors.surfaceElevated, borderTopLeftRadius: 16, borderTopRightRadius: 16, padding: 20 },
   modalTitle: { fontSize: 18, fontWeight: '700', color: FtColors.text, marginBottom: 16 },
   qtyRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 20, marginBottom: 16 },
@@ -343,5 +343,5 @@ const styles = StyleSheet.create({
   btnGhost: { marginTop: 10, alignItems: 'center', padding: 10 },
   btnGhostText: { color: FtColors.textMuted, fontSize: 15 },
   err: { color: FtColors.text, padding: 16 },
-  link: { color: FtColors.accent, padding: 16, fontWeight: '600' },
+  link: { color: FtColors.accentText, padding: 16, fontWeight: '600' },
 });

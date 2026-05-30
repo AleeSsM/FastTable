@@ -39,8 +39,8 @@ export default function GuestTabLayout() {
           letterSpacing: 0.35,
         },
         headerShadowVisible: false,
-        headerTintColor: Comensal.accent,
-        tabBarActiveTintColor: Comensal.accent,
+        headerTintColor: Comensal.accentText,
+        tabBarActiveTintColor: Comensal.accentText,
         tabBarInactiveTintColor: Comensal.textFaint,
         tabBarStyle: {
           backgroundColor: Comensal.surfaceElevated,

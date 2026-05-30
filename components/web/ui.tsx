@@ -73,7 +73,7 @@ export function WebCardHead({
 }) {
   return (
     <View style={styles.cardHead}>
-      <Ionicons name={icon} size={20} color={color ?? FtColors.accent} />
+      <Ionicons name={icon} size={20} color={color ?? FtColors.accentText} />
       <Text style={styles.cardTitle}>{title}</Text>
       {right ? <View>{right}</View> : null}
     </View>

@@ -18,6 +18,7 @@ import { AuthBoot } from '@/components/auth-boot';
 
 import { Avatar } from '@/components/avatar';
 import { adminCardShadow, adminStyles } from '@/constants/worker-admin-styles';
+import { BRAND } from '@/constants/palette';
 import { FtColors } from '@/constants/fasttable';
 import { useAuth } from '@/contexts/auth-context';
 import { REALTIME_ADMIN, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
@@ -40,10 +41,10 @@ type PersonalRow = {
 const ROLES: readonly WorkerRol[] = ['anfitrion', 'mesero', 'cocina', 'gerente'] as const;
 
 const rolTagColor: Record<WorkerRol, string> = {
-  gerente: FtColors.accent,
-  anfitrion: '#38bdf8',
-  mesero: '#a78bfa',
-  cocina: '#fb923c',
+  gerente: BRAND.accent,
+  anfitrion: BRAND.accentText,
+  mesero: BRAND.accentMuted,
+  cocina: BRAND.warning,
 };
 
 export default function AdminPersonalScreen() {
@@ -408,7 +409,7 @@ const styles = StyleSheet.create({
   selfBadge: {
     fontSize: 11,
     fontWeight: '700',
-    color: FtColors.accent,
+    color: FtColors.accentText,
     backgroundColor: `${FtColors.accent}22`,
     paddingHorizontal: 8,
     paddingVertical: 2,

@@ -19,6 +19,7 @@ import { ComensalGreetingLine } from '@/components/comensal-greeting-line';
 import { ComensalMeseroCard } from '@/components/comensal-mesero-card';
 import { useAuth } from '@/contexts/auth-context';
 import { Comensal } from '@/constants/theme-comensal';
+import { SemanticSurfaces } from '@/constants/semantic-surfaces';
 import { REALTIME_MENU_COMENSAL, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { fetchLineasCuentaComensal } from '@/lib/cuenta-comensal';
 import { mapCocinaRpcErrorComensal } from '@/lib/cocina-errors';
@@ -390,7 +391,7 @@ const styles = StyleSheet.create({
     borderBottomColor: Comensal.borderSubtle,
   },
   cuentaLine: { flex: 1, fontSize: 14, color: Comensal.text, lineHeight: 20 },
-  cuentaSub: { fontSize: 14, fontWeight: '600', color: Comensal.accent },
+  cuentaSub: { fontSize: 14, fontWeight: '600', color: Comensal.accentText },
   cuentaTotalRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -399,7 +400,7 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
   cuentaTotalLabel: { fontSize: 15, fontWeight: '700', color: Comensal.text },
-  cuentaTotal: { fontSize: 18, fontWeight: '800', color: Comensal.accent },
+  cuentaTotal: { fontSize: 18, fontWeight: '800', color: Comensal.accentText },
   cuentaEmpty: { fontSize: 14, color: Comensal.textMuted, fontStyle: 'italic' },
   finishBtn: {
     marginTop: 14,
@@ -436,10 +437,10 @@ const styles = StyleSheet.create({
   itemName: { fontSize: 16, fontWeight: '700', color: Comensal.text },
   itemDesc: { fontSize: 13, color: Comensal.textMuted, marginTop: 2 },
   unavailable: { fontSize: 12, color: Comensal.warning, marginTop: 4 },
-  price: { fontSize: 16, fontWeight: '700', color: Comensal.accent },
+  price: { fontSize: 16, fontWeight: '700', color: Comensal.accentText },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.75)',
+    backgroundColor: SemanticSurfaces.overlayModal,
     justifyContent: 'flex-end',
   },
   modalSheet: {
@@ -454,7 +455,7 @@ const styles = StyleSheet.create({
   modalImg: { width: '100%', height: 200, borderRadius: 14, marginBottom: 14, backgroundColor: Comensal.surface },
   modalTitle: { fontSize: 24, fontWeight: '800', color: Comensal.text },
   modalDesc: { fontSize: 14, color: Comensal.textMuted, marginTop: 8, lineHeight: 21 },
-  modalPrice: { fontSize: 16, fontWeight: '700', color: Comensal.accent, marginTop: 10 },
+  modalPrice: { fontSize: 16, fontWeight: '700', color: Comensal.accentText, marginTop: 10 },
   label: { fontSize: 12, fontWeight: '700', color: Comensal.textFaint, marginTop: 16, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.6 },
   qtyRow: { flexDirection: 'row', alignItems: 'center', gap: 16 },
   qtyBtn: {

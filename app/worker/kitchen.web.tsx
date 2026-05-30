@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 
 import { StatCard, WebCard, WebCardHead, WebHeader, WebRow, WebScroll, webStyles } from '@/components/web/ui';
-import { FtColors } from '@/constants/fasttable';
+import { FtColors, FtSurfaces } from '@/constants/fasttable';
 import { useAuth } from '@/contexts/auth-context';
 import { REALTIME_KITCHEN, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { mapCocinaRpcError } from '@/lib/cocina-errors';
@@ -274,7 +274,7 @@ export default function KitchenWebScreen() {
               value={it.disponible}
               onValueChange={(v) => onToggleDisponible(it, v)}
               disabled={toggleBusy === it.id}
-              trackColor={{ false: FtColors.border, true: 'rgba(125,206,160,0.5)' }}
+              trackColor={{ false: FtColors.border, true: FtSurfaces.successSwitch }}
               thumbColor={it.disponible ? FtColors.success : FtColors.textMuted}
             />
           </View>
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
   },
   filterChipOn: { borderColor: FtColors.accent, backgroundColor: FtColors.surfaceElevated },
   filterChipText: { fontSize: 13, color: FtColors.textMuted, fontWeight: '600' },
-  filterChipTextOn: { color: FtColors.accent, fontWeight: '700' },
+  filterChipTextOn: { color: FtColors.accentText, fontWeight: '700' },
   board: { flexDirection: 'row', flexWrap: 'wrap', gap: 14 },
   ticket: {
     flexGrow: 1,

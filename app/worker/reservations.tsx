@@ -13,7 +13,7 @@ import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 
 import { Avatar } from '@/components/avatar';
 import { useAuth } from '@/contexts/auth-context';
-import { FtColors } from '@/constants/fasttable';
+import { FtColors, FtSurfaces } from '@/constants/fasttable';
 import {
   canShowNoShow,
   mapReservaRows,
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
   scroll: { flex: 1, backgroundColor: FtColors.background },
   content: { padding: 18, paddingBottom: 44 },
   back: { marginBottom: 12 },
-  backText: { fontSize: 15, color: FtColors.accent },
+  backText: { fontSize: 15, color: FtColors.accentText },
   loader: { marginBottom: 16 },
   h1: { fontSize: 19, fontWeight: '800', color: FtColors.text, marginBottom: 6 },
   sub: { fontSize: 13, color: FtColors.textMuted, lineHeight: 20, marginBottom: 12 },
@@ -295,8 +295,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 8,
   },
-  badgeInfo: { color: FtColors.accent, backgroundColor: 'rgba(124,140,255,0.18)' },
-  badgeWarn: { color: FtColors.warning, backgroundColor: 'rgba(240,189,115,0.18)' },
+  badgeInfo: { color: FtColors.accentText, backgroundColor: FtSurfaces.accentChip },
+  badgeWarn: { color: FtColors.warning, backgroundColor: FtSurfaces.warningBadge },
   line: { fontSize: 14, color: FtColors.textMuted, marginBottom: 4 },
   warn: { fontSize: 13, color: FtColors.warning, marginTop: 8 },
   quickActions: { flexDirection: 'row', gap: 10, marginTop: 12 },
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
     backgroundColor: FtColors.success,
     alignItems: 'center',
   },
-  btnOkText: { color: '#fff', fontWeight: '800', fontSize: 14 },
+  btnOkText: { color: FtColors.onAccent, fontWeight: '800', fontSize: 14 },
   btnNo: {
     flex: 1,
     paddingVertical: 12,

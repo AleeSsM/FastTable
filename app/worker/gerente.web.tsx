@@ -5,7 +5,7 @@ import { ActivityIndicator, Linking, Pressable, RefreshControl, StyleSheet, Text
 
 import { Avatar } from '@/components/avatar';
 import { StatCard, WebCard, WebCardHead, WebHeader, WebRow, WebScroll, webStyles } from '@/components/web/ui';
-import { FtColors } from '@/constants/fasttable';
+import { FtColors, FtSurfaces } from '@/constants/fasttable';
 import { useAuth } from '@/contexts/auth-context';
 import { REALTIME_GERENTE, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { formatPriceFromCents } from '@/lib/format';
@@ -520,11 +520,11 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     fontSize: 12,
     fontWeight: '800',
-    color: FtColors.accent,
+    color: FtColors.accentText,
     backgroundColor: FtColors.surface,
   },
   topName: { flex: 1, fontSize: 14, color: FtColors.text },
-  topUnits: { fontSize: 13, color: FtColors.accent, fontWeight: '700' },
+  topUnits: { fontSize: 13, color: FtColors.accentText, fontWeight: '700' },
   muted: { fontSize: 14, color: FtColors.textFaint },
   liveGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   livePill: {
@@ -570,12 +570,12 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: FtColors.warning,
     textTransform: 'uppercase',
-    backgroundColor: 'rgba(240,189,115,0.2)',
+    backgroundColor: FtSurfaces.warningBanner,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 999,
   },
-  repStateDone: { color: FtColors.success, backgroundColor: 'rgba(125,206,160,0.2)' },
+  repStateDone: { color: FtColors.success, backgroundColor: FtSurfaces.successBanner },
   repTitle: { fontSize: 15, fontWeight: '800', color: FtColors.text, marginTop: 8 },
   repDesc: { fontSize: 13, color: FtColors.textMuted, lineHeight: 19, marginTop: 5 },
   repInfoRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8 },
@@ -593,7 +593,7 @@ const styles = StyleSheet.create({
     backgroundColor: FtColors.surface,
     maxWidth: '100%',
   },
-  repContactText: { fontSize: 12.5, color: FtColors.accent, fontWeight: '600', flexShrink: 1 },
+  repContactText: { fontSize: 12.5, color: FtColors.accentText, fontWeight: '600', flexShrink: 1 },
   repMeta: { fontSize: 11, color: FtColors.textFaint, marginTop: 8 },
   repBtn: {
     marginTop: 12,

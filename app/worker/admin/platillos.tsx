@@ -19,7 +19,7 @@ import { useFocusEffect } from 'expo-router';
 import { AuthBoot } from '@/components/auth-boot';
 
 import { adminCardShadow, adminStyles } from '@/constants/worker-admin-styles';
-import { FtColors } from '@/constants/fasttable';
+import { FtColors, FtSurfaces } from '@/constants/fasttable';
 import { REALTIME_ADMIN, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { centavosToPrecioInput, parsePrecioPesosToCentavos } from '@/lib/admin-price';
 import { formatPriceFromCents, formatCantidadInventario, parseCantidadInventario, etiquetaCampoCantidad, tecladoCantidadInventario, placeholderCantidadInventario } from '@/lib/format';
@@ -391,12 +391,12 @@ export default function AdminPlatillosScreen() {
                   </Text>
                   <View style={adminStyles.tagRow}>
                     {!p.disponible ? (
-                      <View style={[adminStyles.estadoTag, { backgroundColor: 'rgba(228,127,158,0.15)' }]}>
+                      <View style={[adminStyles.estadoTag, { backgroundColor: FtSurfaces.dangerSoft }]}>
                         <Text style={[adminStyles.estadoTagText, { color: FtColors.danger }]}>No disponible</Text>
                       </View>
                     ) : null}
                     {p.sin_stock ? (
-                      <View style={[adminStyles.estadoTag, { backgroundColor: 'rgba(240,189,115,0.15)' }]}>
+                      <View style={[adminStyles.estadoTag, { backgroundColor: FtSurfaces.warningSoft }]}>
                         <Text style={[adminStyles.estadoTagText, { color: FtColors.warning }]}>Sin stock</Text>
                       </View>
                     ) : null}

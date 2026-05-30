@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   label: { fontSize: 13, fontWeight: '700', color: Comensal.text, marginBottom: 8, letterSpacing: 0.2 },
-  big: { fontSize: 44, fontWeight: '800', color: Comensal.accent },
+  big: { fontSize: 44, fontWeight: '800', color: Comensal.accentText },
   meta: { fontSize: 13, color: Comensal.textMuted, marginTop: 4 },
   input: {
     borderWidth: 1,

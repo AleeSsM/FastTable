@@ -1,6 +1,6 @@
 import { Platform, StyleSheet } from 'react-native';
 
-import { FtColors } from '@/constants/fasttable';
+import { FtColors, FtSurfaces } from '@/constants/fasttable';
 
 export const adminCardShadow =
   Platform.OS === 'ios'
@@ -15,7 +15,7 @@ export const adminStyles = StyleSheet.create({
   loader: { marginVertical: 16 },
   hero: { marginBottom: 16 },
   backRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 10 },
-  backText: { fontSize: 15, fontWeight: '600', color: FtColors.accent },
+  backText: { fontSize: 15, fontWeight: '600', color: FtColors.accentText },
   heroEyebrow: {
     fontSize: 11,
     fontWeight: '700',
@@ -52,7 +52,7 @@ export const adminStyles = StyleSheet.create({
   },
   filterChipOn: { borderColor: FtColors.accent, backgroundColor: FtColors.surfaceElevated },
   filterChipText: { fontSize: 12, color: FtColors.textMuted, fontWeight: '600' },
-  filterChipTextOn: { color: FtColors.accent, fontWeight: '700' },
+  filterChipTextOn: { color: FtColors.accentText, fontWeight: '700' },
   muted: { color: FtColors.textMuted, marginBottom: 12, fontSize: 14 },
   errText: { color: FtColors.danger, fontSize: 14, lineHeight: 20 },
   emptyCard: {
@@ -93,7 +93,7 @@ export const adminStyles = StyleSheet.create({
     borderColor: FtColors.border,
     backgroundColor: FtColors.surface,
   },
-  btnIconDanger: { borderColor: 'rgba(228, 127, 158, 0.4)' },
+  btnIconDanger: { borderColor: FtSurfaces.dangerBorder },
   btnIconText: { fontWeight: '700', color: FtColors.text, fontSize: 14 },
   btnIconTextDanger: { color: FtColors.danger },
   fab: {
@@ -134,12 +134,12 @@ export const adminStyles = StyleSheet.create({
   hubSub: { fontSize: 13, color: FtColors.textMuted, marginTop: 4, lineHeight: 18 },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.55)',
+    backgroundColor: FtSurfaces.overlay,
     justifyContent: 'flex-end',
   },
   modalBackdropCenter: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.55)',
+    backgroundColor: FtSurfaces.overlay,
     justifyContent: 'center',
     padding: 24,
   },
@@ -199,7 +199,7 @@ export const adminStyles = StyleSheet.create({
   },
   chipOn: { borderColor: FtColors.accent, backgroundColor: FtColors.surfaceElevated },
   chipText: { fontSize: 13, color: FtColors.textMuted, fontWeight: '600' },
-  chipTextOn: { color: FtColors.accent, fontWeight: '700' },
+  chipTextOn: { color: FtColors.accentText, fontWeight: '700' },
   modalOk: {
     marginTop: 18,
     backgroundColor: FtColors.accent,
@@ -209,7 +209,7 @@ export const adminStyles = StyleSheet.create({
   },
   modalOkOff: { opacity: 0.6 },
   modalOkText: { fontWeight: '800', color: FtColors.onAccent },
-  modalCancel: { textAlign: 'center', marginTop: 14, color: FtColors.accent, fontWeight: '600', paddingBottom: 8 },
+  modalCancel: { textAlign: 'center', marginTop: 14, color: FtColors.accentText, fontWeight: '600', paddingBottom: 8 },
   recipeRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -236,7 +236,7 @@ export const adminStyles = StyleSheet.create({
     borderStyle: 'dashed',
     borderColor: FtColors.accent,
   },
-  addIngBtnText: { color: FtColors.accent, fontWeight: '700' },
+  addIngBtnText: { color: FtColors.accentText, fontWeight: '700' },
   dishThumb: { width: 56, height: 56, borderRadius: 12, backgroundColor: FtColors.surface },
   pickerRow: {
     flexDirection: 'row',
@@ -254,20 +254,20 @@ export function estadoMesaStyle(estado: 'libre' | 'ocupada' | 'reservada') {
   switch (estado) {
     case 'libre':
       return {
-        bg: 'rgba(120, 200, 150, 0.18)',
+        bg: FtSurfaces.successBadge,
         color: FtColors.success,
         label: 'Libre',
       };
     case 'ocupada':
       return {
-        bg: 'rgba(240, 189, 115, 0.2)',
-        color: FtColors.warning,
+        bg: FtSurfaces.dangerBadge,
+        color: FtColors.danger,
         label: 'Ocupada',
       };
     case 'reservada':
       return {
-        bg: 'rgba(120, 160, 220, 0.2)',
-        color: FtColors.accent,
+        bg: FtSurfaces.warningBadge,
+        color: FtColors.warning,
         label: 'Reservada',
       };
     default:

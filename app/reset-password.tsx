@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   primaryBtnDisabled: { opacity: 0.7 },
   primaryBtnText: { color: Comensal.onAccent, fontSize: 16, fontWeight: '800', letterSpacing: 0.2 },
   link: { marginTop: 18, alignItems: 'center' },
-  linkText: { fontSize: 15, color: Comensal.accent },
+  linkText: { fontSize: 15, color: Comensal.accentText },
   backLink: { marginTop: 12, alignItems: 'center' },
   backLinkText: { fontSize: 15, color: Comensal.textMuted },
 });

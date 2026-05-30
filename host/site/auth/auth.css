@@ -1,14 +1,7 @@
+@import url('../brand.css');
+
 :root {
-  --bg: #06080f;
-  --surface: #0f1524;
-  --text: #f4f7ff;
-  --text-muted: #a4afc4;
-  --accent: #7c8cff;
-  --on-accent: #f5f7ff;
-  --border: #2a3b61;
   --radius: 14px;
-  --danger: #e47f9e;
-  --success: #63c8a4;
 }
 
 * {
@@ -70,7 +63,7 @@ input {
   padding: 12px 14px;
   border-radius: 10px;
   border: 1px solid var(--border);
-  background: #161f34;
+  background: var(--surface-elevated);
   color: var(--text);
   font-size: 1rem;
 }
@@ -143,6 +136,6 @@ button:disabled {
 }
 
 .links a {
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 0.9rem;
 }

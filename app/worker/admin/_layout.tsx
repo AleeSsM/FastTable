@@ -7,7 +7,7 @@ export default function AdminLayout() {
     <Stack
       screenOptions={{
         headerStyle: { backgroundColor: FtColors.surfaceElevated },
-        headerTintColor: FtColors.accent,
+        headerTintColor: FtColors.accentText,
         headerTitleStyle: { fontWeight: '700', color: FtColors.text },
         headerShadowVisible: false,
         contentStyle: { backgroundColor: FtColors.background },

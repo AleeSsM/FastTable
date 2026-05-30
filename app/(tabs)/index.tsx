@@ -452,7 +452,7 @@ const styles = StyleSheet.create({
   },
   resText: { fontSize: 14, color: Comensal.text, fontWeight: '500', lineHeight: 20 },
   cancelBtn: { marginTop: 8, alignSelf: 'flex-start' },
-  cancelBtnText: { fontSize: 13, color: Comensal.accent, fontWeight: '500' },
+  cancelBtnText: { fontSize: 13, color: Comensal.accentText, fontWeight: '500' },
   reserveBtn: {
     alignSelf: 'flex-end',
     paddingVertical: 11,

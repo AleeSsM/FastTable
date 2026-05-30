@@ -18,7 +18,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 
 import { useAuth } from '@/contexts/auth-context';
-import { FtColors } from '@/constants/fasttable';
+import { FtColors, FtSurfaces } from '@/constants/fasttable';
 import { REALTIME_INVENTARIO, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import {
   cantidadParaEdicion,
@@ -610,7 +610,7 @@ const styles = StyleSheet.create({
   loader: { marginVertical: 16 },
   hero: { marginBottom: 16 },
   backRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 10 },
-  backText: { fontSize: 15, fontWeight: '600', color: FtColors.accent },
+  backText: { fontSize: 15, fontWeight: '600', color: FtColors.accentText },
   heroEyebrow: {
     fontSize: 11,
     fontWeight: '700',
@@ -666,7 +666,7 @@ const styles = StyleSheet.create({
   },
   filterChipOn: { borderColor: FtColors.accent, backgroundColor: FtColors.surfaceElevated },
   filterChipText: { fontSize: 12, color: FtColors.textMuted, fontWeight: '600' },
-  filterChipTextOn: { color: FtColors.accent, fontWeight: '700' },
+  filterChipTextOn: { color: FtColors.accentText, fontWeight: '700' },
   muted: { color: FtColors.textMuted, marginBottom: 12, fontSize: 14 },
   errText: { color: FtColors.danger, fontSize: 14, lineHeight: 20 },
   emptyCard: {
@@ -716,9 +716,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 6,
-    backgroundColor: 'rgba(240, 189, 115, 0.15)',
+    backgroundColor: FtSurfaces.warningSoft,
   },
-  stockTagCritical: { backgroundColor: 'rgba(228, 127, 158, 0.15)' },
+  stockTagCritical: { backgroundColor: FtSurfaces.dangerSoft },
   stockTagText: { fontSize: 11, fontWeight: '700', color: FtColors.warning },
   stockTagTextCritical: { color: FtColors.danger },
   stockBlock: {
@@ -780,12 +780,12 @@ const styles = StyleSheet.create({
     borderColor: FtColors.borderSubtle,
   },
   movTipoText: { fontSize: 10, fontWeight: '700', color: FtColors.textMuted, textTransform: 'uppercase' },
-  movDelta: { fontSize: 15, fontWeight: '800', color: FtColors.accent, marginTop: 6 },
+  movDelta: { fontSize: 15, fontWeight: '800', color: FtColors.accentText, marginTop: 6 },
   movNote: { fontSize: 12, color: FtColors.textMuted, marginTop: 4 },
   movDate: { fontSize: 11, color: FtColors.textFaint, marginTop: 4 },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.55)',
+    backgroundColor: FtSurfaces.overlay,
     justifyContent: 'center',
     padding: 24,
   },
@@ -826,5 +826,5 @@ const styles = StyleSheet.create({
   },
   modalOkOff: { opacity: 0.6 },
   modalOkText: { fontWeight: '800', color: FtColors.onAccent },
-  modalCancel: { textAlign: 'center', marginTop: 14, color: FtColors.accent, fontWeight: '600' },
+  modalCancel: { textAlign: 'center', marginTop: 14, color: FtColors.accentText, fontWeight: '600' },
 });

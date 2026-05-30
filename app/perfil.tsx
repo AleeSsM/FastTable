@@ -16,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Avatar } from '@/components/avatar';
 import { BRAND, RADII } from '@/constants/palette';
+import { SemanticSurfaces } from '@/constants/semantic-surfaces';
 import { useAuth } from '@/contexts/auth-context';
 import { useNavigateToWelcomeOnceWhen } from '@/hooks/use-auth-navigation';
 import { pickAndUploadAvatar } from '@/lib/avatar';
@@ -235,7 +236,7 @@ const styles = StyleSheet.create({
   content: { alignItems: 'center', paddingHorizontal: 20, paddingVertical: 18, paddingBottom: 44 },
   inner: { width: '100%', maxWidth: 560 },
   backRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 14 },
-  backText: { fontSize: 15, color: BRAND.accent, fontWeight: '600' },
+  backText: { fontSize: 15, color: BRAND.accentText, fontWeight: '600' },
   eyebrow: {
     fontSize: 11,
     letterSpacing: 2.4,
@@ -250,7 +251,7 @@ const styles = StyleSheet.create({
     borderRadius: 52,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(4,7,14,0.55)',
+    backgroundColor: SemanticSurfaces.overlay,
   },
   photoBtn: {
     flexDirection: 'row',
@@ -264,7 +265,7 @@ const styles = StyleSheet.create({
     borderColor: BRAND.border,
     backgroundColor: BRAND.surfaceElevated,
   },
-  photoBtnText: { fontSize: 14, fontWeight: '700', color: BRAND.accent },
+  photoBtnText: { fontSize: 14, fontWeight: '700', color: BRAND.accentText },
   photoHint: { fontSize: 12, color: BRAND.textMuted, marginTop: 10, textAlign: 'center', lineHeight: 18 },
   field: { marginBottom: 16 },
   label: { fontSize: 13, fontWeight: '700', color: BRAND.textMuted, marginBottom: 8 },

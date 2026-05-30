@@ -6,6 +6,7 @@
  * las pantallas del personal, para no tener que tocar sus imports.
  */
 import { BRAND } from '@/constants/palette';
+import { SemanticSurfaces } from '@/constants/semantic-surfaces';
 
 export const FtColors = {
   background: BRAND.background,
@@ -17,6 +18,7 @@ export const FtColors = {
   border: BRAND.border,
   borderSubtle: BRAND.borderSubtle,
   accent: BRAND.accent,
+  accentText: BRAND.accentText,
   accentMuted: BRAND.accentMuted,
   /** Texto sobre botones con acento */
   onAccent: BRAND.onAccent,
@@ -24,3 +26,5 @@ export const FtColors = {
   warning: BRAND.warning,
   danger: BRAND.danger,
 } as const;
+
+export { SemanticSurfaces as FtSurfaces };

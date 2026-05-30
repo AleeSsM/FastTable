@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   resumenLbl: { fontSize: 12, color: Comensal.textMuted, letterSpacing: 0.3 },
   resumenVal: { fontSize: 20, color: Comensal.text, fontWeight: '800', marginTop: 2 },
   resumenDivider: { height: 1, backgroundColor: Comensal.border, marginVertical: 12 },
-  resumenTotal: { fontSize: 24, color: Comensal.accent, fontWeight: '800', marginTop: 2 },
+  resumenTotal: { fontSize: 24, color: Comensal.accentText, fontWeight: '800', marginTop: 2 },
   emptyCard: {
     alignItems: 'center',
     backgroundColor: Comensal.surfaceElevated,
@@ -279,11 +279,11 @@ const styles = StyleSheet.create({
   },
   cardTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   mesa: { fontSize: 17, fontWeight: '800', color: Comensal.text },
-  total: { fontSize: 18, fontWeight: '800', color: Comensal.accent },
+  total: { fontSize: 18, fontWeight: '800', color: Comensal.accentText },
   fecha: { fontSize: 13, color: Comensal.textMuted, marginTop: 6 },
   meseroRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 10 },
   meseroText: { fontSize: 13, color: Comensal.textMuted, fontWeight: '600' },
-  ver: { fontSize: 13, color: Comensal.accent, marginTop: 10, fontWeight: '700' },
+  ver: { fontSize: 13, color: Comensal.accentText, marginTop: 10, fontWeight: '700' },
   modalSafe: { flex: 1, backgroundColor: Comensal.background },
   modalHead: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 12 },
   modalTitle: { fontSize: 18, fontWeight: '800', color: Comensal.text, flex: 1 },
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
   modalScroll: { padding: 16, paddingBottom: 32 },
   linea: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
   lineaNombre: { flex: 1, fontSize: 15, color: Comensal.text, paddingRight: 12 },
-  lineaSub: { fontSize: 15, fontWeight: '700', color: Comensal.accent },
+  lineaSub: { fontSize: 15, fontWeight: '700', color: Comensal.accentText },
   totalRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -303,5 +303,5 @@ const styles = StyleSheet.create({
     borderTopColor: Comensal.border,
   },
   totalLbl: { fontSize: 16, fontWeight: '700', color: Comensal.text },
-  totalVal: { fontSize: 22, fontWeight: '800', color: Comensal.accent },
+  totalVal: { fontSize: 22, fontWeight: '800', color: Comensal.accentText },
 });

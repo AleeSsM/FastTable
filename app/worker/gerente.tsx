@@ -20,7 +20,7 @@ import { Avatar } from '@/components/avatar';
 import { AuthBoot } from '@/components/auth-boot';
 import { useAuth } from '@/contexts/auth-context';
 import { useSafeSignOut } from '@/hooks/use-safe-sign-out';
-import { FtColors } from '@/constants/fasttable';
+import { FtColors, FtSurfaces } from '@/constants/fasttable';
 import { REALTIME_GERENTE, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { formatPriceFromCents } from '@/lib/format';
 import { supabase } from '@/lib/supabase';
@@ -617,7 +617,7 @@ const styles = StyleSheet.create({
   },
   rangeChipOn: { borderColor: FtColors.accent, backgroundColor: FtColors.surfaceElevated },
   rangeChipText: { fontSize: 12, color: FtColors.textMuted, fontWeight: '600' },
-  rangeChipTextOn: { color: FtColors.accent, fontWeight: '700' },
+  rangeChipTextOn: { color: FtColors.accentText, fontWeight: '700' },
   card: {
     padding: 16,
     borderRadius: 16,
@@ -628,7 +628,7 @@ const styles = StyleSheet.create({
   },
   cardHead: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
   cardTitle: { fontSize: 16, fontWeight: '800', color: FtColors.text, flex: 1 },
-  bigNumber: { fontSize: 28, fontWeight: '800', color: FtColors.accent, letterSpacing: 0.5 },
+  bigNumber: { fontSize: 28, fontWeight: '800', color: FtColors.accentText, letterSpacing: 0.5 },
   emphasis: { fontSize: 18, fontWeight: '700', color: FtColors.text },
   chartRow: {
     flexDirection: 'row',
@@ -682,7 +682,7 @@ const styles = StyleSheet.create({
     borderBottomColor: FtColors.borderSubtle,
   },
   topName: { flex: 1, fontSize: 14, color: FtColors.text, marginRight: 10 },
-  topUnits: { fontSize: 13, color: FtColors.accent, fontWeight: '700' },
+  topUnits: { fontSize: 13, color: FtColors.accentText, fontWeight: '700' },
   cardHint: { fontSize: 12, color: FtColors.textMuted, marginTop: 8, lineHeight: 18 },
   muted: { fontSize: 14, color: FtColors.textFaint },
   equipoRow: {
@@ -711,12 +711,12 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: FtColors.warning,
     textTransform: 'uppercase',
-    backgroundColor: 'rgba(240,189,115,0.2)',
+    backgroundColor: FtSurfaces.warningBanner,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 999,
   },
-  repStateDone: { color: FtColors.success, backgroundColor: 'rgba(125,206,160,0.2)' },
+  repStateDone: { color: FtColors.success, backgroundColor: FtSurfaces.successBanner },
   repTitle: { fontSize: 15, fontWeight: '800', color: FtColors.text, marginTop: 8 },
   repDesc: { fontSize: 13, color: FtColors.textMuted, lineHeight: 19, marginTop: 5 },
   repInfoRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 8 },
@@ -733,7 +733,7 @@ const styles = StyleSheet.create({
     borderColor: FtColors.border,
     backgroundColor: FtColors.surface,
   },
-  repContactText: { fontSize: 12.5, color: FtColors.accent, fontWeight: '600' },
+  repContactText: { fontSize: 12.5, color: FtColors.accentText, fontWeight: '600' },
   repMeta: { fontSize: 11, color: FtColors.textFaint, marginTop: 8 },
   repBtn: {
     marginTop: 10,
@@ -752,7 +752,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     marginBottom: 8,
   },
-  linkKitchenText: { flex: 1, fontSize: 15, color: FtColors.accent, fontWeight: '600' },
+  linkKitchenText: { flex: 1, fontSize: 15, color: FtColors.accentText, fontWeight: '600' },
   signOut: { paddingVertical: 16, alignItems: 'center' },
   signOutText: { fontSize: 15, color: FtColors.textFaint, textDecorationLine: 'underline' },
 });

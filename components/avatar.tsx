@@ -59,5 +59,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: BRAND.border,
   },
-  initials: { color: BRAND.accent, fontWeight: '800' },
+  initials: { color: BRAND.accentText, fontWeight: '800' },
 });

@@ -4,7 +4,7 @@ import { ActivityIndicator, Pressable, RefreshControl, StyleSheet, Text, View } 
 
 import { Avatar } from '@/components/avatar';
 import { StatCard, WebCard, WebCardHead, WebHeader, WebRow, WebScroll, webStyles } from '@/components/web/ui';
-import { FtColors } from '@/constants/fasttable';
+import { FtColors, FtSurfaces } from '@/constants/fasttable';
 import { useAuth } from '@/contexts/auth-context';
 import { mesaEtiqueta, mesaEtiquetaFromJoin } from '@/lib/mesa-label';
 import {
@@ -568,7 +568,7 @@ const styles = StyleSheet.create({
     borderColor: FtColors.border,
     backgroundColor: FtColors.surfaceElevated,
   },
-  chipOn: { borderColor: FtColors.accent, backgroundColor: 'rgba(124,140,255,0.18)' },
+  chipOn: { borderColor: FtColors.accent, backgroundColor: FtSurfaces.accentChip },
   chipText: { fontSize: 13, fontWeight: '700', color: FtColors.textMuted },
   chipTextOn: { color: FtColors.text },
   loadCard: {
@@ -584,18 +584,18 @@ const styles = StyleSheet.create({
   loadName: { fontSize: 14, color: FtColors.text, fontWeight: '600' },
   loadCount: { fontSize: 13, color: FtColors.textMuted, fontWeight: '700' },
   pill: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999 },
-  pillInfo: { backgroundColor: 'rgba(124,140,255,0.16)' },
-  pillWarn: { backgroundColor: 'rgba(240,189,115,0.2)' },
-  pillOk: { backgroundColor: 'rgba(99,200,164,0.18)' },
+  pillInfo: { backgroundColor: FtSurfaces.accentPill },
+  pillWarn: { backgroundColor: FtSurfaces.warningBanner },
+  pillOk: { backgroundColor: FtSurfaces.successBadge },
   pillText: { fontSize: 11, fontWeight: '800' },
-  pillTextInfo: { color: FtColors.accent },
+  pillTextInfo: { color: FtColors.accentText },
   pillTextWarn: { color: FtColors.warning },
   pillTextOk: { color: FtColors.success },
   btnRow: { flexDirection: 'row', gap: 10, marginTop: 12 },
   btnPrimary: { marginTop: 12, paddingVertical: 12, borderRadius: 12, backgroundColor: FtColors.accent, alignItems: 'center' },
   btnPrimaryText: { color: FtColors.onAccent, fontWeight: '800', fontSize: 14 },
   btnOutline: { paddingVertical: 11, borderRadius: 12, borderWidth: 1, borderColor: FtColors.accent, alignItems: 'center' },
-  btnOutlineText: { color: FtColors.accent, fontWeight: '800', fontSize: 14 },
+  btnOutlineText: { color: FtColors.accentText, fontWeight: '800', fontSize: 14 },
   btnDanger: { paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: FtColors.danger, alignItems: 'center' },
   btnDangerText: { color: FtColors.danger, fontWeight: '800', fontSize: 14 },
   btnDisabled: { opacity: 0.6 },
@@ -648,7 +648,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'stretch',
   },
-  mesaBtnText: { fontSize: 13, fontWeight: '700', color: FtColors.accent },
+  mesaBtnText: { fontSize: 13, fontWeight: '700', color: FtColors.accentText },
   mesaBtnFill: { backgroundColor: FtColors.accent, borderColor: FtColors.accent },
   mesaBtnFillText: { fontSize: 13, fontWeight: '800', color: FtColors.onAccent },
   linkRow: {
@@ -660,7 +660,7 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: FtColors.border,
   },
-  linkText: { fontSize: 14, fontWeight: '700', color: FtColors.accent },
+  linkText: { fontSize: 14, fontWeight: '700', color: FtColors.accentText },
   equipoGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 14 },
   equipoCard: {
     flexGrow: 1,

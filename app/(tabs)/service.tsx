@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   label: { fontSize: 13, fontWeight: '700', color: Comensal.text, marginBottom: 8 },
-  fixedValue: { fontSize: 20, color: Comensal.accent, fontWeight: '800' },
+  fixedValue: { fontSize: 20, color: Comensal.accentText, fontWeight: '800' },
   metaWarning: { fontSize: 14, color: Comensal.warning, lineHeight: 20 },
   input: {
     borderWidth: 1,

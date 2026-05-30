@@ -95,6 +95,6 @@ const styles = StyleSheet.create({
   },
   btnText: { color: Comensal.onAccent, fontSize: 16, fontWeight: '800' },
   link: { alignItems: 'center', marginTop: 8 },
-  linkText: { fontSize: 15, color: Comensal.accent },
+  linkText: { fontSize: 15, color: Comensal.accentText },
   hint: { marginTop: 20, fontSize: 11, lineHeight: 16, color: Comensal.textFaint },
 });

@@ -10,6 +10,7 @@
     "build:web": "expo export -p web",
     "build:host": "node host/scripts/build.mjs",
     "lint": "expo lint",
+    "sync:palette": "node scripts/sync-palette-css.mjs",
     "staff:console": "node scripts/ft-staff-console.mjs"
   },
   "dependencies": {

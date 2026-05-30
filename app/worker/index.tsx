@@ -15,7 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AuthBoot } from '@/components/auth-boot';
 import { Avatar } from '@/components/avatar';
-import { FtColors } from '@/constants/fasttable';
+import { FtColors, FtSurfaces } from '@/constants/fasttable';
 import { useAuth } from '@/contexts/auth-context';
 import { useSafeSignOut } from '@/hooks/use-safe-sign-out';
 import { mesaEtiqueta, mesaEtiquetaFromJoin } from '@/lib/mesa-label';
@@ -535,7 +535,7 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   content: { paddingHorizontal: 18, paddingBottom: 48 },
   backRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 8, marginTop: 4, alignSelf: 'flex-start' },
-  backText: { fontSize: 14, color: FtColors.accent, fontWeight: '700' },
+  backText: { fontSize: 14, color: FtColors.accentText, fontWeight: '700' },
   hero: { marginTop: 6, marginBottom: 18 },
   heroEyebrow: {
     fontSize: 12,
@@ -643,7 +643,7 @@ const styles = StyleSheet.create({
     backgroundColor: FtColors.surface,
     marginRight: 8,
   },
-  choiceChipActive: { borderColor: FtColors.accent, backgroundColor: 'rgba(124,140,255,0.18)' },
+  choiceChipActive: { borderColor: FtColors.accent, backgroundColor: FtSurfaces.accentChip },
   choiceChipText: { fontSize: 13, fontWeight: '700', color: FtColors.textMuted },
   choiceChipTextActive: { color: FtColors.text },
   loadRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 7 },
@@ -653,11 +653,11 @@ const styles = StyleSheet.create({
   warn: { fontSize: 13, color: FtColors.warning, marginTop: 10 },
   hintSmall: { fontSize: 12, color: FtColors.textMuted, lineHeight: 17, marginTop: 10 },
   pill: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 999 },
-  pillInfo: { backgroundColor: 'rgba(124,140,255,0.16)' },
-  pillWarn: { backgroundColor: 'rgba(240,189,115,0.2)' },
-  pillOk: { backgroundColor: 'rgba(99,200,164,0.18)' },
+  pillInfo: { backgroundColor: FtSurfaces.accentPill },
+  pillWarn: { backgroundColor: FtSurfaces.warningBanner },
+  pillOk: { backgroundColor: FtSurfaces.successBadge },
   pillText: { fontSize: 11, fontWeight: '800' },
-  pillTextInfo: { color: FtColors.accent },
+  pillTextInfo: { color: FtColors.accentText },
   pillTextWarn: { color: FtColors.warning },
   pillTextOk: { color: FtColors.success },
   btnPrimary: {
@@ -676,7 +676,7 @@ const styles = StyleSheet.create({
     borderColor: FtColors.accent,
     alignItems: 'center',
   },
-  btnOutlineText: { color: FtColors.accent, fontWeight: '800', fontSize: 15 },
+  btnOutlineText: { color: FtColors.accentText, fontWeight: '800', fontSize: 15 },
   btnDanger: {
     marginTop: 10,
     paddingVertical: 12,
@@ -734,7 +734,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minWidth: 110,
   },
-  mesaBtnText: { fontSize: 14, fontWeight: '700', color: FtColors.accent },
+  mesaBtnText: { fontSize: 14, fontWeight: '700', color: FtColors.accentText },
   mesaBtnFill: { backgroundColor: FtColors.accent, borderColor: FtColors.accent },
   mesaBtnFillText: { fontSize: 14, fontWeight: '800', color: FtColors.onAccent },
   mesaChipsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
@@ -756,7 +756,7 @@ const styles = StyleSheet.create({
     borderTopColor: FtColors.border,
     marginTop: 8,
   },
-  linkText: { fontSize: 15, fontWeight: '600', color: FtColors.accent },
+  linkText: { fontSize: 15, fontWeight: '600', color: FtColors.accentText },
   signOut: { paddingVertical: 16, alignItems: 'center' },
   signOutText: { fontSize: 15, color: FtColors.textFaint, textDecorationLine: 'underline' },
 });

@@ -67,6 +67,9 @@ function main() {
   if (fs.existsSync(OUT)) fs.rmSync(OUT, { recursive: true, force: true });
   fs.mkdirSync(OUT, { recursive: true });
 
+  console.log("→ Sincronizando paleta CSS …");
+  execSync("node scripts/sync-palette-css.mjs", { cwd: ROOT, stdio: "inherit" });
+
   console.log("→ Copiando landing, auth y apk …");
   copyRecursive(SITE, OUT, new Set(["config.template.js"]));
 
