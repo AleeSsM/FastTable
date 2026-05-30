@@ -216,6 +216,50 @@ export function navItemHref(item: WorkerNavItem): string {
   return item.section ? `${item.href}?sec=${item.section}` : item.href;
 }
 
+/** Normaliza pathname/href de la barra lateral (p. ej. `/worker/index` → `/worker`). */
+function normalizeNavPath(path: string): string {
+  const trimmed = path.replace(/\/$/, '') || '/';
+  if (trimmed === '/worker/index') return '/worker';
+  return trimmed;
+}
+
+/** Indica si la ruta actual corresponde al ítem de navegación (sin confundir subrutas de `/worker`). */
+export function navHrefMatches(pathname: string, href: string): boolean {
+  const p = normalizeNavPath(pathname);
+  const h = normalizeNavPath(href);
+  if (h === '/worker') return p === '/worker';
+  return p === h || p.startsWith(`${h}/`);
+}
+
+function navSecParam(sec: string | string[] | undefined): string | undefined {
+  return typeof sec === 'string' ? sec : Array.isArray(sec) ? sec[0] : undefined;
+}
+
+/** Resaltado lateral web: ruta + ?sec=; en rutas con ítem raíz y secciones, el raíz solo activo sin ?sec=. */
+export function isNavItemActive(
+  item: WorkerNavItem,
+  pathname: string,
+  sec: string | string[] | undefined,
+  rol: WorkerRol | string | undefined,
+): boolean {
+  if (!navHrefMatches(pathname, item.href)) return false;
+
+  const secParam = navSecParam(sec);
+  const siblings = navForRole(rol).filter((i) => i.href === item.href);
+  const hasSectionless = siblings.some((i) => !i.section);
+  const hasSections = siblings.some((i) => !!i.section);
+
+  if (item.section) {
+    if (secParam) return secParam === item.section;
+    if (hasSectionless && hasSections) return false;
+    const firstSec = siblings.find((i) => i.section)?.section;
+    return item.section === (firstSec ?? defaultSectionForRole(rol));
+  }
+
+  if (hasSectionless && hasSections) return !secParam;
+  return true;
+}
+
 export function parseNavSection(
   rol: WorkerRol | string | undefined,
   sec: string | string[] | undefined,
@@ -226,7 +270,7 @@ export function parseNavSection(
   const sections = items.filter((i) => i.section).map((i) => i.section!);
   if (raw && sections.includes(raw)) return raw;
   // Ruta sin ?sec=: primera sección del rol en esa ruta.
-  const onPath = items.filter((i) => i.href === pathname || pathname.startsWith(`${i.href}/`));
+  const onPath = items.filter((i) => navHrefMatches(pathname, i.href));
   const firstSec = onPath.find((i) => i.section)?.section;
   return firstSec ?? defaultSectionForRole(rol);
 }

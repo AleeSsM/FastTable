@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams, usePathname, useRouter, type Href } from 'expo-router';
+import { useGlobalSearchParams, usePathname, useRouter, type Href } from 'expo-router';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Avatar } from '@/components/avatar';
@@ -9,19 +9,14 @@ import { useSafeSignOut } from '@/hooks/use-safe-sign-out';
 import { badgeCountForItem, useWorkerNavBadges } from '@/hooks/use-worker-nav-badges';
 import {
   navForRole,
+  isNavItemActive,
   navItemHref,
-  parseNavSection,
   roleLabel,
   type WorkerNavItem,
   type WorkerRol,
 } from '@/lib/worker-nav';
 
 const SIDEBAR_WIDTH = 256;
-
-function isActive(pathname: string, href: string): boolean {
-  if (href === '/worker') return pathname === '/worker';
-  return pathname === href || pathname.startsWith(`${href}/`);
-}
 
 /**
  * Marco de escritorio para el personal (solo web). Barra lateral fija a la
@@ -30,12 +25,12 @@ function isActive(pathname: string, href: string): boolean {
 export function WorkerWebShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname() ?? '';
-  const params = useLocalSearchParams<{ sec?: string }>();
+  // Global: el layout padre no recibe ?sec= de las pantallas hijas con useLocalSearchParams.
+  const params = useGlobalSearchParams<{ sec?: string }>();
   const { staffMember, loading } = useAuth();
   const { safeSignOut, signingOut } = useSafeSignOut();
 
   const rol = staffMember?.rol as WorkerRol | undefined;
-  const currentSec = parseNavSection(rol, params.sec, pathname);
   const { badges } = useWorkerNavBadges(rol, staffMember?.id ?? null, pathname);
 
   if (loading) {
@@ -71,9 +66,7 @@ export function WorkerWebShell({ children }: { children: React.ReactNode }) {
 
         <View style={styles.nav}>
           {items.map((item) => {
-            const active = item.section
-              ? isActive(pathname, item.href) && currentSec === item.section
-              : isActive(pathname, item.href);
+            const active = isNavItemActive(item, pathname, params.sec, rol);
             const count = badgeCountForItem(item, badges);
             const isAlert = item.badgeAlert === true;
             return (
