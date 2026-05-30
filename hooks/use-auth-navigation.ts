@@ -51,17 +51,13 @@ export function useNavigateToWorkerWhen(when: boolean) {
 
 /** Sesión expirada en tabs/worker (no durante cierre de sesión manual). */
 export function useNavigateToWelcomeOnceWhen(when: boolean) {
-  const sent = useRef(false);
+  const pathname = usePathname();
 
   useEffect(() => {
-    if (!when || isSignOutNavigationActive()) {
-      sent.current = false;
-      return;
-    }
-    if (sent.current) return;
-    sent.current = true;
-    navigateToWelcomeRoot();
-  }, [when]);
+    if (!when || isSignOutNavigationActive()) return;
+    if (isAlreadyAtRoute(pathname, '/')) return;
+    navigateToWelcomeRoot({ force: true });
+  }, [when, pathname]);
 }
 
 export { isAlreadyAtRoute, useReplaceWhen } from '@/hooks/use-replace-when';

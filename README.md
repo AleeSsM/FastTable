@@ -61,7 +61,7 @@ La **fuente de verdad** es la base de datos; la app solo orquesta permisos y exp
 - Proyecto **Supabase** con el esquema aplicado: ver [`supabase/README.md`](supabase/README.md)
 - Archivo **`.env`** con `EXPO_PUBLIC_SUPABASE_URL` y `EXPO_PUBLIC_SUPABASE_ANON_KEY` (plantilla: `.env.example`). Para producción web añade `EXPO_PUBLIC_APP_URL` (dominio público, sin localhost). La *service role* solo en máquina local para scripts administrativos, nunca en builds públicos.
 
-**Sitio público (landing + APK + auth + app web en `/app`)**: carpeta [`host/`](host/README.md) y `npm run build:host`. Producción: [`docs/PRODUCCION.md`](docs/PRODUCCION.md) · Despliegue: [`docs/DESPLIEGUE.md`](docs/DESPLIEGUE.md) · Equipo: [`docs/COLABORACION.md`](docs/COLABORACION.md).
+**Sitio público (landing + APK + auth + app web en `/app`)**: [`host/README.md`](host/README.md) · [`docs/PRODUCCION.md`](docs/PRODUCCION.md).
 
 ---
 
@@ -74,7 +74,7 @@ cp .env.example .env
 npm start
 ```
 
-Cuentas demo del personal: [`supabase/demo-accounts.txt`](supabase/demo-accounts.txt) · script `npm run staff:console`.
+Alta de personal: `npm run staff:console` (requiere service role en `.env` local).
 
 ---
 
@@ -91,11 +91,9 @@ Cuentas demo del personal: [`supabase/demo-accounts.txt`](supabase/demo-accounts
 
 | Recurso | Contenido |
 |---------|-----------|
-| [`supabase/README.md`](supabase/README.md) | Instalación: teardown + bootstrap + personal demo |
+| [`supabase/README.md`](supabase/README.md) | Instalación: teardown + bootstrap |
 | `supabase/00_schema_teardown.sql` | Borrado del esquema FastTable (opcional) |
 | `supabase/01_schema_bootstrap.sql` | Esquema completo alineado con la app |
-| `supabase/demo-accounts.txt` | Credenciales demo de personal |
-| `supabase/SCHEMA_CHANGE_GUIDE.txt` | Guía para alterar el esquema con cuidado |
 
 ---
 

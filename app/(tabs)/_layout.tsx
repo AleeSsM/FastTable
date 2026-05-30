@@ -12,13 +12,13 @@ export default function GuestTabLayout() {
   const { session, staffMember, loading, signingOut } = useAuth();
 
   const needsWorker = !loading && !signingOut && !!session && !!staffMember;
-  const needsHome = !signingOut && !session;
+  const needsHome = !signingOut && !loading && !session;
 
   useNavigateToWelcomeOnceWhen(needsHome);
   useNavigateToWorkerWhen(needsWorker);
 
-  // Spinner al cerrar sesión, redirigir personal, o volver a bienvenida sin sesión.
-  if (signingOut || needsWorker || needsHome) {
+  // Sin sesión no montar tabs. Personal → worker antes de pintar tabs.
+  if (signingOut || !session || needsWorker) {
     return <AuthBoot />;
   }
 

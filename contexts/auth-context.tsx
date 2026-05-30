@@ -11,6 +11,7 @@ import {
 } from 'react';
 
 import { supabase } from '@/lib/supabase';
+import { isSignOutNavigationActive } from '@/lib/sign-out-nav';
 import type { Database } from '@/types/database';
 
 type ProfileRow = Database['public']['Tables']['perfiles']['Row'];
@@ -133,7 +134,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setSession(null);
           setProfile(null);
           setStaffMember(null);
+          setLoading(false);
         }
+        return;
+      }
+
+      if (isSignOutNavigationActive()) {
+        if (s?.user) return;
+        setSession(null);
+        setProfile(null);
+        setStaffMember(null);
+        setLoading(false);
         return;
       }
 
@@ -175,6 +186,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (signingOutRef.current) return;
     signingOutRef.current = true;
     setSigningOut(true);
+    setLoading(false);
   }, []);
 
   const signOut = useCallback(async () => {
@@ -185,8 +197,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSession(null);
     setProfile(null);
     setStaffMember(null);
+    setLoading(false);
     try {
-      await supabase.auth.signOut({ scope: 'local' });
+      await Promise.race([
+        supabase.auth.signOut({ scope: 'local' }),
+        new Promise<void>((resolve) => setTimeout(resolve, 2000)),
+      ]);
     } catch {
       await clearInvalidLocalSession();
     }
@@ -195,6 +211,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const finishSignOutNavigation = useCallback(() => {
     signingOutRef.current = false;
     setSigningOut(false);
+    setLoading(false);
   }, []);
 
   const value = useMemo<AuthContextValue>(

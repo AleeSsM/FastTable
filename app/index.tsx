@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useRouter } from 'expo-router';
 import {
   Platform,
   Pressable,
@@ -8,7 +8,6 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
 
 import { AuthBoot } from '@/components/auth-boot';
 import { useAuth } from '@/contexts/auth-context';
@@ -20,25 +19,13 @@ export default function WelcomeScreen() {
   const router = useRouter();
   const { session, user, staffMember, loading, signingOut } = useAuth();
 
+  const blockAutoRedirect = signingOut || isSignOutNavigationActive();
   const goWorker =
-    !isSignOutNavigationActive() &&
-    !loading &&
-    !signingOut &&
-    !!session &&
-    !!user &&
-    !!staffMember;
+    !blockAutoRedirect && !loading && !!session && !!user && !!staffMember;
   const goTabs =
-    !isSignOutNavigationActive() &&
-    !loading &&
-    !signingOut &&
-    !!session &&
-    !!user &&
-    !staffMember;
-  const showBoot =
-    signingOut ||
-    isSignOutNavigationActive() ||
-    (loading && !session) ||
-    (!!session && (goWorker || goTabs));
+    !blockAutoRedirect && !loading && !!session && !!user && !staffMember;
+  // Sin sesión → siempre bienvenida (evita 2.º spinner tras cerrar sesión).
+  const showBoot = !!session && (loading || goWorker || goTabs);
 
   useNavigateToWorkerWhen(goWorker);
   useNavigateToGuestTabsWhen(goTabs);

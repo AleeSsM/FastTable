@@ -24,8 +24,8 @@ export function afterSignOutUiSettled(): Promise<void> {
 
 /** Pausa tras router.replace antes de reactivar guards de navegación. */
 export function afterSignOutNavigationSettled(): Promise<void> {
-  if (Platform.OS === 'ios') return waitMs(120);
-  return afterAnimationFrames(1);
+  if (Platform.OS === 'ios') return waitMs(450);
+  return afterAnimationFrames(2);
 }
 
 export function dismissKeyboardForSignOut(): void {
@@ -33,7 +33,7 @@ export function dismissKeyboardForSignOut(): void {
 }
 
 /** Ejecuta el cierre de sesión fuera del tick del toque en iOS. */
-export function runSignOutTask(task: () => Promise<void>): void {
+export function runSignOutTask(task: () => void | Promise<void>): void {
   dismissKeyboardForSignOut();
   if (Platform.OS === 'ios') {
     setTimeout(() => void task(), 0);

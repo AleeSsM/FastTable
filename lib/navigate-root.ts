@@ -6,6 +6,13 @@ const welcomeLock = { current: false };
 const tabsLock = { current: false };
 const workerLock = { current: false };
 
+/** Tras cerrar sesión, desbloquea reintentos si el primer replace no cambió de stack. */
+export function resetRootNavigationLocks(): void {
+  welcomeLock.current = false;
+  tabsLock.current = false;
+  workerLock.current = false;
+}
+
 export function isWelcomeRootPath(pathname: string): boolean {
   return pathname === '/' || pathname === '';
 }
@@ -13,8 +20,9 @@ export function isWelcomeRootPath(pathname: string): boolean {
 function scheduleRootNavigation(
   inFlight: { current: boolean },
   go: () => void,
+  force = false,
 ): void {
-  if (inFlight.current) return;
+  if (!force && inFlight.current) return;
   inFlight.current = true;
 
   requestAnimationFrame(() => {
@@ -30,11 +38,17 @@ function scheduleRootNavigation(
   });
 }
 
+type RootNavOptions = { force?: boolean };
+
 /** Bienvenida en app/index.tsx — reemplaza el stack raíz. */
-export function navigateToWelcomeRoot(): void {
-  scheduleRootNavigation(welcomeLock, () => {
-    router.replace('/');
-  });
+export function navigateToWelcomeRoot(options: RootNavOptions = {}): void {
+  scheduleRootNavigation(
+    welcomeLock,
+    () => {
+      router.replace('/');
+    },
+    options.force === true,
+  );
 }
 
 /** Tabs de comensal en app/(tabs) — stack raíz. */

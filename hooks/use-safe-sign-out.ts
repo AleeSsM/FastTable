@@ -1,47 +1,29 @@
 import type { Href } from 'expo-router';
-import { useCallback } from 'react';
+import { useRouter } from 'expo-router';
+import { useCallback, useRef } from 'react';
 
 import { useAuth } from '@/contexts/auth-context';
-import { navigateToWelcomeRoot } from '@/lib/navigate-root';
-import {
-  markSignOutNavigationEnd,
-  markSignOutNavigationStart,
-} from '@/lib/sign-out-nav';
-import {
-  afterSignOutNavigationSettled,
-  afterSignOutUiSettled,
-  runSignOutTask,
-} from '@/lib/sign-out';
+import { runSignOutTask } from '@/lib/sign-out';
 
 type Options = {
   redirectTo?: Href;
 };
 
 /**
- * Cierra sesión: una sola navegación a bienvenida, luego limpia Supabase.
+ * Cierra sesión navegando a /sign-out (stack raíz), que limpia auth y redirige a bienvenida.
  */
 export function useSafeSignOut(_options: Options = {}) {
-  const { beginSignOut, signOut, finishSignOutNavigation, signingOut } = useAuth();
+  const router = useRouter();
+  const { signingOut } = useAuth();
+  const navigating = useRef(false);
 
   const safeSignOut = useCallback(() => {
-    if (signingOut) return;
-
-    runSignOutTask(async () => {
-      markSignOutNavigationStart();
-
-      try {
-        await afterSignOutUiSettled();
-        beginSignOut();
-        navigateToWelcomeRoot();
-        await afterSignOutNavigationSettled();
-        await signOut();
-        await afterSignOutUiSettled();
-      } finally {
-        finishSignOutNavigation();
-        markSignOutNavigationEnd();
-      }
+    if (signingOut || navigating.current) return;
+    navigating.current = true;
+    runSignOutTask(() => {
+      router.replace('/sign-out');
     });
-  }, [beginSignOut, signOut, finishSignOutNavigation, signingOut]);
+  }, [router, signingOut]);
 
   return { safeSignOut, signingOut };
 }

@@ -32,7 +32,7 @@ host/
 └── dist/                  ← GENERADO (no editar; se sube al host)
 ```
 
-La carpeta antigua `landing/` sigue en el repo por historial; **la versión que se publica es `host/site/`**.
+La carpeta **`host/site/`** es la landing que se publica en Vercel.
 
 ---
 

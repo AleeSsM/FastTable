@@ -164,7 +164,7 @@ export default function InventarioScreen() {
         );
       } else if (m.includes('categoria')) {
         setSchemaError(
-          'Falta la columna categoría en ingredientes. En Supabase SQL Editor ejecuta supabase/02_patch_inventario.sql (recomendado) o el bloque de migración en 01_schema_bootstrap.sql.',
+          'Falta la columna categoría en ingredientes. En Supabase SQL Editor ejecuta supabase/01_schema_bootstrap.sql en un entorno de prueba o aplica la migración de categorías manualmente.',
         );
       } else {
         setSchemaError(m);

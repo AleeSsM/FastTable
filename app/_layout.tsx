@@ -28,6 +28,7 @@ export default function RootLayout() {
         <DeepLinkBridge />
         <Stack screenOptions={{ headerBackTitle: 'Atrás' }}>
           <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="sign-out" options={{ headerShown: false, gestureEnabled: false }} />
           <Stack.Screen name="register" options={{ title: 'Crear cuenta', headerBackTitle: 'Atrás' }} />
           <Stack.Screen name="login" options={{ title: 'Iniciar sesión', headerBackTitle: 'Atrás' }} />
           <Stack.Screen name="forgot-password" options={{ title: 'Recuperar contraseña', headerBackTitle: 'Atrás' }} />
