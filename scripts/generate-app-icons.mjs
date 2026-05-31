@@ -1,6 +1,7 @@
 /**
  * Genera iconos PNG bien centrados para Expo / Android adaptive icon.
  * Fuente: assets/images/icon-source.png (maestro del logo).
+ * No toca host/site/assets/banner.png — ese asset es aparte.
  *
  * Android recorta ~17 % por borde; el logo debe caber en el 66 % central.
  */
@@ -119,26 +120,6 @@ async function writeBackground(dest) {
   console.log(`  ✔ ${path.relative(ROOT, dest)} (solid ${NAVY_HEX})`);
 }
 
-/** Banner horizontal de la landing (sección descarga). */
-async function writeBanner(source, dest, width, height) {
-  const logoHeight = Math.round(height * 0.88);
-  const resized = await sharp(source)
-    .resize(logoHeight, logoHeight, { fit: "inside" })
-    .png()
-    .toBuffer();
-  const meta = await sharp(resized).metadata();
-  const left = Math.round((width - meta.width) / 2);
-  const top = Math.round((height - meta.height) / 2);
-
-  await sharp({
-    create: { width, height, channels: 4, background: NAVY },
-  })
-    .composite([{ input: resized, left, top }])
-    .png()
-    .toFile(dest);
-  console.log(`  ✔ ${path.relative(ROOT, dest)} (${width}×${height})`);
-}
-
 async function main() {
   const source = resolveSource();
   console.log(`→ Fuente: ${path.relative(ROOT, source)}`);
@@ -158,7 +139,6 @@ async function main() {
   await writeFavicon(source, path.join(HOST_ASSETS, "favicon.png"), 192);
   await writeFavicon(source, path.join(HOST_ASSETS, "logo-icon.png"), 256);
   await writeFavicon(source, path.join(HOST_ASSETS, "apple-touch-icon.png"), 180);
-  await writeBanner(source, path.join(HOST_ASSETS, "banner.png"), 1040, 320);
 
   console.log("");
   console.log("✔ Iconos generados. Rebuild nativo (EAS) para ver el cambio en el launcher.");
