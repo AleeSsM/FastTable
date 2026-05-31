@@ -79,7 +79,7 @@ const DOWNLOAD_LINKS = {
   );
 
   const revealTargets = document.querySelectorAll(
-    ".feature, .role, .step, .download__card, .section__head"
+    ".feature, .role, .step, .download__card, .section__head, .gallery__item"
   );
   revealTargets.forEach((el) => el.classList.add("reveal"));
 

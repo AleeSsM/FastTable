@@ -364,6 +364,27 @@ img {
   gap: 12px;
   overflow: hidden;
 }
+.phone__screen--photo {
+  padding: 0;
+  background: var(--bg);
+}
+.phone__shot {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  border-radius: 32px;
+}
+.phone--gallery {
+  width: 260px;
+  height: 530px;
+  animation: none;
+}
+.phone--gallery .phone__notch {
+  width: 110px;
+  height: 22px;
+}
 .appbar__title {
   font-weight: 800;
   font-size: 18px;
@@ -573,6 +594,20 @@ img {
 }
 
 /* Roles */
+.role__shot-wrap {
+  margin: -26px -26px 18px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg);
+}
+.role__shot {
+  display: block;
+  width: 100%;
+  height: 168px;
+  object-fit: cover;
+  object-position: top center;
+}
 .role__tag {
   display: inline-block;
   font-size: 12px;
@@ -617,6 +652,44 @@ img {
   border: solid var(--success);
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
+}
+
+/* Gallery (capturas reales) */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px 22px;
+  align-items: start;
+}
+.gallery__item {
+  margin: 0;
+  text-align: center;
+}
+.gallery__item--phone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.gallery__item figcaption {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.gallery__item--web {
+  grid-column: span 3;
+}
+.gallery__web-shot {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow);
+  background: var(--surface);
+}
+.gallery__item--web figcaption {
+  margin-top: 12px;
 }
 
 /* ===================== Steps ===================== */
@@ -883,6 +956,12 @@ img {
   .grid--roles {
     grid-template-columns: repeat(2, 1fr);
   }
+  .gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .gallery__item--web {
+    grid-column: span 2;
+  }
   .download__card {
     grid-template-columns: 1fr;
     text-align: center;
@@ -921,6 +1000,17 @@ img {
   .grid--features,
   .grid--roles {
     grid-template-columns: 1fr;
+  }
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+  .gallery__item--web {
+    grid-column: span 1;
+  }
+  .phone--gallery {
+    width: min(260px, 78vw);
+    height: auto;
+    aspect-ratio: 300 / 610;
   }
   .steps {
     flex-direction: column;

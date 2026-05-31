@@ -12,6 +12,7 @@
     "lint": "expo lint",
     "sync:palette": "node scripts/sync-palette-css.mjs",
     "generate:icons": "node scripts/generate-app-icons.mjs",
+    "sync:screenshots": "node scripts/sync-screenshots.mjs",
     "eas": "eas",
     "build:apk": "eas build --platform android --profile preview",
     "build:apk:ci": "eas build --platform android --profile preview --non-interactive",

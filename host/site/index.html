@@ -37,6 +37,7 @@
 
         <nav class="nav__links" aria-label="Secciones">
           <a href="#features">Funciones</a>
+          <a href="#galeria">Capturas</a>
           <a href="#roles">Roles</a>
           <a href="#how">Cómo funciona</a>
           <a href="#download">Descargar</a>
@@ -102,62 +103,27 @@
             </div>
           </div>
 
-          <!-- Mockup teléfono -->
+          <!-- Captura real de la app -->
           <div class="hero__device" aria-hidden="true">
             <div class="phone phone--float">
               <div class="phone__notch"></div>
-              <div class="phone__screen">
-                <div class="appbar">
-                  <div class="appbar__title">Buenas noches 👋</div>
-                  <div class="appbar__sub">Mesa lista para ti</div>
-                </div>
-                <div class="screen-card screen-card--banner">
-                  <div class="dot dot--ok"></div>
-                  <div>
-                    <div class="sc-strong">Mesa 4 · ocupada</div>
-                    <div class="sc-muted">Atiende: Sofía</div>
-                  </div>
-                </div>
-                <div class="screen-list">
-                  <div class="screen-row">
-                    <div class="thumb"></div>
-                    <div class="screen-row__body">
-                      <div class="sc-strong">Risotto de hongos</div>
-                      <div class="sc-muted">Plato fuerte</div>
-                    </div>
-                    <div class="price">$185</div>
-                  </div>
-                  <div class="screen-row">
-                    <div class="thumb thumb--b"></div>
-                    <div class="screen-row__body">
-                      <div class="sc-strong">Limonada de la casa</div>
-                      <div class="sc-muted">Bebida</div>
-                    </div>
-                    <div class="price">$55</div>
-                  </div>
-                  <div class="screen-row">
-                    <div class="thumb thumb--c"></div>
-                    <div class="screen-row__body">
-                      <div class="sc-strong">Tarta de chocolate</div>
-                      <div class="sc-muted">Postre</div>
-                    </div>
-                    <div class="price">$95</div>
-                  </div>
-                </div>
-                <div class="screen-total">
-                  <span>Total estimado</span>
-                  <strong>$335</strong>
-                </div>
-                <div class="screen-btn">Pedir a cocina</div>
+              <div class="phone__screen phone__screen--photo">
+                <img
+                  src="/assets/screenshots/hero-comensal.jpg"
+                  alt=""
+                  class="phone__shot"
+                  width="272"
+                  height="582"
+                />
               </div>
             </div>
             <div class="device-badge device-badge--a">
-              <div class="dot dot--accent"></div>
-              Pedido enviado
+              <div class="dot dot--ok"></div>
+              Reserva en segundos
             </div>
             <div class="device-badge device-badge--b">
-              <div class="dot dot--warn"></div>
-              Cocina: en preparación
+              <div class="dot dot--accent"></div>
+              Sincronizado al instante
             </div>
           </div>
         </div>
@@ -228,6 +194,109 @@
         </div>
       </section>
 
+      <!-- ===================== GALLERY (capturas reales) ===================== -->
+      <section class="section section--alt" id="galeria">
+        <div class="container">
+          <div class="section__head">
+            <span class="eyebrow">Capturas reales</span>
+            <h2 class="section__title">Así se ve en el restaurante</h2>
+            <p class="section__sub">
+              Comensales en el móvil, personal en sala y cocina, y consola web para
+              quien opera desde una tablet o PC.
+            </p>
+          </div>
+
+          <div class="gallery">
+            <figure class="gallery__item gallery__item--phone">
+              <div class="phone phone--gallery">
+                <div class="phone__notch"></div>
+                <div class="phone__screen phone__screen--photo">
+                  <img
+                    src="/assets/screenshots/comensal-menu.jpg"
+                    alt="Menú digital con fotos y precios en la app comensal"
+                    class="phone__shot"
+                    loading="lazy"
+                    width="240"
+                    height="514"
+                  />
+                </div>
+              </div>
+              <figcaption>Comensal · Menú y pedidos</figcaption>
+            </figure>
+
+            <figure class="gallery__item gallery__item--phone">
+              <div class="phone phone--gallery">
+                <div class="phone__notch"></div>
+                <div class="phone__screen phone__screen--photo">
+                  <img
+                    src="/assets/screenshots/staff-host.jpg"
+                    alt="Panel del anfitrión con mesas libres y fila de espera"
+                    class="phone__shot"
+                    loading="lazy"
+                    width="240"
+                    height="514"
+                  />
+                </div>
+              </div>
+              <figcaption>Personal · Anfitrión en móvil</figcaption>
+            </figure>
+
+            <figure class="gallery__item gallery__item--phone">
+              <div class="phone phone--gallery">
+                <div class="phone__notch"></div>
+                <div class="phone__screen phone__screen--photo">
+                  <img
+                    src="/assets/screenshots/staff-cocina.jpg"
+                    alt="Pantalla de cocina con pedidos y disponibilidad de platos"
+                    class="phone__shot"
+                    loading="lazy"
+                    width="240"
+                    height="514"
+                  />
+                </div>
+              </div>
+              <figcaption>Personal · Cocina</figcaption>
+            </figure>
+
+            <figure class="gallery__item gallery__item--web">
+              <img
+                src="/assets/screenshots/web-host.jpg"
+                alt="Consola web del anfitrión con reservas y mapa de mesas"
+                class="gallery__web-shot"
+                loading="lazy"
+                width="1200"
+                height="675"
+              />
+              <figcaption>Consola web · Recepción y mesas</figcaption>
+            </figure>
+
+            <figure class="gallery__item gallery__item--web">
+              <img
+                src="/assets/screenshots/web-waiter.jpg"
+                alt="Panel del mesero con mesas asignadas y solicitudes"
+                class="gallery__web-shot"
+                loading="lazy"
+                width="1200"
+                height="675"
+              />
+              <figcaption>Consola web · Mesero</figcaption>
+            </figure>
+
+            <figure class="gallery__item gallery__item--web">
+              <img
+                src="/assets/screenshots/web-inventario.jpg"
+                alt="Inventario y stock del gerente en consola web"
+                class="gallery__web-shot"
+                loading="lazy"
+                width="1200"
+                height="675"
+              />
+              <figcaption>Consola web · Gerencia e inventario</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
       <!-- ===================== ROLES ===================== -->
       <section class="section section--alt" id="roles">
         <div class="container">
@@ -242,6 +311,16 @@
 
           <div class="grid grid--roles">
             <article class="card role">
+              <div class="role__shot-wrap">
+                <img
+                  src="/assets/screenshots/hero-comensal.jpg"
+                  alt=""
+                  class="role__shot"
+                  loading="lazy"
+                  width="320"
+                  height="180"
+                />
+              </div>
               <div class="role__tag">Comensal</div>
               <h3>Reserva, pide y revisa su cuenta</h3>
               <ul class="ticks">
@@ -252,6 +331,16 @@
               </ul>
             </article>
             <article class="card role">
+              <div class="role__shot-wrap">
+                <img
+                  src="/assets/screenshots/staff-host.jpg"
+                  alt=""
+                  class="role__shot"
+                  loading="lazy"
+                  width="320"
+                  height="180"
+                />
+              </div>
               <div class="role__tag">Sala</div>
               <h3>Mesero y anfitrión, al control</h3>
               <ul class="ticks">
@@ -262,6 +351,16 @@
               </ul>
             </article>
             <article class="card role">
+              <div class="role__shot-wrap">
+                <img
+                  src="/assets/screenshots/staff-cocina.jpg"
+                  alt=""
+                  class="role__shot"
+                  loading="lazy"
+                  width="320"
+                  height="180"
+                />
+              </div>
               <div class="role__tag">Cocina</div>
               <h3>La cola de pedidos, ordenada</h3>
               <ul class="ticks">
@@ -271,6 +370,16 @@
               </ul>
             </article>
             <article class="card role">
+              <div class="role__shot-wrap">
+                <img
+                  src="/assets/screenshots/staff-gerencia.jpg"
+                  alt=""
+                  class="role__shot"
+                  loading="lazy"
+                  width="320"
+                  height="180"
+                />
+              </div>
               <div class="role__tag">Gerencia</div>
               <h3>Los números que importan</h3>
               <ul class="ticks">
@@ -403,6 +512,7 @@
           <div>
             <h4>Producto</h4>
             <a href="#features">Funciones</a>
+            <a href="#galeria">Capturas</a>
             <a href="#roles">Roles</a>
             <a href="#how">Cómo funciona</a>
           </div>
