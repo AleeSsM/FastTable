@@ -5,7 +5,8 @@
  *
  *  👉  Para cambiar el look de la app, edita SOLO este archivo.
  *
- *  Dirección: navy + crema + oro (identidad del restaurante).
+ *  Dirección: “Noir & Azure” — negro, blanco y azul elegante.
+ *  (Los iconos del restaurante son navy/oro; la UI usa esta paleta acordada.)
  *
  *  `AcColors` y `Comensal` se derivan de aquí. Tras cambiar colores, ejecuta
  *  `npm run sync:palette` para actualizar host/site/brand.css (landing y auth).
@@ -13,37 +14,37 @@
 
 /** Colores base de marca (hex). */
 export const BRAND = {
-  background: '#121b2e',
-  surface: '#1a2744',
-  surfaceElevated: '#223454',
-  surfaceInput: '#1a2744',
-  text: '#f5efe3',
-  textMuted: '#b4bcc8',
-  textFaint: '#7a8496',
-  border: '#2d4060',
-  borderSubtle: '#22304a',
-  /** Oro — botones y acentos sólidos */
-  accent: '#b8956a',
-  /** Oro claro — enlaces, precios y texto de acento */
-  accentText: '#d4b896',
-  /** Acento secundario en etiquetas y cejas */
-  accentMuted: '#c9a86c',
-  onAccent: '#121b2e',
+  background: '#000000',
+  surface: '#0c0c0e',
+  surfaceElevated: '#14161a',
+  surfaceInput: '#0c0c0e',
+  text: '#ffffff',
+  textMuted: '#aeb6c3',
+  textFaint: '#6e7685',
+  border: '#232830',
+  borderSubtle: '#181a1f',
+  /** Azul profundo — botones y acentos sólidos */
+  accent: '#2b5a8c',
+  /** Azul claro — enlaces, precios y texto de acento */
+  accentText: '#6ba3e0',
+  /** Etiquetas, cejas y acento secundario en texto */
+  accentMuted: '#8eb4e8',
+  onAccent: '#ffffff',
   success: '#5ec996',
   warning: '#ecc05a',
   danger: '#ec8888',
-  heroImgFallback: '#1a2744',
-  logoBackdrop: '#f5efe3',
+  heroImgFallback: '#14161a',
+  logoBackdrop: '#ffffff',
 } as const;
 
 export const BRAND_RGB = {
-  accent: '184, 149, 106',
-  accentText: '212, 184, 150',
-  accentMuted: '201, 168, 108',
+  accent: '43, 90, 140',
+  accentText: '107, 163, 224',
+  accentMuted: '142, 180, 232',
   success: '94, 201, 150',
   warning: '236, 192, 90',
   danger: '236, 136, 136',
-  shadow: '18, 27, 46',
+  shadow: '0, 0, 0',
 } as const;
 
 /** Construye un color con transparencia a partir de un triplete RGB. */
