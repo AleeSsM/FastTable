@@ -1,5 +1,6 @@
 import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
+import Head from 'expo-router/head';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
@@ -24,6 +25,9 @@ const RootNavigationTheme = {
 export default function RootLayout() {
   return (
     <ThemeProvider value={RootNavigationTheme}>
+      <Head>
+        <title>A la Carta</title>
+      </Head>
       <AuthProvider>
         <DeepLinkBridge />
         <Stack screenOptions={{ headerBackTitle: 'Atrás' }}>
