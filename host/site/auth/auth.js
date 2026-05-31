@@ -5,6 +5,10 @@
 (function (global) {
   "use strict";
 
+  const NATIVE_SCHEME = "alacarta";
+  const NATIVE_CALLBACK = "alacarta://auth/callback";
+  const ANDROID_PACKAGE = "com.alacarta.app";
+
   function getConfig() {
     const c = global.ALACARTA_CONFIG;
     if (!c?.supabaseUrl || !c?.supabaseAnonKey) {
@@ -68,6 +72,103 @@
     global.history.replaceState({}, "", path);
   }
 
+  function isMobileDevice() {
+    return /Android|iPhone|iPad|iPod/i.test(global.navigator.userAgent);
+  }
+
+  function hasAuthParams(params) {
+    const p = params || parseAuthParams();
+    return Boolean(
+      p.code || (p.access_token && p.refresh_token) || p.error || p.error_description,
+    );
+  }
+
+  function buildNativeAuthCallbackUrl() {
+    return NATIVE_CALLBACK + global.location.search + global.location.hash;
+  }
+
+  function nativeAppUrl(path) {
+    if (!path || path === "/") return `${NATIVE_SCHEME}://`;
+    const normalized = path.startsWith("/") ? path.slice(1) : path;
+    return `${NATIVE_SCHEME}://${normalized}`;
+  }
+
+  function tryOpenNativeApp(url) {
+    if (/Android/i.test(global.navigator.userAgent)) {
+      const withoutScheme = url.replace(/^alacarta:\/\//, "");
+      global.location.href =
+        "intent://" +
+        withoutScheme +
+        "#Intent;scheme=" +
+        NATIVE_SCHEME +
+        ";package=" +
+        ANDROID_PACKAGE +
+        ";end";
+      return;
+    }
+    global.location.href = url;
+  }
+
+  function buildNativeSessionUrl(session, type) {
+    const hash = new URLSearchParams({
+      access_token: session.access_token,
+      refresh_token: session.refresh_token,
+      type: type || "signup",
+    }).toString();
+    return `${NATIVE_CALLBACK}#${hash}`;
+  }
+
+  function wait(ms) {
+    return new Promise(function (resolve) {
+      global.setTimeout(resolve, ms);
+    });
+  }
+
+  /**
+   * En móvil, intenta abrir la app nativa con el enlace del correo (o la sesión ya creada).
+   * Si la app se abre, el usuario sale del navegador y no hace falta la página web.
+   */
+  async function completeAuthCallback() {
+    const params = parseAuthParams();
+
+    if (params.error) {
+      throw new Error(formatError(params.error_description || params.error));
+    }
+
+    const isRecovery = params.type === "recovery";
+    const onMobile = isMobileDevice();
+
+    if (onMobile && !isRecovery && hasAuthParams(params)) {
+      tryOpenNativeApp(buildNativeAuthCallbackUrl());
+      await wait(1800);
+      if (global.document.hidden) {
+        return { type: params.type, handedOff: true };
+      }
+    }
+
+    const type = await handleAuthCallback();
+
+    if (isRecovery) {
+      return { type, handedOff: false };
+    }
+
+    if (onMobile) {
+      const client = await createClient();
+      const {
+        data: { session },
+      } = await client.auth.getSession();
+      if (session) {
+        tryOpenNativeApp(buildNativeSessionUrl(session, type));
+        await wait(1600);
+        if (global.document.hidden) {
+          return { type, handedOff: true };
+        }
+      }
+    }
+
+    return { type, handedOff: false };
+  }
+
   async function handleAuthCallback() {
     const params = parseAuthParams();
 
@@ -99,6 +200,12 @@
     parseAuthParams,
     createClient,
     handleAuthCallback,
+    completeAuthCallback,
+    isMobileDevice,
+    hasAuthParams,
+    buildNativeAuthCallbackUrl,
+    nativeAppUrl,
+    tryOpenNativeApp,
     formatError,
     appUrl(path) {
       const cfg = getConfig();

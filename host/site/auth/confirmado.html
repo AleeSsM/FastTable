@@ -12,7 +12,7 @@
     <div class="card center">
       <img src="/assets/logo-icon.png" alt="A la Carta" class="auth-brand" width="48" height="48" />
       <h1 class="success">¡Listo!</h1>
-      <p>Tu correo quedó verificado. Ya puedes usar A la Carta con normalidad.</p>
+      <p id="status">Tu correo quedó verificado. Ya puedes usar A la Carta con normalidad.</p>
       <div class="links">
         <a class="btn" id="app-btn" href="#">Abrir la app</a>
         <a class="btn btn--ghost" href="/apk/alacarta.apk" id="apk-btn">Descargar APK (Android)</a>
@@ -21,7 +21,17 @@
     </div>
     <script src="auth.js"></script>
     <script>
-      document.getElementById("app-btn").href = AlaCartaAuth.appUrl("/login");
+      (function () {
+        var nativeUrl = AlaCartaAuth.nativeAppUrl("/");
+        document.getElementById("app-btn").href = nativeUrl;
+        if (AlaCartaAuth.isMobileDevice()) {
+          document.getElementById("status").textContent =
+            "Tu correo quedó verificado. Abriendo la app…";
+          setTimeout(function () {
+            AlaCartaAuth.tryOpenNativeApp(nativeUrl);
+          }, 600);
+        }
+      })();
       document.getElementById("apk-btn").addEventListener("click", function (e) {
         fetch("/apk/alacarta.apk", { method: "HEAD" }).then(function (r) {
           if (!r.ok) {

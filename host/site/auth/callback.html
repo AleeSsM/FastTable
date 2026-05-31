@@ -20,8 +20,12 @@
       (async function () {
         const status = document.getElementById("status");
         try {
-          const type = await AlaCartaAuth.handleAuthCallback();
-          if (type === "recovery") {
+          if (AlaCartaAuth.isMobileDevice()) {
+            status.textContent = "Abriendo la app…";
+          }
+          const result = await AlaCartaAuth.completeAuthCallback();
+          if (result.handedOff) return;
+          if (result.type === "recovery") {
             window.location.replace("/auth/reset-password.html");
             return;
           }
