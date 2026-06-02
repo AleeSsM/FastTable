@@ -18,12 +18,16 @@ import {
   canShowNoShow,
   mapReservaRows,
   mapStaffRpcError,
-  splitReservationsByTime,
+  sortReservasByTime,
   type ReservaStaffRow,
 } from '@/lib/worker-reservations-logic';
 import { REALTIME_WORKER_RESERVATIONS, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
+import { useNow } from '@/hooks/use-now';
+import { confirmDialog } from '@/lib/confirm';
 import { mesaEtiqueta } from '@/lib/mesa-label';
 import { supabase } from '@/lib/supabase';
+
+type MeseroLoad = { id: string; nombre_visible: string; mesasAtendidas: number };
 
 function fmt(d: string) {
   return new Date(d).toLocaleString('es', {
@@ -43,20 +47,44 @@ export default function WorkerReservationsScreen() {
   const [reservas, setReservas] = useState<ReservaStaffRow[]>([]);
   const [names, setNames] = useState<Record<string, string | null>>({});
   const [fotos, setFotos] = useState<Record<string, string | null>>({});
+  const [meseroLoads, setMeseroLoads] = useState<MeseroLoad[]>([]);
+  const [selectedMeseroByReserva, setSelectedMeseroByReserva] = useState<Record<string, string>>({});
 
   const load = useCallback(async () => {
     await supabase.rpc('expirar_reservas_vencidas');
-    const { data: resData } = await supabase
-      .from('reservas_mesa')
-      .select(
-        'id, id_usuario, fecha_hora_reserva, mesero_atender_a_partir_de, personas_grupo, nota, comensal_llego, ciclo, mesas ( id, codigo, estado, id_personal_atendiendo )',
-      )
-      .eq('ciclo', 'activa')
-      .is('comensal_llego', null)
-      .order('fecha_hora_reserva');
+    const [{ data: resData }, { data: meserosData }, { data: mesasConMesero }] = await Promise.all([
+      supabase
+        .from('reservas_mesa')
+        .select(
+          'id, id_usuario, fecha_hora_reserva, mesero_atender_a_partir_de, personas_grupo, nota, comensal_llego, ciclo, mesas ( id, codigo, estado, id_personal_atendiendo )',
+        )
+        .eq('ciclo', 'activa')
+        .is('comensal_llego', null)
+        .order('fecha_hora_reserva'),
+      supabase
+        .from('personal')
+        .select('id, nombre_visible')
+        .eq('activo', true)
+        .eq('rol', 'mesero')
+        .order('nombre_visible'),
+      supabase.from('mesas').select('id_personal_atendiendo').not('id_personal_atendiendo', 'is', null),
+    ]);
 
     const rows = mapReservaRows((resData ?? []) as Record<string, unknown>[]);
     setReservas(rows);
+
+    const assignedCounts = new Map<string, number>();
+    for (const row of (mesasConMesero ?? []) as { id_personal_atendiendo: string | null }[]) {
+      if (!row.id_personal_atendiendo) continue;
+      assignedCounts.set(row.id_personal_atendiendo, (assignedCounts.get(row.id_personal_atendiendo) ?? 0) + 1);
+    }
+    setMeseroLoads(
+      ((meserosData ?? []) as { id: string; nombre_visible: string }[]).map((mesero) => ({
+        id: mesero.id,
+        nombre_visible: mesero.nombre_visible,
+        mesasAtendidas: assignedCounts.get(mesero.id) ?? 0,
+      })),
+    );
 
     const userIds = [...new Set(rows.map((r) => r.id_usuario))];
     if (userIds.length > 0) {
@@ -78,19 +106,8 @@ export default function WorkerReservationsScreen() {
     }
   }, []);
 
-  const { upcoming, attend } = useMemo(
-    () => splitReservationsByTime(reservas, new Date()),
-    [reservas],
-  );
-  const now = new Date();
-  const attendOrdered = useMemo(
-    () =>
-      [...attend].sort(
-        (a, b) =>
-          new Date(a.fecha_hora_reserva).getTime() - new Date(b.fecha_hora_reserva).getTime(),
-      ),
-    [attend],
-  );
+  const pendingReservasOrdered = useMemo(() => sortReservasByTime(reservas), [reservas]);
+  const now = useNow();
 
   useFocusEffect(
     useCallback(() => {
@@ -130,12 +147,35 @@ export default function WorkerReservationsScreen() {
     await load();
   };
 
+  const marcarComensalNoLlego = async (id: string) => {
+    const ok = await confirmDialog(
+      'Comensal no llegó',
+      '¿Marcar que el comensal no se presentó? Se liberará la mesa si no hay otra reserva vigente.',
+      'No llegó',
+    );
+    if (!ok) return;
+    await resolve(id, false);
+  };
+
   const onAtenderCompleta = async (id: string) => {
-    const { error } = await supabase.rpc('personal_atender_reserva_completa', { p_id_reserva: id });
+    const meseroId = selectedMeseroByReserva[id];
+    if (!meseroId) {
+      Alert.alert('Atender', 'Selecciona el mesero responsable antes de atender la reserva.');
+      return;
+    }
+    const { error } = await supabase.rpc('personal_atender_reserva_completa_asignando_mesero', {
+      p_id_reserva: id,
+      p_id_mesero: meseroId,
+    });
     if (error) {
       Alert.alert('Atender', mapStaffRpcError(error.message));
       return;
     }
+    setSelectedMeseroByReserva((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
     await load();
   };
 
@@ -173,16 +213,16 @@ export default function WorkerReservationsScreen() {
 
       {loading && !refreshing ? <ActivityIndicator color={AcColors.accent} style={styles.loader} /> : null}
 
-      <Text style={styles.h1}>Reservas a atender</Text>
+      <Text style={styles.h1}>Reservas pendientes</Text>
       <Text style={styles.sub}>
-        “Atender” confirma llegada, te asigna la mesa y la marca ocupada. Abajo: comensal no llegó (tras la ventana de 5
-        min).
+        La mesa ya viene de la reserva del comensal. Elige mesero y pulsa “Atender” cuando llegue. Tras 5 min de la
+        hora acordada podrás marcar “Comensal no llegó”.
       </Text>
 
-      {attendOrdered.length === 0 ? (
-        <Text style={styles.empty}>Nada pendiente en este momento.</Text>
+      {pendingReservasOrdered.length === 0 ? (
+        <Text style={styles.empty}>No hay reservas activas.</Text>
       ) : (
-        attendOrdered.map((r) => {
+        pendingReservasOrdered.map((r) => {
           const t = r.mesas;
           const code = t?.codigo;
           const guest = names[r.id_usuario]?.trim() || 'Cliente';
@@ -199,7 +239,7 @@ export default function WorkerReservationsScreen() {
                 </Text>
               </View>
               <Text style={[styles.badge, isLate ? styles.badgeWarn : styles.badgeInfo]}>
-                {isLate ? 'Prioridad alta' : 'Próxima atención'}
+                {isLate ? 'Prioridad alta' : 'Programada'}
               </Text>
               <Text style={styles.line}>Hora acordada: {fmt(r.fecha_hora_reserva)}</Text>
               <Text style={styles.line}>Personas: {r.personas_grupo}</Text>
@@ -208,13 +248,37 @@ export default function WorkerReservationsScreen() {
                 <Text style={styles.warn}>Otro mesero está atendiendo esta mesa.</Text>
               ) : (
                 <>
+                  <Text style={styles.fieldLabel}>Mesero responsable</Text>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.choiceRow}>
+                    {meseroLoads.length === 0 ? (
+                      <Text style={styles.empty}>Sin meseros en línea.</Text>
+                    ) : (
+                      meseroLoads.map((m) => (
+                        <Pressable
+                          key={m.id}
+                          style={[
+                            styles.choiceChip,
+                            selectedMeseroByReserva[r.id] === m.id && styles.choiceChipActive,
+                          ]}
+                          onPress={() => setSelectedMeseroByReserva((p) => ({ ...p, [r.id]: m.id }))}>
+                          <Text
+                            style={[
+                              styles.choiceChipText,
+                              selectedMeseroByReserva[r.id] === m.id && styles.choiceChipTextActive,
+                            ]}>
+                            {m.nombre_visible} ({m.mesasAtendidas})
+                          </Text>
+                        </Pressable>
+                      ))
+                    )}
+                  </ScrollView>
                   <View style={styles.quickActions}>
                     <Pressable style={styles.btnOk} onPress={() => onAtenderCompleta(r.id)}>
                       <Text style={styles.btnOkText}>Atender</Text>
                     </Pressable>
                     <Pressable
                       style={[styles.btnNo, !showNoShow && styles.btnNoDisabled]}
-                      onPress={() => resolve(r.id, false)}
+                      onPress={() => void marcarComensalNoLlego(r.id)}
                       disabled={!showNoShow}>
                       <Text style={styles.btnNoText}>Comensal no llegó</Text>
                     </Pressable>
@@ -226,29 +290,6 @@ export default function WorkerReservationsScreen() {
                   ) : null}
                 </>
               )}
-            </View>
-          );
-        })
-      )}
-
-      <Text style={[styles.h1, styles.mt]}>Próximas reservas</Text>
-      {upcoming.length === 0 ? (
-        <Text style={styles.empty}>No hay reservas próximas.</Text>
-      ) : (
-        upcoming.map((r) => {
-          const t = r.mesas;
-          const guest = names[r.id_usuario]?.trim() || 'Cliente';
-          return (
-            <View key={r.id} style={[styles.cardMuted, styles.guestRow]}>
-              <Avatar uri={fotos[r.id_usuario]} name={guest} size={40} />
-              <View style={{ flex: 1 }}>
-                <Text style={styles.cardTitle}>
-                  {mesaEtiqueta(t?.codigo)} · {guest}
-                </Text>
-                <Text style={styles.line}>
-                  {fmt(r.fecha_hora_reserva)} · {r.personas_grupo} pers.
-                </Text>
-              </View>
             </View>
           );
         })
@@ -267,7 +308,6 @@ const styles = StyleSheet.create({
   loader: { marginBottom: 16 },
   h1: { fontSize: 19, fontWeight: '800', color: AcColors.text, marginBottom: 6 },
   sub: { fontSize: 13, color: AcColors.textMuted, lineHeight: 20, marginBottom: 12 },
-  mt: { marginTop: 20 },
   empty: { fontSize: 14, color: AcColors.textMuted, marginBottom: 12 },
   card: {
     padding: 16,
@@ -276,14 +316,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: AcColors.border,
     marginBottom: 12,
-  },
-  cardMuted: {
-    padding: 14,
-    borderRadius: 14,
-    backgroundColor: AcColors.surfaceElevated,
-    borderWidth: 1,
-    borderColor: AcColors.borderSubtle,
-    marginBottom: 10,
   },
   cardTitle: { fontSize: 16, fontWeight: '800', color: AcColors.text, marginBottom: 8 },
   badge: {
@@ -296,8 +328,22 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   badgeInfo: { color: AcColors.accentText, backgroundColor: AcSurfaces.accentChip },
-  badgeWarn: { color: AcColors.warning, backgroundColor: AcSurfaces.warningBadge },
+  badgeWarn: { color: AcColors.warning, backgroundColor: AcSurfaces.warningBanner },
   line: { fontSize: 14, color: AcColors.textMuted, marginBottom: 4 },
+  fieldLabel: { fontSize: 12, fontWeight: '700', color: AcColors.textMuted, marginTop: 8, marginBottom: 8 },
+  choiceRow: { marginBottom: 4 },
+  choiceChip: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: AcColors.border,
+    backgroundColor: AcColors.surface,
+    marginRight: 8,
+  },
+  choiceChipActive: { borderColor: AcColors.accent, backgroundColor: AcSurfaces.accentChip },
+  choiceChipText: { fontSize: 13, fontWeight: '700', color: AcColors.textMuted },
+  choiceChipTextActive: { color: AcColors.text },
   warn: { fontSize: 13, color: AcColors.warning, marginTop: 8 },
   quickActions: { flexDirection: 'row', gap: 10, marginTop: 12 },
   btnOk: {

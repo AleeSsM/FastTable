@@ -154,15 +154,16 @@ export default function WorkerDashboardScreen() {
 
   const renderReservas = () => (
     <View style={styles.section}>
-      {d.attendOrdered.length === 0 ? (
-        <Text style={styles.empty}>Nada pendiente por atender ahora.</Text>
+      <Text style={styles.sub}>La mesa ya viene de la reserva. Elige mesero y atiende cuando llegue el comensal.</Text>
+      {d.pendingReservasOrdered.length === 0 ? (
+        <Text style={styles.empty}>No hay reservas activas.</Text>
       ) : (
-        d.attendOrdered.map((r) => {
+        d.pendingReservasOrdered.map((r) => {
           const code = r.mesas?.codigo;
           const guest = d.names[r.id_usuario]?.trim() || 'Cliente';
           const other = r.mesas?.id_personal_atendiendo != null && r.mesas.id_personal_atendiendo !== staffMember.id;
-          const showNoShow = d.canShowNoShow(r, new Date());
-          const isLate = new Date(r.fecha_hora_reserva).getTime() < Date.now();
+          const showNoShow = d.canShowNoShow(r, d.now);
+          const isLate = new Date(r.fecha_hora_reserva).getTime() < d.now.getTime();
           return (
             <View key={r.id} style={[styles.card, cardShadow]}>
               <View style={styles.rowHead}>
@@ -175,7 +176,7 @@ export default function WorkerDashboardScreen() {
                 </View>
                 <View style={[styles.pill, isLate ? styles.pillWarn : styles.pillInfo]}>
                   <Text style={[styles.pillText, isLate ? styles.pillTextWarn : styles.pillTextInfo]}>
-                    {isLate ? 'Prioridad' : 'Próxima'}
+                    {isLate ? 'Prioridad' : 'Programada'}
                   </Text>
                 </View>
               </View>
@@ -199,36 +200,21 @@ export default function WorkerDashboardScreen() {
                     <Text style={styles.btnPrimaryText}>Atender (confirmar llegada)</Text>
                   </Pressable>
                   {showNoShow ? (
-                    <Pressable style={styles.btnDanger} onPress={() => d.resolve(r.id, false)}>
+                    <Pressable style={styles.btnDanger} onPress={() => void d.marcarComensalNoLlego(r.id)}>
                       <Text style={styles.btnDangerText}>Comensal no llegó</Text>
                     </Pressable>
                   ) : (
-                    <Text style={styles.hintSmall}>
-                      Tras 5 min de la hora acordada podrás marcar “Comensal no llegó”.
-                    </Text>
+                    <>
+                      <Pressable style={[styles.btnDanger, styles.btnDisabled]} disabled>
+                        <Text style={styles.btnDangerText}>Comensal no llegó</Text>
+                      </Pressable>
+                      <Text style={styles.hintSmall}>
+                        Tras 5 min de la hora acordada podrás marcar “Comensal no llegó”.
+                      </Text>
+                    </>
                   )}
                 </>
               )}
-            </View>
-          );
-        })
-      )}
-
-      <Text style={styles.miniTitle}>Próximas reservas</Text>
-      {d.upcoming.length === 0 ? (
-        <Text style={styles.empty}>No hay reservas próximas.</Text>
-      ) : (
-        d.upcoming.map((r) => {
-          const guest = d.names[r.id_usuario]?.trim() || 'Cliente';
-          return (
-            <View key={r.id} style={[styles.cardSoft, styles.rowHead]}>
-              <Avatar uri={d.fotos[r.id_usuario]} name={guest} size={38} />
-              <View style={{ flex: 1 }}>
-                <Text style={styles.cardName}>{mesaEtiqueta(r.mesas?.codigo)} · {guest}</Text>
-                <Text style={styles.cardMeta}>
-                  {fmtFecha(r.fecha_hora_reserva)} · {r.personas_grupo} pers.
-                </Text>
-              </View>
             </View>
           );
         })
@@ -421,7 +407,7 @@ export default function WorkerDashboardScreen() {
 
   const hostTabs: { key: HostTab; label: string; icon: keyof typeof Ionicons.glyphMap; count: number }[] = [
     { key: 'fila', label: 'Fila', icon: 'people-outline', count: d.waiting ?? 0 },
-    { key: 'reservas', label: 'Reservas', icon: 'calendar-outline', count: d.attendOrdered.length },
+    { key: 'reservas', label: 'Reservas', icon: 'calendar-outline', count: d.pendingReservasOrdered.length },
     { key: 'mesas', label: 'Mesas', icon: 'grid-outline', count: d.available ?? 0 },
     { key: 'equipo', label: 'Equipo', icon: 'swap-horizontal-outline', count: 0 },
   ];
@@ -434,7 +420,7 @@ export default function WorkerDashboardScreen() {
     ? [
         { label: 'Mesas libres', value: d.available, tone: AcColors.success },
         { label: 'En fila', value: d.waiting, tone: AcColors.warning },
-        { label: 'A atender', value: d.attendOrdered.length, tone: AcColors.accent },
+        { label: 'Reservas', value: d.pendingReservasOrdered.length, tone: AcColors.accent },
       ]
     : [
         { label: 'Mis mesas', value: d.myMesas.length, tone: AcColors.accent },

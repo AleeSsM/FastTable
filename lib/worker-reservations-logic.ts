@@ -48,6 +48,12 @@ export function mapReservaRows(rawList: Record<string, unknown>[]): ReservaStaff
   });
 }
 
+export function sortReservasByTime(rows: ReservaStaffRow[]): ReservaStaffRow[] {
+  return [...rows].sort(
+    (a, b) => new Date(a.fecha_hora_reserva).getTime() - new Date(b.fecha_hora_reserva).getTime(),
+  );
+}
+
 /** Desde la hora acordada: “ir a atender”. Antes: “próximas”. */
 export function splitReservationsByTime(rows: ReservaStaffRow[], now: Date) {
   const t = now.getTime();
@@ -62,7 +68,10 @@ export function splitReservationsByTime(rows: ReservaStaffRow[], now: Date) {
 
 /** Tras 5 min desde la hora reservada (coincide con mesero_atender_a_partir_de en BD). */
 export function canShowNoShow(r: ReservaStaffRow, now: Date): boolean {
-  return now.getTime() >= new Date(r.mesero_atender_a_partir_de).getTime();
+  const fromMeseroField = Date.parse(r.mesero_atender_a_partir_de);
+  const fromReserva = Date.parse(r.fecha_hora_reserva) + 5 * 60 * 1000;
+  const threshold = Number.isFinite(fromMeseroField) ? fromMeseroField : fromReserva;
+  return now.getTime() >= threshold;
 }
 
 export function mapStaffRpcError(message: string): string {

@@ -2,6 +2,7 @@ import { useFocusEffect } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 
 import { useAuth } from '@/contexts/auth-context';
+import { useNow } from '@/hooks/use-now';
 import { REALTIME_WORKER_DASHBOARD, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { confirmDialog, notify } from '@/lib/confirm';
 import { fetchCuentaMesaServicio } from '@/lib/cuenta-mesa';
@@ -12,6 +13,7 @@ import {
   canShowNoShow,
   mapReservaRows,
   mapStaffRpcError,
+  sortReservasByTime,
   splitReservationsByTime,
   type ReservaStaffRow,
 } from '@/lib/worker-reservations-logic';
@@ -106,6 +108,7 @@ export function useWorkerDashboard() {
 
   const isHost = staffMember?.rol === 'anfitrion' || staffMember?.rol === 'gerente';
   const isWaiter = staffMember?.rol === 'mesero';
+  const now = useNow();
 
   const load = useCallback(async () => {
     if (!staffMember?.id) return;
@@ -331,13 +334,8 @@ export function useWorkerDashboard() {
   );
 
   const { upcoming, attend } = useMemo(() => splitReservationsByTime(reservas, new Date()), [reservas]);
-  const attendOrdered = useMemo(
-    () =>
-      [...attend].sort(
-        (a, b) => new Date(a.fecha_hora_reserva).getTime() - new Date(b.fecha_hora_reserva).getTime(),
-      ),
-    [attend],
-  );
+  const attendOrdered = useMemo(() => sortReservasByTime(attend), [attend]);
+  const pendingReservasOrdered = useMemo(() => sortReservasByTime(reservas), [reservas]);
 
   const onDeleteSolicitud = useCallback(
     async (id: string) => {
@@ -372,6 +370,19 @@ export function useWorkerDashboard() {
       await load();
     },
     [load],
+  );
+
+  const marcarComensalNoLlego = useCallback(
+    async (id: string) => {
+      const ok = await confirmDialog(
+        'Comensal no llegó',
+        '¿Marcar que el comensal no se presentó? Se liberará la mesa si no hay otra reserva vigente.',
+        'No llegó',
+      );
+      if (!ok) return;
+      await resolve(id, false);
+    },
+    [resolve],
   );
 
   const onAtenderCompleta = useCallback(
@@ -596,6 +607,7 @@ export function useWorkerDashboard() {
     fotos,
     upcoming,
     attendOrdered,
+    pendingReservasOrdered,
     // selección
     selectedMesaByEntry,
     setSelectedMesaByEntry,
@@ -611,12 +623,14 @@ export function useWorkerDashboard() {
     assigningEntryId,
     // utilidades
     canShowNoShow,
+    now,
     // acciones
     load,
     onRefresh,
     onDeleteSolicitud,
     marcarSolicitudAtendida,
     resolve,
+    marcarComensalNoLlego,
     onAtenderCompleta,
     confirmarTerminarServicio,
     onToggleMesaWalkIn,

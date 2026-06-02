@@ -153,8 +153,7 @@ export default function WorkerDashboardWebScreen() {
   const hostSummary = [
     { icon: 'grid-outline' as const, label: 'Mesas libres', value: d.available ?? 0, tone: AcColors.success },
     { icon: 'people-outline' as const, label: 'En fila', value: d.waiting ?? 0, tone: AcColors.warning },
-    { icon: 'calendar-outline' as const, label: 'Reservas a atender', value: d.attendOrdered.length, tone: AcColors.accent },
-    { icon: 'time-outline' as const, label: 'Próximas reservas', value: d.upcoming.length, tone: AcColors.text },
+    { icon: 'calendar-outline' as const, label: 'Reservas pendientes', value: d.pendingReservasOrdered.length, tone: AcColors.accent },
   ];
   const waiterSummary = [
     { icon: 'bookmark-outline' as const, label: 'Mis mesas', value: d.myMesas.length, tone: AcColors.accent },
@@ -288,90 +287,73 @@ export default function WorkerDashboardWebScreen() {
   );
 
   const hostReservasCard = (
-    <>
-      <WebCard>
-        <WebCardHead icon="calendar-outline" title="Reservas a atender" />
-        {d.attendOrdered.length === 0 ? (
-          <Text style={styles.empty}>Nada pendiente por atender ahora.</Text>
-        ) : (
-          d.attendOrdered.map((r) => {
-            const code = r.mesas?.codigo;
-            const guest = d.names[r.id_usuario]?.trim() || 'Cliente';
-            const other =
-              r.mesas?.id_personal_atendiendo != null && r.mesas.id_personal_atendiendo !== staffMember.id;
-            const showNoShow = d.canShowNoShow(r, new Date());
-            const isLate = new Date(r.fecha_hora_reserva).getTime() < Date.now();
-            return (
-              <View key={r.id} style={styles.subCard}>
-                <View style={styles.rowHead}>
-                  <Avatar uri={d.fotos[r.id_usuario]} name={guest} size={42} />
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.itemName}>{mesaEtiqueta(code)} · {guest}</Text>
-                    <Text style={styles.itemMeta}>{fmtFecha(r.fecha_hora_reserva)} · {r.personas_grupo} pers.</Text>
-                  </View>
-                  <View style={[styles.pill, isLate ? styles.pillWarn : styles.pillInfo]}>
-                    <Text style={[styles.pillText, isLate ? styles.pillTextWarn : styles.pillTextInfo]}>
-                      {isLate ? 'Prioridad' : 'Próxima'}
-                    </Text>
-                  </View>
-                </View>
-                {r.nota ? <Text style={styles.note}>Nota: {r.nota}</Text> : null}
-                {other ? (
-                  <Text style={styles.warn}>Otro mesero está atendiendo esta mesa.</Text>
-                ) : (
-                  <>
-                    <Text style={styles.fieldLabel}>Mesero responsable</Text>
-                    {chips(
-                      d.meseroLoads.map((m) => ({ key: m.id, label: `${m.nombre_visible} (${m.mesasAtendidas})` })),
-                      d.selectedMeseroByReserva[r.id],
-                      (k) => d.setSelectedMeseroByReserva((p) => ({ ...p, [r.id]: k })),
-                      'Sin meseros en línea.',
-                    )}
-                    <View style={styles.btnRow}>
-                      <Pressable style={[styles.btnPrimary, { flex: 1 }]} onPress={() => d.onAtenderCompleta(r.id)}>
-                        <Text style={styles.btnPrimaryText}>Atender</Text>
-                      </Pressable>
-                      {showNoShow ? (
-                        <Pressable style={[styles.btnDanger, { flex: 1 }]} onPress={() => d.resolve(r.id, false)}>
-                          <Text style={styles.btnDangerText}>No llegó</Text>
-                        </Pressable>
-                      ) : null}
-                    </View>
-                    {!showNoShow ? (
-                      <Text style={styles.hintSmall}>Tras 5 min de la hora podrás marcar “no llegó”.</Text>
-                    ) : null}
-                  </>
-                )}
-              </View>
-            );
-          })
-        )}
-      </WebCard>
-      <View style={{ height: 16 }} />
-      <WebCard>
-        <WebCardHead icon="time-outline" color={AcColors.textMuted} title="Próximas reservas" />
-        {d.upcoming.length === 0 ? (
-          <Text style={styles.empty}>No hay reservas próximas.</Text>
-        ) : (
-          d.upcoming.map((r) => {
-            const guest = d.names[r.id_usuario]?.trim() || 'Cliente';
-            return (
-              <View key={r.id} style={[styles.rowHead, styles.upcomingRow]}>
-                <Avatar uri={d.fotos[r.id_usuario]} name={guest} size={38} />
+    <WebCard>
+      <WebCardHead icon="calendar-outline" title="Reservas pendientes" />
+      <Text style={styles.cardHint}>La mesa ya viene de la reserva. Elige mesero y atiende cuando llegue el comensal.</Text>
+      {d.pendingReservasOrdered.length === 0 ? (
+        <Text style={styles.empty}>No hay reservas activas.</Text>
+      ) : (
+        d.pendingReservasOrdered.map((r) => {
+          const code = r.mesas?.codigo;
+          const guest = d.names[r.id_usuario]?.trim() || 'Cliente';
+          const other =
+            r.mesas?.id_personal_atendiendo != null && r.mesas.id_personal_atendiendo !== staffMember.id;
+          const showNoShow = d.canShowNoShow(r, d.now);
+          const isLate = new Date(r.fecha_hora_reserva).getTime() < d.now.getTime();
+          return (
+            <View key={r.id} style={styles.subCard}>
+              <View style={styles.rowHead}>
+                <Avatar uri={d.fotos[r.id_usuario]} name={guest} size={42} />
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.itemName}>{mesaEtiqueta(r.mesas?.codigo)} · {guest}</Text>
+                  <Text style={styles.itemName}>{mesaEtiqueta(code)} · {guest}</Text>
                   <Text style={styles.itemMeta}>{fmtFecha(r.fecha_hora_reserva)} · {r.personas_grupo} pers.</Text>
                 </View>
+                <View style={[styles.pill, isLate ? styles.pillWarn : styles.pillInfo]}>
+                  <Text style={[styles.pillText, isLate ? styles.pillTextWarn : styles.pillTextInfo]}>
+                    {isLate ? 'Prioridad' : 'Programada'}
+                  </Text>
+                </View>
               </View>
-            );
-          })
-        )}
-        <Pressable style={styles.linkRow} onPress={() => router.push('/worker/reservations' as Href)}>
-          <Text style={styles.linkText}>Vista detallada de reservas</Text>
-          <Ionicons name="chevron-forward" size={18} color={AcColors.accentMuted} />
-        </Pressable>
-      </WebCard>
-    </>
+              {r.nota ? <Text style={styles.note}>Nota: {r.nota}</Text> : null}
+              {other ? (
+                <Text style={styles.warn}>Otro mesero está atendiendo esta mesa.</Text>
+              ) : (
+                <>
+                  <Text style={styles.fieldLabel}>Mesero responsable</Text>
+                  {chips(
+                    d.meseroLoads.map((m) => ({ key: m.id, label: `${m.nombre_visible} (${m.mesasAtendidas})` })),
+                    d.selectedMeseroByReserva[r.id],
+                    (k) => d.setSelectedMeseroByReserva((p) => ({ ...p, [r.id]: k })),
+                    'Sin meseros en línea.',
+                  )}
+                  <View style={styles.btnRow}>
+                    <Pressable style={[styles.btnPrimary, { flex: 1 }]} onPress={() => d.onAtenderCompleta(r.id)}>
+                      <Text style={styles.btnPrimaryText}>Atender</Text>
+                    </Pressable>
+                    {showNoShow ? (
+                      <Pressable style={[styles.btnDanger, { flex: 1 }]} onPress={() => void d.marcarComensalNoLlego(r.id)}>
+                        <Text style={styles.btnDangerText}>No llegó</Text>
+                      </Pressable>
+                    ) : (
+                      <Pressable style={[styles.btnDangerOutline, { flex: 1 }]} disabled>
+                        <Text style={styles.btnDangerOutlineText}>No llegó</Text>
+                      </Pressable>
+                    )}
+                  </View>
+                  {!showNoShow ? (
+                    <Text style={styles.hintSmall}>Tras 5 min de la hora podrás marcar “no llegó”.</Text>
+                  ) : null}
+                </>
+              )}
+            </View>
+          );
+        })
+      )}
+      <Pressable style={styles.linkRow} onPress={() => router.push('/worker/reservations' as Href)}>
+        <Text style={styles.linkText}>Vista detallada de reservas</Text>
+        <Ionicons name="chevron-forward" size={18} color={AcColors.accentMuted} />
+      </Pressable>
+    </WebCard>
   );
 
   const hostMesasCard = (
@@ -591,13 +573,21 @@ const styles = StyleSheet.create({
   pillTextInfo: { color: AcColors.accentText },
   pillTextWarn: { color: AcColors.warning },
   pillTextOk: { color: AcColors.success },
-  btnRow: { flexDirection: 'row', gap: 10, marginTop: 12 },
   btnPrimary: { marginTop: 12, paddingVertical: 12, borderRadius: 12, backgroundColor: AcColors.accent, alignItems: 'center' },
   btnPrimaryText: { color: AcColors.onAccent, fontWeight: '800', fontSize: 14 },
   btnOutline: { paddingVertical: 11, borderRadius: 12, borderWidth: 1, borderColor: AcColors.accent, alignItems: 'center' },
   btnOutlineText: { color: AcColors.accentText, fontWeight: '800', fontSize: 14 },
   btnDanger: { paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: AcColors.danger, alignItems: 'center' },
   btnDangerText: { color: AcColors.danger, fontWeight: '800', fontSize: 14 },
+  btnDangerOutline: {
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: AcColors.border,
+    alignItems: 'center',
+    opacity: 0.45,
+  },
+  btnDangerOutlineText: { color: AcColors.textMuted, fontWeight: '700', fontSize: 14 },
   btnDisabled: { opacity: 0.6 },
   mesaCodeLg: { fontSize: 20, fontWeight: '800', color: AcColors.text, flex: 1 },
   walkinAvatar: {
