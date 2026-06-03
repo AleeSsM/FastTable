@@ -1,25 +1,28 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Tabs } from 'expo-router';
-import { Platform } from 'react-native';
+import { Redirect, Tabs } from 'expo-router';
+import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
 
-import { AuthBoot } from '@/components/auth-boot';
 import { SoloPersonalWeb } from '@/components/solo-personal-web';
-import { useAuth } from '@/contexts/auth-context';
 import { Comensal } from '@/constants/theme-comensal';
-import { useNavigateToWelcomeOnceWhen, useNavigateToWorkerWhen } from '@/hooks/use-auth-navigation';
+import { useAuth } from '@/contexts/auth-context';
 
 export default function GuestTabLayout() {
-  const { session, staffMember, loading, signingOut } = useAuth();
+  const { session, staffMember, loading } = useAuth();
 
-  const needsWorker = !loading && !signingOut && !!session && !!staffMember;
-  const needsHome = !signingOut && !loading && !session;
+  if (loading) {
+    return (
+      <View style={styles.boot}>
+        <ActivityIndicator color={Comensal.accent} size="large" />
+      </View>
+    );
+  }
 
-  useNavigateToWelcomeOnceWhen(needsHome);
-  useNavigateToWorkerWhen(needsWorker);
+  if (!session) {
+    return <Redirect href="/" />;
+  }
 
-  // Sin sesión no montar tabs. Personal → worker antes de pintar tabs.
-  if (signingOut || !session || needsWorker) {
-    return <AuthBoot />;
+  if (staffMember) {
+    return <Redirect href="/worker" />;
   }
 
   // La versión web es exclusiva para personal; los clientes usan la app móvil.
@@ -39,8 +42,8 @@ export default function GuestTabLayout() {
           letterSpacing: 0.35,
         },
         headerShadowVisible: false,
-        headerTintColor: Comensal.accentText,
-        tabBarActiveTintColor: Comensal.accentText,
+        headerTintColor: Comensal.accent,
+        tabBarActiveTintColor: Comensal.accent,
         tabBarInactiveTintColor: Comensal.textFaint,
         tabBarStyle: {
           backgroundColor: Comensal.surfaceElevated,
@@ -95,3 +98,12 @@ export default function GuestTabLayout() {
     </Tabs>
   );
 }
+const styles = StyleSheet.create({
+  boot: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Comensal.background,
+  },
+});
+

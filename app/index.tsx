@@ -1,44 +1,41 @@
-import { useRouter } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
 import {
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    ActivityIndicator,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AuthBoot } from '@/components/auth-boot';
-import { useAuth } from '@/contexts/auth-context';
 import { Comensal } from '@/constants/theme-comensal';
-import { isSignOutNavigationActive } from '@/lib/sign-out-nav';
-import { useNavigateToGuestTabsWhen, useNavigateToWorkerWhen } from '@/hooks/use-auth-navigation';
+import { useAuth } from '@/contexts/auth-context';
 
 export default function WelcomeScreen() {
   const router = useRouter();
-  const { session, user, staffMember, loading, signingOut } = useAuth();
+  const { session, user, staffMember, loading } = useAuth();
 
-  const blockAutoRedirect = signingOut || isSignOutNavigationActive();
-  const goWorker =
-    !blockAutoRedirect && !loading && !!session && !!user && !!staffMember;
-  const goTabs =
-    !blockAutoRedirect && !loading && !!session && !!user && !staffMember;
-  // Sin sesión → siempre bienvenida (evita 2.º spinner tras cerrar sesión).
-  const showBoot = !!session && (loading || goWorker || goTabs);
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.centered}>
+        <ActivityIndicator color={Comensal.accent} />
+        <Text style={styles.muted}>Cargando…</Text>
+      </SafeAreaView>
+    );
+  }
 
-  useNavigateToWorkerWhen(goWorker);
-  useNavigateToGuestTabsWhen(goTabs);
-
-  if (showBoot) {
-    return <AuthBoot />;
+  if (session && user) {
+    if (staffMember) return <Redirect href="/worker" />;
+    return <Redirect href="/(tabs)" />;
   }
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
         <Text style={styles.eyebrow}>Bienvenido</Text>
-        <Text style={styles.brand}>A la Carta</Text>
+        <Text style={styles.brand}>FastTable</Text>
         <View style={styles.brandRule} />
         <Text style={styles.tagline}>Reserva mesa, fila y servicio en un solo lugar.</Text>
 
@@ -47,10 +44,10 @@ export default function WelcomeScreen() {
           <Text style={styles.cardBody}>
             Crea una cuenta con correo y contraseña, o entra si ya te registraste.
           </Text>
-          <Pressable style={styles.primaryBtn} onPress={() => router.replace('/register')}>
+          <Pressable style={styles.primaryBtn} onPress={() => router.push('/register')}>
             <Text style={styles.primaryBtnText}>Registrarme</Text>
           </Pressable>
-          <Pressable style={styles.secondaryBtn} onPress={() => router.replace('/login')}>
+          <Pressable style={styles.secondaryBtn} onPress={() => router.push('/login')}>
             <Text style={styles.secondaryBtnText}>Iniciar sesión</Text>
           </Pressable>
         </View>

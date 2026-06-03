@@ -1,22 +1,26 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useGlobalSearchParams, usePathname, useRouter, type Href } from 'expo-router';
+import { useLocalSearchParams, usePathname, useRouter, type Href } from 'expo-router';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Avatar } from '@/components/avatar';
-import { AcColors } from '@/constants/alacarta';
+import { FtColors } from '@/constants/fasttable';
 import { useAuth } from '@/contexts/auth-context';
-import { useSafeSignOut } from '@/hooks/use-safe-sign-out';
 import { badgeCountForItem, useWorkerNavBadges } from '@/hooks/use-worker-nav-badges';
 import {
-  navForRole,
-  isNavItemActive,
-  navItemHref,
-  roleLabel,
-  type WorkerNavItem,
-  type WorkerRol,
+    navForRole,
+    navItemHref,
+    parseNavSection,
+    roleLabel,
+    type WorkerNavItem,
+    type WorkerRol,
 } from '@/lib/worker-nav';
 
 const SIDEBAR_WIDTH = 256;
+
+function isActive(pathname: string, href: string): boolean {
+  if (href === '/worker') return pathname === '/worker';
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 /**
  * Marco de escritorio para el personal (solo web). Barra lateral fija a la
@@ -25,18 +29,17 @@ const SIDEBAR_WIDTH = 256;
 export function WorkerWebShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname() ?? '';
-  // Global: el layout padre no recibe ?sec= de las pantallas hijas con useLocalSearchParams.
-  const params = useGlobalSearchParams<{ sec?: string }>();
-  const { staffMember, loading } = useAuth();
-  const { safeSignOut, signingOut } = useSafeSignOut();
+  const params = useLocalSearchParams<{ sec?: string }>();
+  const { staffMember, loading, signOut } = useAuth();
 
   const rol = staffMember?.rol as WorkerRol | undefined;
+  const currentSec = parseNavSection(rol, params.sec, pathname);
   const { badges } = useWorkerNavBadges(rol, staffMember?.id ?? null, pathname);
 
   if (loading) {
     return (
       <View style={styles.boot}>
-        <ActivityIndicator color={AcColors.accent} size="large" />
+        <ActivityIndicator color={FtColors.accent} size="large" />
       </View>
     );
   }
@@ -56,17 +59,19 @@ export function WorkerWebShell({ children }: { children: React.ReactNode }) {
       <View style={styles.sidebar}>
         <View style={styles.brandRow}>
           <View style={styles.brandMark}>
-            <Ionicons name="restaurant" size={20} color={AcColors.onAccent} />
+            <Ionicons name="restaurant" size={20} color={FtColors.onAccent} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.brandName}>A la Carta</Text>
+            <Text style={styles.brandName}>FastTable</Text>
             <Text style={styles.brandTag}>Consola de personal</Text>
           </View>
         </View>
 
         <View style={styles.nav}>
           {items.map((item) => {
-            const active = isNavItemActive(item, pathname, params.sec, rol);
+            const active = item.section
+              ? isActive(pathname, item.href) && currentSec === item.section
+              : isActive(pathname, item.href);
             const count = badgeCountForItem(item, badges);
             const isAlert = item.badgeAlert === true;
             return (
@@ -81,7 +86,7 @@ export function WorkerWebShell({ children }: { children: React.ReactNode }) {
                 <Ionicons
                   name={item.icon}
                   size={20}
-                  color={active ? AcColors.onAccent : AcColors.textMuted}
+                  color={active ? FtColors.onAccent : FtColors.textMuted}
                 />
                 <Text style={[styles.navText, active && styles.navTextActive]}>{item.label}</Text>
                 {count > 0 ? (
@@ -109,14 +114,13 @@ export function WorkerWebShell({ children }: { children: React.ReactNode }) {
             </View>
           </Pressable>
           <Pressable
-            onPress={safeSignOut}
-            disabled={signingOut}
+            onPress={() => signOut()}
             hitSlop={8}
             style={({ hovered }: { hovered?: boolean }) => [
               styles.signOutBtn,
               hovered && styles.signOutBtnHover,
             ]}>
-            <Ionicons name="log-out-outline" size={20} color={AcColors.danger} />
+            <Ionicons name="log-out-outline" size={20} color={FtColors.danger} />
           </Pressable>
         </View>
       </View>
@@ -127,19 +131,19 @@ export function WorkerWebShell({ children }: { children: React.ReactNode }) {
 }
 
 const styles = StyleSheet.create({
-  boot: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: AcColors.background },
-  bare: { flex: 1, backgroundColor: AcColors.background },
+  boot: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: FtColors.background },
+  bare: { flex: 1, backgroundColor: FtColors.background },
   root: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: AcColors.background,
+    backgroundColor: FtColors.background,
     minHeight: '100%',
   },
   sidebar: {
     width: SIDEBAR_WIDTH,
-    backgroundColor: AcColors.surface,
+    backgroundColor: FtColors.surface,
     borderRightWidth: 1,
-    borderRightColor: AcColors.border,
+    borderRightColor: FtColors.border,
     paddingVertical: 22,
     paddingHorizontal: 16,
   },
@@ -148,12 +152,12 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
     borderRadius: 11,
-    backgroundColor: AcColors.accent,
+    backgroundColor: FtColors.accent,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  brandName: { fontSize: 17, fontWeight: '800', color: AcColors.text, letterSpacing: 0.2 },
-  brandTag: { fontSize: 11, color: AcColors.textMuted, marginTop: 1 },
+  brandName: { fontSize: 17, fontWeight: '800', color: FtColors.text, letterSpacing: 0.2 },
+  brandTag: { fontSize: 11, color: FtColors.textMuted, marginTop: 1 },
   nav: { gap: 4, flex: 1 },
   navItem: {
     flexDirection: 'row',
@@ -163,10 +167,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 11,
   },
-  navItemHover: { backgroundColor: AcColors.surfaceElevated },
-  navItemActive: { backgroundColor: AcColors.accent },
-  navText: { flex: 1, fontSize: 14, fontWeight: '600', color: AcColors.textMuted },
-  navTextActive: { color: AcColors.onAccent, fontWeight: '700' },
+  navItemHover: { backgroundColor: FtColors.surfaceElevated },
+  navItemActive: { backgroundColor: FtColors.accent },
+  navText: { flex: 1, fontSize: 14, fontWeight: '600', color: FtColors.textMuted },
+  navTextActive: { color: FtColors.onAccent, fontWeight: '700' },
   badge: {
     minWidth: 22,
     height: 22,
@@ -175,11 +179,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  badgeAlert: { backgroundColor: AcColors.warning },
-  badgeMuted: { backgroundColor: AcColors.surfaceElevated, borderWidth: 1, borderColor: AcColors.border },
+  badgeAlert: { backgroundColor: FtColors.warning },
+  badgeMuted: { backgroundColor: FtColors.surfaceElevated, borderWidth: 1, borderColor: FtColors.border },
   badgeText: { fontSize: 12, fontWeight: '800' },
-  badgeTextAlert: { color: AcColors.background },
-  badgeTextMuted: { color: AcColors.textMuted },
+  badgeTextAlert: { color: FtColors.background },
+  badgeTextMuted: { color: FtColors.textMuted },
   userBox: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -187,7 +191,7 @@ const styles = StyleSheet.create({
     paddingTop: 14,
     marginTop: 10,
     borderTopWidth: 1,
-    borderTopColor: AcColors.border,
+    borderTopColor: FtColors.border,
   },
   userInfo: {
     flex: 1,
@@ -197,10 +201,10 @@ const styles = StyleSheet.create({
     padding: 6,
     borderRadius: 11,
   },
-  userInfoHover: { backgroundColor: AcColors.surfaceElevated },
-  userName: { fontSize: 13, fontWeight: '700', color: AcColors.text },
-  userRole: { fontSize: 11, color: AcColors.textMuted, marginTop: 1 },
+  userInfoHover: { backgroundColor: FtColors.surfaceElevated },
+  userName: { fontSize: 13, fontWeight: '700', color: FtColors.text },
+  userRole: { fontSize: 11, color: FtColors.textMuted, marginTop: 1 },
   signOutBtn: { padding: 8, borderRadius: 9 },
-  signOutBtnHover: { backgroundColor: AcColors.surfaceElevated },
+  signOutBtnHover: { backgroundColor: FtColors.surfaceElevated },
   content: { flex: 1, minHeight: '100%' },
 });

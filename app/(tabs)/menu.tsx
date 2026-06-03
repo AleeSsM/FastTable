@@ -1,34 +1,32 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useCallback, useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  Modal,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
 import { Image } from 'expo-image';
 import { useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
+import {
+    ActivityIndicator,
+    Alert,
+    Modal,
+    Pressable,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
+} from 'react-native';
 
 import { ComensalGreetingLine } from '@/components/comensal-greeting-line';
 import { ComensalMeseroCard } from '@/components/comensal-mesero-card';
-import { useAuth } from '@/contexts/auth-context';
 import { Comensal } from '@/constants/theme-comensal';
-import { SemanticSurfaces } from '@/constants/semantic-surfaces';
+import { useAuth } from '@/contexts/auth-context';
 import { REALTIME_MENU_COMENSAL, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
-import { fetchLineasCuentaComensal } from '@/lib/cuenta-comensal';
 import { mapCocinaRpcErrorComensal } from '@/lib/cocina-errors';
+import { fetchLineasCuentaComensal } from '@/lib/cuenta-comensal';
 import { formatPriceFromCents } from '@/lib/format';
-import { mesaEtiqueta } from '@/lib/mesa-label';
 import {
-  etiquetaDisponibilidadComensal,
-  itemNoPedible,
-  type ItemMenuComensal,
+    etiquetaDisponibilidadComensal,
+    itemNoPedible,
+    type ItemMenuComensal,
 } from '@/lib/menu-comensal';
 import { fetchMesaActivaComensal, type MesaActiva } from '@/lib/mesa-activa';
 import { supabase } from '@/lib/supabase';
@@ -193,7 +191,7 @@ export default function MenuScreen() {
         <View style={styles.mesaBanner}>
           <Ionicons name="restaurant" size={18} color={Comensal.success} />
           <Text style={styles.mesaBannerText}>
-            {mesaEtiqueta(mesaActiva.codigo)} · puedes pedir a cocina
+            Mesa {mesaActiva.codigo} · puedes pedir a cocina
           </Text>
         </View>
       ) : (
@@ -391,7 +389,7 @@ const styles = StyleSheet.create({
     borderBottomColor: Comensal.borderSubtle,
   },
   cuentaLine: { flex: 1, fontSize: 14, color: Comensal.text, lineHeight: 20 },
-  cuentaSub: { fontSize: 14, fontWeight: '600', color: Comensal.accentText },
+  cuentaSub: { fontSize: 14, fontWeight: '600', color: Comensal.accent },
   cuentaTotalRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -400,7 +398,7 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
   cuentaTotalLabel: { fontSize: 15, fontWeight: '700', color: Comensal.text },
-  cuentaTotal: { fontSize: 18, fontWeight: '800', color: Comensal.accentText },
+  cuentaTotal: { fontSize: 18, fontWeight: '800', color: Comensal.accent },
   cuentaEmpty: { fontSize: 14, color: Comensal.textMuted, fontStyle: 'italic' },
   finishBtn: {
     marginTop: 14,
@@ -437,10 +435,10 @@ const styles = StyleSheet.create({
   itemName: { fontSize: 16, fontWeight: '700', color: Comensal.text },
   itemDesc: { fontSize: 13, color: Comensal.textMuted, marginTop: 2 },
   unavailable: { fontSize: 12, color: Comensal.warning, marginTop: 4 },
-  price: { fontSize: 16, fontWeight: '700', color: Comensal.accentText },
+  price: { fontSize: 16, fontWeight: '700', color: Comensal.accent },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: SemanticSurfaces.overlayModal,
+    backgroundColor: 'rgba(0,0,0,0.75)',
     justifyContent: 'flex-end',
   },
   modalSheet: {
@@ -455,7 +453,7 @@ const styles = StyleSheet.create({
   modalImg: { width: '100%', height: 200, borderRadius: 14, marginBottom: 14, backgroundColor: Comensal.surface },
   modalTitle: { fontSize: 24, fontWeight: '800', color: Comensal.text },
   modalDesc: { fontSize: 14, color: Comensal.textMuted, marginTop: 8, lineHeight: 21 },
-  modalPrice: { fontSize: 16, fontWeight: '700', color: Comensal.accentText, marginTop: 10 },
+  modalPrice: { fontSize: 16, fontWeight: '700', color: Comensal.accent, marginTop: 10 },
   label: { fontSize: 12, fontWeight: '700', color: Comensal.textFaint, marginTop: 16, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.6 },
   qtyRow: { flexDirection: 'row', alignItems: 'center', gap: 16 },
   qtyBtn: {

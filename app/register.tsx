@@ -1,17 +1,17 @@
-import { useRef, useState } from 'react';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
 
 import { Comensal } from '@/constants/theme-comensal';
 import { formatAuthErrorMessage } from '@/lib/auth-errors';
@@ -25,10 +25,8 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [busy, setBusy] = useState(false);
-  const submitLock = useRef(false);
 
   const onSubmit = async () => {
-    if (submitLock.current || busy) return;
     const n = name.trim();
     const e = email.trim().toLowerCase();
     if (!n || !e || !password) {
@@ -43,7 +41,6 @@ export default function RegisterScreen() {
       Alert.alert('Contraseña', 'Las contraseñas no coinciden.');
       return;
     }
-    submitLock.current = true;
     setBusy(true);
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -75,7 +72,6 @@ export default function RegisterScreen() {
         [{ text: 'Entendido', onPress: () => router.replace('/') }],
       );
     } finally {
-      submitLock.current = false;
       setBusy(false);
     }
   };
@@ -187,5 +183,5 @@ const styles = StyleSheet.create({
   secondaryLink: { marginTop: 16, alignItems: 'center' },
   secondaryLinkText: { fontSize: 15, color: Comensal.textMuted, textDecorationLine: 'underline' },
   backLink: { marginTop: 20, alignItems: 'center' },
-  backLinkText: { fontSize: 15, color: Comensal.accentText },
+  backLinkText: { fontSize: 15, color: Comensal.accent },
 });

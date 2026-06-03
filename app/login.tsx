@@ -1,17 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
 
 import { Comensal } from '@/constants/theme-comensal';
 import { formatAuthErrorMessage } from '@/lib/auth-errors';
@@ -23,7 +23,6 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
-  const submitLock = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -37,13 +36,11 @@ export default function LoginScreen() {
   }, []);
 
   const onSubmit = async () => {
-    if (submitLock.current || busy) return;
     const e = email.trim().toLowerCase();
     if (!e || !password) {
       Alert.alert('Faltan datos', 'Introduce correo y contraseña.');
       return;
     }
-    submitLock.current = true;
     setBusy(true);
     try {
       const { error } = await supabase.auth.signInWithPassword({ email: e, password });
@@ -57,7 +54,6 @@ export default function LoginScreen() {
       const msg = err instanceof Error ? err.message : String(err);
       Alert.alert('Sin conexión', formatAuthErrorMessage(msg));
     } finally {
-      submitLock.current = false;
       setBusy(false);
     }
   };
@@ -145,5 +141,5 @@ const styles = StyleSheet.create({
   secondaryLink: { marginTop: 16, alignItems: 'center' },
   secondaryLinkText: { fontSize: 15, color: Comensal.textMuted, textDecorationLine: 'underline' },
   backLink: { marginTop: 20, alignItems: 'center' },
-  backLinkText: { fontSize: 15, color: Comensal.accentText },
+  backLinkText: { fontSize: 15, color: Comensal.accent },
 });

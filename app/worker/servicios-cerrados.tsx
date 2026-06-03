@@ -1,23 +1,23 @@
 import { Ionicons } from '@expo/vector-icons';
+import { Redirect, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import {
-  ActivityIndicator,
-  Modal,
-  Platform,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    ActivityIndicator,
+    Modal,
+    Platform,
+    Pressable,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Redirect, useFocusEffect } from 'expo-router';
 
+import { FtColors } from '@/constants/fasttable';
+import { ui } from '@/constants/ui';
 import { useAuth } from '@/contexts/auth-context';
-import { AcColors } from '@/constants/alacarta';
 import { formatPriceFromCents } from '@/lib/format';
-import { mesaEtiquetaFromJoin } from '@/lib/mesa-label';
 import { supabase } from '@/lib/supabase';
 
 type ServicioCerrado = {
@@ -38,6 +38,12 @@ const cardShadow =
   Platform.OS === 'ios'
     ? { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15, shadowRadius: 6 }
     : { elevation: 3 };
+
+function mesaCodigo(m: ServicioCerrado['mesas']): string {
+  if (m == null) return '—';
+  const z = Array.isArray(m) ? m[0] : m;
+  return z?.codigo ?? '—';
+}
 
 function itemNombre(raw: LineaRecibo['items_menu']): string {
   if (raw == null) return '—';
@@ -100,7 +106,7 @@ export default function ServiciosCerradosScreen() {
   if (authLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator color={AcColors.accent} />
+        <ActivityIndicator color={FtColors.accent} />
       </View>
     );
   }
@@ -122,21 +128,21 @@ export default function ServiciosCerradosScreen() {
               setRefreshing(true);
               void load().finally(() => setRefreshing(false));
             }}
-            tintColor={AcColors.accent}
+            tintColor={FtColors.accent}
           />
         }>
         <Text style={styles.sub}>
           Recibos de servicios terminados: qué se pidió y el total cobrado al cerrar la mesa.
         </Text>
         {loading ? (
-          <ActivityIndicator color={AcColors.accent} style={{ marginTop: 24 }} />
+          <ActivityIndicator color={FtColors.accent} style={{ marginTop: 24 }} />
         ) : lista.length === 0 ? (
           <Text style={styles.empty}>Aún no hay servicios cerrados registrados.</Text>
         ) : (
           lista.map((s) => (
             <Pressable key={s.id} style={[styles.card, cardShadow]} onPress={() => void abrirDetalle(s.id)}>
               <View style={styles.cardTop}>
-                <Text style={styles.mesa}>{mesaEtiquetaFromJoin(s.mesas)}</Text>
+                <Text style={styles.mesa}>Mesa {mesaCodigo(s.mesas)}</Text>
                 <Text style={styles.total}>{formatPriceFromCents(s.total_centavos)}</Text>
               </View>
               <Text style={styles.fecha}>
@@ -162,14 +168,14 @@ export default function ServiciosCerradosScreen() {
         <SafeAreaView style={styles.modalSafe}>
           <View style={styles.modalHead}>
             <Pressable onPress={() => setDetalleId(null)} hitSlop={12}>
-              <Ionicons name="close" size={28} color={AcColors.text} />
+              <Ionicons name="close" size={28} color={FtColors.text} />
             </Pressable>
             <Text style={styles.modalTitle}>
-              Recibo — {servicioSel ? mesaEtiquetaFromJoin(servicioSel.mesas) : ''}
+              Recibo — Mesa {servicioSel ? mesaCodigo(servicioSel.mesas) : ''}
             </Text>
           </View>
           {detalleBusy ? (
-            <ActivityIndicator color={AcColors.accent} style={{ marginTop: 24 }} />
+            <ActivityIndicator color={FtColors.accent} style={{ marginTop: 24 }} />
           ) : (
             <ScrollView contentContainerStyle={styles.modalScroll}>
               {lineas.map((ln) => {
@@ -199,33 +205,33 @@ export default function ServiciosCerradosScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: AcColors.background },
+  safe: ui.screen,
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   scroll: { padding: 16, paddingBottom: 32 },
-  sub: { fontSize: 14, color: AcColors.textMuted, marginBottom: 16, lineHeight: 20 },
-  empty: { fontSize: 15, color: AcColors.textMuted, fontStyle: 'italic', marginTop: 12 },
-  card: { backgroundColor: AcColors.surface, borderRadius: 12, padding: 14, marginBottom: 10 },
+  sub: { fontSize: 14, color: FtColors.textMuted, marginBottom: 16, lineHeight: 20 },
+  empty: { fontSize: 15, color: FtColors.textMuted, fontStyle: 'italic', marginTop: 12 },
+  card: { backgroundColor: FtColors.surface, borderRadius: 12, padding: 14, marginBottom: 10 },
   cardTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  mesa: { fontSize: 17, fontWeight: '700', color: AcColors.text },
-  total: { fontSize: 17, fontWeight: '800', color: AcColors.accentText },
-  fecha: { fontSize: 13, color: AcColors.textMuted, marginTop: 6 },
-  invitado: { fontSize: 13, color: AcColors.text, marginTop: 4 },
-  ver: { fontSize: 13, color: AcColors.accentText, marginTop: 8, fontWeight: '600' },
-  modalSafe: { flex: 1, backgroundColor: AcColors.background },
+  mesa: { fontSize: 17, fontWeight: '700', color: FtColors.text },
+  total: { fontSize: 17, fontWeight: '800', color: FtColors.accent },
+  fecha: { fontSize: 13, color: FtColors.textMuted, marginTop: 6 },
+  invitado: { fontSize: 13, color: FtColors.text, marginTop: 4 },
+  ver: { fontSize: 13, color: FtColors.accent, marginTop: 8, fontWeight: '600' },
+  modalsafe: ui.screen,
   modalHead: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 12 },
-  modalTitle: { fontSize: 18, fontWeight: '700', color: AcColors.text, flex: 1 },
+  modalTitle: { fontSize: 18, fontWeight: '700', color: FtColors.text, flex: 1 },
   modalScroll: { padding: 16, paddingBottom: 32 },
   linea: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
-  lineaNombre: { flex: 1, fontSize: 15, color: AcColors.text },
-  lineaSub: { fontSize: 15, fontWeight: '600', color: AcColors.accentText },
+  lineaNombre: { flex: 1, fontSize: 15, color: FtColors.text },
+  lineaSub: { fontSize: 15, fontWeight: '600', color: FtColors.accent },
   totalRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 16,
     paddingTop: 14,
     borderTopWidth: 1,
-    borderTopColor: AcColors.border,
+    borderTopColor: FtColors.border,
   },
-  totalLbl: { fontSize: 16, fontWeight: '700', color: AcColors.text },
-  totalVal: { fontSize: 20, fontWeight: '800', color: AcColors.accentText },
+  totalLbl: { fontSize: 16, fontWeight: '700', color: FtColors.text },
+  totalVal: { fontSize: 20, fontWeight: '800', color: FtColors.accent },
 });

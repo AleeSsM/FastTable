@@ -1,17 +1,17 @@
-import { useRef, useState } from 'react';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
 
 import { Comensal } from '@/constants/theme-comensal';
 import { formatAuthErrorMessage } from '@/lib/auth-errors';
@@ -22,16 +22,13 @@ export default function ForgotPasswordScreen() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState(false);
-  const submitLock = useRef(false);
 
   const onSubmit = async () => {
-    if (submitLock.current || busy) return;
     const e = email.trim().toLowerCase();
     if (!e || !e.includes('@')) {
       Alert.alert('Correo', 'Introduce un correo válido.');
       return;
     }
-    submitLock.current = true;
     setBusy(true);
     try {
       const redirectTo = getAuthRedirectUrl();
@@ -42,14 +39,11 @@ export default function ForgotPasswordScreen() {
       }
       Alert.alert(
         'Revisa tu correo',
-        Platform.OS === 'web'
-          ? 'Si existe una cuenta con ese correo, te enviamos un enlace. Ábrelo en este navegador; te llevará a elegir una contraseña nueva.'
-          : 'Si existe una cuenta con ese correo, te enviamos un enlace para elegir una nueva contraseña. ' +
-              'Si lo abres en el ordenador, usa el navegador (no hace falta la app instalada).',
+        'Si existe una cuenta con ese correo, te enviamos un enlace para elegir una nueva contraseña. ' +
+          'Abre el enlace en este dispositivo (misma app FastTable).',
         [{ text: 'Entendido', onPress: () => router.back() }],
       );
     } finally {
-      submitLock.current = false;
       setBusy(false);
     }
   };
@@ -133,5 +127,5 @@ const styles = StyleSheet.create({
   primaryBtnDisabled: { opacity: 0.7 },
   primaryBtnText: { color: Comensal.onAccent, fontSize: 16, fontWeight: '800', letterSpacing: 0.2 },
   backLink: { marginTop: 20, alignItems: 'center' },
-  backLinkText: { fontSize: 15, color: Comensal.accentText },
+  backLinkText: { fontSize: 15, color: Comensal.accent },
 });

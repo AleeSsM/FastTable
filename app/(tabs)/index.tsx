@@ -2,15 +2,15 @@ import { Image } from 'expo-image';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  Platform,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    ActivityIndicator,
+    Alert,
+    Platform,
+    Pressable,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from 'react-native';
 
 import { ComensalGreetingLine } from '@/components/comensal-greeting-line';
@@ -19,7 +19,6 @@ import { Comensal } from '@/constants/theme-comensal';
 import { useAuth } from '@/contexts/auth-context';
 import { REALTIME_TABLES_SCREEN, useSupabaseRealtimeRefresh } from '@/hooks/use-supabase-realtime-refresh';
 import { supabase } from '@/lib/supabase';
-import { mesaEtiqueta } from '@/lib/mesa-label';
 import { tableImageUrl } from '@/lib/table-image';
 
 type EstadoMesa = 'libre' | 'ocupada' | 'reservada';
@@ -258,7 +257,7 @@ export default function TablesScreen() {
               <View style={styles.cardAccent} />
               <View style={styles.cardInner}>
                 <View style={styles.cardTop}>
-                  <Text style={styles.tableId}>{mesaEtiqueta(t.codigo)}</Text>
+                  <Text style={styles.tableId}>{t.codigo}</Text>
                   <View
                     style={[
                       styles.badge,
@@ -452,7 +451,7 @@ const styles = StyleSheet.create({
   },
   resText: { fontSize: 14, color: Comensal.text, fontWeight: '500', lineHeight: 20 },
   cancelBtn: { marginTop: 8, alignSelf: 'flex-start' },
-  cancelBtnText: { fontSize: 13, color: Comensal.accentText, fontWeight: '500' },
+  cancelBtnText: { fontSize: 13, color: Comensal.accent, fontWeight: '500' },
   reserveBtn: {
     alignSelf: 'flex-end',
     paddingVertical: 11,

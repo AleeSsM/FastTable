@@ -17,9 +17,8 @@ export const Comensal = {
   textFaint: BRAND.textFaint,
   border: BRAND.border,
   borderSubtle: BRAND.borderSubtle,
-  /** Azul elegante (botones y acentos) */
+  /** Azul eléctrico + violeta profundo para un look premium tech */
   accent: BRAND.accent,
-  accentText: BRAND.accentText,
   accentMuted: BRAND.accentMuted,
   onAccent: BRAND.onAccent,
   success: BRAND.success,

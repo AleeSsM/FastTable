@@ -1,20 +1,20 @@
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
 
-import { useAuth } from '@/contexts/auth-context';
 import { Comensal } from '@/constants/theme-comensal';
+import { useAuth } from '@/contexts/auth-context';
 import { formatAuthErrorMessage } from '@/lib/auth-errors';
 import { supabase } from '@/lib/supabase';
 
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   primaryBtnDisabled: { opacity: 0.7 },
   primaryBtnText: { color: Comensal.onAccent, fontSize: 16, fontWeight: '800', letterSpacing: 0.2 },
   link: { marginTop: 18, alignItems: 'center' },
-  linkText: { fontSize: 15, color: Comensal.accentText },
+  linkText: { fontSize: 15, color: Comensal.accent },
   backLink: { marginTop: 12, alignItems: 'center' },
   backLinkText: { fontSize: 15, color: Comensal.textMuted },
 });

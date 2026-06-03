@@ -1,16 +1,16 @@
 import { Stack } from 'expo-router';
 
-import { AcColors } from '@/constants/alacarta';
+import { FtColors } from '@/constants/fasttable';
 
 export default function AdminLayout() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: AcColors.surfaceElevated },
-        headerTintColor: AcColors.accentText,
-        headerTitleStyle: { fontWeight: '700', color: AcColors.text },
+        headerStyle: { backgroundColor: FtColors.surfaceElevated },
+        headerTintColor: FtColors.accent,
+        headerTitleStyle: { fontWeight: '700', color: FtColors.text },
         headerShadowVisible: false,
-        contentStyle: { backgroundColor: AcColors.background },
+        contentStyle: { backgroundColor: FtColors.background },
       }}>
       <Stack.Screen name="index" options={{ title: 'Administración', headerShown: false }} />
       <Stack.Screen name="personal" options={{ title: 'Personal' }} />
