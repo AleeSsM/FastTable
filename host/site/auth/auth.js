@@ -5,8 +5,8 @@
 (function (global) {
   "use strict";
 
-  const NATIVE_SCHEME = "alacarta";
-  const NATIVE_CALLBACK = "alacarta://auth/callback";
+  const NATIVE_SCHEME = "fasttable";
+  const NATIVE_CALLBACK = "fasttable://auth/callback";
   const ANDROID_PACKAGE = "com.alacarta.app";
 
   function getConfig() {
@@ -95,7 +95,7 @@
 
   function tryOpenNativeApp(url) {
     if (/Android/i.test(global.navigator.userAgent)) {
-      const withoutScheme = url.replace(/^alacarta:\/\//, "");
+      const withoutScheme = url.replace(/^fasttable:\/\//, "");
       global.location.href =
         "intent://" +
         withoutScheme +

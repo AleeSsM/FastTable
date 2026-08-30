@@ -13,7 +13,7 @@ function productionWebOrigin(): string | null {
   return siteUrl ? siteUrl.replace(/\/$/, '') : null;
 }
 
-/** Deep link fijo de la app instalada (`app.json` → scheme `alacarta`). */
+/** Deep link fijo de la app instalada (`app.json` → scheme `fasttable`). */
 export function getNativeAuthRedirectUrl(path: string = AUTH_CALLBACK_PATH): string {
   return Linking.createURL(normalizePath(path));
 }
@@ -21,7 +21,7 @@ export function getNativeAuthRedirectUrl(path: string = AUTH_CALLBACK_PATH): str
 /**
  * URL enviada a Supabase al registrarse o recuperar contraseña.
  * Web: dominio público (`EXPO_PUBLIC_APP_URL`) o el origen actual en desarrollo.
- * Móvil: siempre `alacarta://auth/callback` (no usa la URL web).
+ * Móvil: siempre `fasttable://auth/callback` (no usa la URL web).
  */
 export function getAuthRedirectUrl(path: string = AUTH_CALLBACK_PATH): string {
   const normalized = normalizePath(path);

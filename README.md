@@ -14,7 +14,9 @@
 
 </div>
 
-Aplicación móvil para **operar un restaurante de punta a punta**: el comensal reserva, ordena y consulta su cuenta; el personal atiende mesas, solicitudes y reservas; cocina recibe pedidos y administra la carta; gerencia visualiza indicadores. Todo sobre **un backend único** (PostgreSQL, políticas RLS, funciones RPC y **Realtime** para reflejar cambios sin recargar a mano).
+Aplicación móvil y web para **operar un restaurante de punta a punta**: el comensal reserva, ordena y consulta su cuenta; el personal atiende mesas, solicitudes y reservas; cocina recibe pedidos y administra la carta; gerencia visualiza indicadores. Todo sobre un backend Supabase propio (PostgreSQL, políticas RLS, funciones RPC y **Realtime** para reflejar cambios sin recargar a mano).
+
+> Este repositorio no comparte ni necesita una base de datos ajena. Cada instalación crea y configura su propio proyecto Supabase con el esquema incluido.
 
 ---
 
@@ -55,26 +57,24 @@ La **fuente de verdad** es la base de datos; la app solo orquesta permisos y exp
 
 ---
 
-## Requisitos
+## Instalación local
 
 - **Node.js** (LTS) y **npm**
-- Proyecto **Supabase** con el esquema aplicado: ver [`supabase/README.md`](supabase/README.md)
-- Archivo **`.env`** con `EXPO_PUBLIC_SUPABASE_URL` y `EXPO_PUBLIC_SUPABASE_ANON_KEY` (plantilla: `.env.example`). Para producción web añade `EXPO_PUBLIC_APP_URL` (dominio público, sin localhost). La *service role* solo en máquina local para scripts administrativos, nunca en builds públicos.
+- Un proyecto **Supabase propio**: alojado en Supabase o una instancia local/autohospedada. No basta PostgreSQL genérico, porque la aplicación usa Auth, Storage y Realtime de Supabase.
 
-**Sitio público (landing + APK + auth + app web en `/app`)**: [`host/README.md`](host/README.md) · [`docs/PRODUCCION.md`](docs/PRODUCCION.md).
-
----
-
-## Arranque rápido
+1. Crea el backend y aplica el esquema completo siguiendo [`supabase/README.md`](supabase/README.md).
+2. Crea tu configuración local:
 
 ```bash
 npm install
 cp .env.example .env
-# Edita .env con tu proyecto Supabase
+# Añade en .env la URL y la clave anónima de TU proyecto Supabase
 npm start
 ```
 
-Alta de personal: `npm run staff:console` (requiere service role en `.env` local).
+3. Registra un usuario desde la aplicación. Para crear el primer gerente y el resto del personal, usa `npm run staff:console`; requiere `SUPABASE_SERVICE_ROLE_KEY` únicamente en tu `.env` local.
+
+Para publicar la web, el APK o configurar los enlaces de correo, consulta [`host/README.md`](host/README.md). La guía de producción genérica está en [`docs/PRODUCCION.md`](docs/PRODUCCION.md).
 
 ---
 
@@ -91,9 +91,9 @@ Alta de personal: `npm run staff:console` (requiere service role en `.env` local
 
 | Recurso | Contenido |
 |---------|-----------|
-| [`supabase/README.md`](supabase/README.md) | Instalación: teardown + bootstrap |
-| `supabase/00_schema_teardown.sql` | Borrado del esquema A la Carta (opcional) |
-| `supabase/01_schema_bootstrap.sql` | Esquema completo alineado con la app |
+| [`supabase/README.md`](supabase/README.md) | Guía para crear un backend propio (cloud o local) |
+| `supabase/00_schema_teardown.sql` | Borrado de una instalación A la Carta propia (opcional y destructivo) |
+| `supabase/01_schema_bootstrap.sql` | Esquema completo, permisos, Storage, Realtime y datos iniciales |
 
 ---
 

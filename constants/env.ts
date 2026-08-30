@@ -12,7 +12,7 @@ function trimEnv(value: string | undefined): string {
 export const env = {
   supabaseUrl: trimEnv(process.env.EXPO_PUBLIC_SUPABASE_URL),
   supabaseAnonKey: trimEnv(process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY),
-  /** Dominio público de la app web (sin barra final). Ej. https://fast-table.vercel.app */
+  /** Dominio público de la app web (sin barra final). Ej. https://tu-proyecto.vercel.app */
   appUrl: trimEnv(process.env.EXPO_PUBLIC_APP_URL),
 };
 

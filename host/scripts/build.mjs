@@ -59,7 +59,7 @@ function main() {
 
   if (!appUrl) {
     console.warn(
-      "⚠ EXPO_PUBLIC_APP_URL vacío. Pon tu dominio público (ej. https://fast-table.vercel.app) antes de desplegar.",
+      "⚠ EXPO_PUBLIC_APP_URL vacío. Pon tu dominio público (ej. https://tu-proyecto.vercel.app) antes de desplegar.",
     );
   }
 

@@ -1,38 +1,35 @@
-# A la Carta en producción (Vercel)
+# Despliegue web
 
-Sitio publicado:
+Este repositorio no apunta a una instancia ni un dominio concreto. Publica `host/` donde prefieras y usa las credenciales de tu propio proyecto Supabase.
 
-| Qué | URL |
-|-----|-----|
-| Landing | https://fast-table.vercel.app |
-| App web (comensal + personal) | https://fast-table.vercel.app/app/ |
-| Auth (enlaces del correo) | https://fast-table.vercel.app/auth/callback |
+## Variables de entorno del proveedor de hosting
 
-## Variables en Vercel (no van en GitHub)
+Configura estas variables antes de crear el build:
 
-- `EXPO_PUBLIC_SUPABASE_URL`
-- `EXPO_PUBLIC_SUPABASE_ANON_KEY`
-- `EXPO_PUBLIC_APP_URL` = `https://fast-table.vercel.app`
+```env
+EXPO_PUBLIC_SUPABASE_URL=https://tu-id-de-proyecto.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=tu_clave_publica
+EXPO_PUBLIC_APP_URL=https://tu-dominio-publico.example
+```
 
-Tras cambiar variables → **Redeploy** en Vercel.
+`EXPO_PUBLIC_APP_URL` no lleva barra final y debe ser el dominio final del sitio. Las variables `EXPO_PUBLIC_*` se incorporan al cliente al compilar; por eso solo se permite la URL y la clave pública de Supabase. No configures `SUPABASE_SERVICE_ROLE_KEY` en el hosting.
 
-## Supabase → Authentication → URL configuration
-
-- **Site URL:** `https://fast-table.vercel.app`
-- **Redirect URLs:**
-  - `https://fast-table.vercel.app/auth/callback`
-  - `alacarta://auth/callback`
-
-## Si el enlace del correo abre solo la landing
-
-1. **Site URL** debe ser `https://fast-table.vercel.app` (no `localhost:3000`).
-2. **Redirect URLs** debe incluir `https://fast-table.vercel.app/auth/callback`.
-3. Tras cambiar URLs en Supabase, pide un **correo nuevo** (enlaces viejos siguen con la URL antigua).
-4. Redeploy en Vercel si cambiaste `EXPO_PUBLIC_APP_URL`.
-
+Compila con:
 
 ```bash
 npm run build:host
 ```
 
-Salida: `host/dist/` (no se sube a git).
+La salida es `host/dist/`.
+
+## Configurar Auth
+
+En **Supabase → Authentication → URL Configuration**, configura el mismo dominio:
+
+- **Site URL:** `https://tu-dominio-publico.example`
+- **Redirect URLs:** `https://tu-dominio-publico.example/auth/callback`
+- **Redirect URLs móvil:** `fasttable://auth/callback`
+
+Después de cambiar una URL, redeploya y solicita un correo nuevo: los enlaces de autenticación ya emitidos mantienen el destino anterior.
+
+La guía con reglas de rutas para Vercel, Netlify y Cloudflare Pages está en [`host/README.md`](../host/README.md).

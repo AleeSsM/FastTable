@@ -11,7 +11,7 @@ Aquí vive **un solo sitio web** con todo lo público:
 | `/auth/confirmado` | Mensaje tras confirmar el correo |
 | `/app/` | App web completa (comensal + **personal**: mesero, cocina, gerente…) |
 
-La app móvil nativa sigue siendo aparte (APK/EAS); los correos en el teléfono usan `alacarta://auth/callback` (ya configurado en el código de la app).
+La app móvil nativa sigue siendo aparte (APK/EAS); los correos en el teléfono usan `fasttable://auth/callback` (el esquema definido en `app.json`).
 
 ---
 
@@ -55,7 +55,7 @@ Cuando tengas dominio propio, cámbiala (ej. `https://alacarta.ipn.mx`).
 |--------|--------|
 | **Site URL** | `https://tu-proyecto.vercel.app` (igual que `EXPO_PUBLIC_APP_URL`) |
 | **Redirect URLs** | `https://tu-proyecto.vercel.app/auth/callback` |
-| | `alacarta://auth/callback` |
+| | `fasttable://auth/callback` |
 
 Guarda. Los correos viejos no valen: pide **enlace nuevo** después de esto.
 
@@ -111,7 +111,7 @@ Variables de entorno: igual que arriba, en el proyecto de Vercel.
 
 ### Después del primer deploy
 
-1. Copia la URL que te dio Vercel (ej. `https://fast-table.vercel.app`).
+1. Copia la URL que te dio Vercel (ej. `https://tu-proyecto.vercel.app`).
 2. Ponla en `EXPO_PUBLIC_APP_URL` (Vercel env + tu `.env`).
 3. Actualiza **Supabase** Site URL y Redirect con esa URL.
 4. **Redeploy** en Vercel.
@@ -139,13 +139,13 @@ npx eas login
 npx eas init
 ```
 
-Configura en [expo.dev](https://expo.dev) → proyecto → **Environment variables** (perfil `preview`):
+Configura en [expo.dev](https://expo.dev) → proyecto → **Environment variables** para los perfiles `preview` y `production`:
 
 - `EXPO_PUBLIC_SUPABASE_URL`
 - `EXPO_PUBLIC_SUPABASE_ANON_KEY`
-- `EXPO_PUBLIC_APP_URL` → `https://fast-table.vercel.app`
+- `EXPO_PUBLIC_APP_URL` → el dominio público propio que uses, por ejemplo `https://tu-proyecto.vercel.app`
 
-Package Android fijo: `com.alacarta.app` (en `app.json`). El slug de Expo sigue `FastTable` (ID del proyecto EAS); el nombre visible de la app es **A la Carta**.
+Antes de publicar tu propia app, revisa `app.json` y asigna un identificador Android único para tu organización si Expo te lo solicita durante la configuración. Configura también las tres variables anteriores en EAS: ya no hay una URL de producción preconfigurada en el repositorio.
 
 ### Generar APK
 
@@ -171,7 +171,8 @@ Los usuarios que abren el correo **en el teléfono con la app instalada** usan e
 
 ## Checklist rápido
 
-- [ ] `.env` con Supabase + `EXPO_PUBLIC_APP_URL`
+- [ ] Backend Supabase propio instalado con `supabase/01_schema_bootstrap.sql`
+- [ ] `.env` con las credenciales de ese Supabase + `EXPO_PUBLIC_APP_URL`
 - [ ] Supabase: Site URL + 2 Redirect URLs
 - [ ] `npm run build:host` sin errores
 - [ ] `alacarta.apk` en `host/site/apk/`
